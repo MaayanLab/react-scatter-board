@@ -1,13 +1,20 @@
-import React, { Component } from 'react'
+import React, { Component } from "react";
 
-import ExampleComponent from 'react-scatter-board'
+import { ScatterBoard } from "react-scatter-board";
+
+// 3d example
+const dataUrl = "http://localhost:8080/GSE48968_tSNE_3.json";
 
 export default class App extends Component {
-  render () {
+  render() {
     return (
-      <div>
-        <ExampleComponent text='Modern React component module' />
-      </div>
-    )
+      <ScatterBoard
+        url={dataUrl}
+        shapeKey="strain"
+        colorKey="description"
+        labelKeys={["sample_id"]}
+        is3d={true}
+      />
+    );
   }
 }
