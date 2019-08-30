@@ -18,3 +18,18 @@ export default class App extends Component {
     );
   }
 }
+
+// 2d example
+// const dataUrl = "http://localhost:8080/A549-tSNE_layout.csv.json";
+// export default class App extends Component {
+//   render() {
+//     return (
+//       <ScatterBoard
+//         url={dataUrl}
+//         shapeKey="Time"
+//         colorKey="MOA"
+//         labelKeys={["sig_id"]}
+//       />
+//     );
+//   }
+// }

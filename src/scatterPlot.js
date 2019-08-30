@@ -15,6 +15,17 @@ function getCanvasColor(color) {
 }
 const RARE = 'other'
 
+function getDataType(value) {
+  let type = typeof value
+  if (type === 'number') {
+    type = 'int'
+    if (!Number.isInteger(value)) {
+      type = 'float'
+    }
+  }
+  return type
+}
+
 function orderArray(arr, indices) {
   // Reorder arr based on indices
   const orderedArr = new Array(arr.length)
@@ -199,7 +210,7 @@ class ScatterData {
       if (xyz.indexOf(key) === -1) {
         const values = data.map(o => o[key])
         const nUnique = [...new Set(values)].length
-        const type = typeof data[0][key]
+        const type = getDataType(data[0][key])
         this.metas.push({
           name: key,
           nUnique: nUnique,
@@ -285,7 +296,7 @@ class ScatterData {
     this.metas.push({
       name: key,
       nUnique: [...new Set(values)].length,
-      type: typeof values[0]
+      type: getDataType(values[0])
     })
   }
 
@@ -300,16 +311,12 @@ class ScatterData {
   }
 
   getShapeOptions() {
-    // let shapeOptions = this.metas.filter(meta => {
-    //   return meta.nUnique < this.n && meta.nUnique > 1
-    // })
-    // shapeOptions = shapeOptions.map(meta => {
-    //   return {value: meta.name, label: meta.name}
-    // })
-    const shapeOptions = [
-      { value: 'Time', label: 'Time' },
-      { value: 'p-value', label: 'p-value' }
-    ]
+    let shapeOptions = this.metas.filter(meta => {
+      return meta.type !== 'float' && (meta.nUnique < 7 && meta.nUnique > 1)
+    })
+    shapeOptions = shapeOptions.map(meta => {
+      return { value: meta.name, label: meta.name }
+    })
     return shapeOptions
   }
 
