@@ -328,7 +328,7 @@ class ScatterData {
     const meta = _.findWhere(this.metas, { name: metaKey })
     const dtype = meta.type
 
-    if (dtype !== 'number' && meta.nUnique > 20) {
+    if (dtype !== 'float' && dtype !== 'int' && meta.nUnique > 20) {
       metas = encodeRareCategories(metas, 19)
     }
     let uniqueCats = new Set(metas)
@@ -528,7 +528,7 @@ class ScatterData {
       .domain(Object.keys(scatterDataSubsets))
       .range(symbols)
 
-    if (meta.type === 'number' && meta.nUnique > 6) {
+    if (['int', 'float'].indexOf(meta.type) !== -1 && meta.nUnique > 6) {
       // get grouped datasets, each group is going to be a cloud
       scatterDataSubsets = this.binBy(metaKey, 6)
       // Make a threshold scale
@@ -971,7 +971,7 @@ class Scatter3dView extends React.Component {
 
     const meta = _.findWhere(model.metas, { name: metaKey })
     const dtype = meta.type
-    if (dtype !== 'number' && meta.nUnique > 20) {
+    if (dtype !== 'float' && dtype !== 'int' && meta.nUnique > 20) {
       metas = encodeRareCategories(metas, 19)
     }
 
