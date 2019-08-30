@@ -1,6 +1,6 @@
 # react-scatter-board
 
-A React implementation of THREE.js 2d/3d scatter plot. This library was created using the[create-react-library](https://github.com/transitive-bullshit/create-react-library) CLI.
+A React implementation of THREE.js 2d/3d scatter plot. This library was created using the [create-react-library](https://github.com/transitive-bullshit/create-react-library) CLI.
 
 [![NPM](https://img.shields.io/npm/v/react-scatter-board.svg)](https://www.npmjs.com/package/react-scatter-board) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
@@ -32,6 +32,10 @@ export default class App extends Component {
   }
 }
 ```
+
+## Examples
+
+TBD
 
 ## License
 
