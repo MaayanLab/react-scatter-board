@@ -591,6 +591,7 @@ class Scatter3dView extends React.Component {
     }
     // events
     this.handleMouseMove = this.handleMouseMove.bind(this)
+    this.handleMouseClick = this.handleMouseClick.bind(this)
   }
 
   componentDidMount() {
@@ -638,12 +639,17 @@ class Scatter3dView extends React.Component {
         this.shapeBy(this.props.shapeKey) // will update state shapeScale etc.
         this.renderScatter()
         if (this.state.is3d) {
-          this.animate()
+          this.startAnimate()
         }
       } else if (this.props.colorKey !== prevProps.colorKey) {
         // colorKey changed through parent state passed as prop
         this.renderScatter()
       }
+    }
+  }
+  componentWillUnmount() {
+    if (this.animateId) {
+      this.stopAnimate()
     }
   }
 
@@ -742,6 +748,8 @@ class Scatter3dView extends React.Component {
     this.controls = controls
     this.raycaster = raycaster
     this.mouse = mouse
+
+    this.id = scene.uuid
 
     //   this.addMouseEvents();
   }
@@ -862,7 +870,7 @@ class Scatter3dView extends React.Component {
     // reset colors
     this.resetColors()
     // remove text-label if exists
-    const textLabel = document.getElementById('text-label')
+    const textLabel = document.getElementById('text-label-' + this.id)
     if (textLabel) {
       textLabel.remove()
     }
@@ -893,6 +901,7 @@ class Scatter3dView extends React.Component {
         pointPosition.x,
         pointPosition.y,
         pointPosition.z,
+        this.points.rotation,
         {
           fontsize: 24,
           fontface: 'arial, sans-serif',
@@ -900,14 +909,14 @@ class Scatter3dView extends React.Component {
         }
       )
 
-      textCanvas.id = 'text-label'
+      textCanvas.id = 'text-label-' + this.id
       this.mount.appendChild(textCanvas)
     }
 
     renderer.render(scene, camera)
   }
 
-  makeTextCanvas(message, x, y, z, parameters) {
+  makeTextCanvas(message, x, y, z, euler, parameters) {
     if (parameters === undefined) parameters = {}
     const fontface = parameters.hasOwnProperty('fontface')
       ? parameters['fontface']
@@ -933,14 +942,12 @@ class Scatter3dView extends React.Component {
     context.textBaseline = 'alphabetic'
 
     context.textAlign = 'left'
-    // get size data (height depends only on font size)
-    const metrics = context.measureText(message)
 
     // text color.  Note that we have to do this AFTER the round-rect as it also uses the "fillstyle" of the canvas
     context.fillStyle = getCanvasColor(textColor)
 
     // calculate the project of 3d point into 2d plain
-    const point = new THREE.Vector3(x, y, z)
+    const point = new THREE.Vector3(x, y, z).applyEuler(euler)
     const pv = new THREE.Vector3().copy(point).project(this.camera)
     const coords = {
       x: ((pv.x + 1) / 2) * WIDTH, // * this.DPR,
@@ -1007,9 +1014,14 @@ class Scatter3dView extends React.Component {
     geometry.addAttribute('color', new THREE.BufferAttribute(colors.slice(), 3))
   }
 
+  startAnimate() {
+    if (!this.animateId) {
+      this.animate()
+    }
+  }
   animate() {
-    this.animateId = requestAnimationFrame(this.animate.bind(this))
     this.rotate()
+    this.animateId = window.requestAnimationFrame(() => this.animate())
   }
 
   rotate() {
@@ -1022,7 +1034,7 @@ class Scatter3dView extends React.Component {
   }
 
   stopAnimate() {
-    cancelAnimationFrame(this.animateId)
+    window.cancelAnimationFrame(this.animateId)
   }
 
   // highlightSubset (idsToHighlight) {
