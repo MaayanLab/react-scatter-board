@@ -637,6 +637,9 @@ class Scatter3dView extends React.Component {
         // this.shapeBy(this.state.shapeKey) // will update state shapeScale etc.
         this.shapeBy(this.props.shapeKey) // will update state shapeScale etc.
         this.renderScatter()
+        if (this.state.is3d) {
+          this.animate()
+        }
       } else if (this.props.colorKey !== prevProps.colorKey) {
         // colorKey changed through parent state passed as prop
         this.renderScatter()
@@ -649,7 +652,7 @@ class Scatter3dView extends React.Component {
       <div
         ref={ref => (this.mount = ref)}
         onMouseMove={e => this.handleMouseMove(e)}
-        // onClick={e => this.handleMouseClick(e)}
+        onClick={e => this.handleMouseClick(e)}
       />
     )
   }
@@ -750,6 +753,10 @@ class Scatter3dView extends React.Component {
     mouse.y = -(e.nativeEvent.offsetY / HEIGHT) * 2 + 1
     this.mouse = mouse
     this.renderScatter()
+  }
+
+  handleMouseClick(e) {
+    this.stopAnimate()
   }
 
   makeMaterial() {
@@ -998,6 +1005,24 @@ class Scatter3dView extends React.Component {
       }
     }
     geometry.addAttribute('color', new THREE.BufferAttribute(colors.slice(), 3))
+  }
+
+  animate() {
+    this.animateId = requestAnimationFrame(this.animate.bind(this))
+    this.rotate()
+  }
+
+  rotate() {
+    let time = Date.now() * 0.001
+    for (const child of this.scene.children) {
+      child.rotation.x = time * 0.05
+      child.rotation.y = time * 0.1
+    }
+    this.renderScatter()
+  }
+
+  stopAnimate() {
+    cancelAnimationFrame(this.animateId)
   }
 
   // highlightSubset (idsToHighlight) {
