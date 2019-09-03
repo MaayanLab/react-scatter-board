@@ -35,6 +35,7 @@ class ScatterBoard extends React.Component {
     // variables to be passed to children's states
     const { colorKey, shapeKey, labelKeys, is3d } = this.state
     const { colorScale, shapeScale, shapeLabels } = this.state
+    const { width, height } = this.props
     let colorOptions = null
     let shapeOptions = null
     if (this.state.model) {
@@ -42,14 +43,19 @@ class ScatterBoard extends React.Component {
       shapeOptions = this.state.model.getShapeOptions()
     }
     return (
-      <div>
+      <div
+        style={{
+          position: 'relative',
+          padding: 0,
+          width: width,
+          height: height
+        }}
+      >
         <Scatter3dView
           data={this.state.data}
           model={this.state.model}
-          //   width={rootElem.clientWidth}
-          //   height={rootElem.clientHeight}
-          width={1400}
-          height={800}
+          width={width}
+          height={width}
           DPR={window.devicePixelRatio}
           colorKey={colorKey}
           shapeKey={shapeKey}
@@ -87,6 +93,7 @@ class ScatterBoard extends React.Component {
             }}
             options={colorOptions}
             onSelectChange={this.handleColorKeyChange}
+            width={180}
           />
           <scatterWidgets.SelectDropdown
             label='Shape by:'
@@ -96,6 +103,7 @@ class ScatterBoard extends React.Component {
             }}
             options={shapeOptions}
             onSelectChange={this.handleShapeKeyChange}
+            width={180}
           />
         </div>
       </div>

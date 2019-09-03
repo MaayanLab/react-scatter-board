@@ -589,7 +589,6 @@ class Scatter3dView extends React.Component {
       shapeScale: this.props.shapeScale,
       shapeLabels: this.props.shapeLabels
     }
-
     // events
     this.handleMouseMove = this.handleMouseMove.bind(this)
   }
@@ -698,8 +697,8 @@ class Scatter3dView extends React.Component {
     // Put the renderer's DOM into the container
     renderer.domElement.id = 'renderer'
     this.mount.appendChild(renderer.domElement)
-    this.mount.style.position = 'relative'
-    this.mount.style.padding = 0
+    // this.mount.style.position = 'relative'
+    // this.mount.style.padding = 0
 
     // set up orbit controls
     const controls = new OrbitControls(camera, renderer.domElement)

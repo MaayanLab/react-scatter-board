@@ -111,19 +111,6 @@ class SelectDropdown extends React.Component {
     this.handleChange = this.handleChange.bind(this)
   }
 
-  componentDidMount() {
-    // this.mount.style.position = 'absolute'
-    this.mount.style.zIndex = 10
-    // this.mount.style.top = 0
-    // this.mount.style.right = 0
-    this.mount.style.width = '200px'
-  }
-
-  //   componentDidUpdate (prevProps, prevState) {
-  //     if (prevProps.options !== this.props.options) {
-  //     }
-  //   }
-
   render() {
     return (
       <div ref={ref => (this.mount = ref)}>
@@ -132,6 +119,11 @@ class SelectDropdown extends React.Component {
           defaultValue={this.state.defaultValue}
           options={this.props.options}
           onChange={this.handleChange}
+          styles={{
+            container: () => ({
+              width: this.props.width
+            })
+          }}
         />
       </div>
     )
