@@ -1,13 +1,13 @@
 {
-  "main.css": "/react-scatter-board/static/css/main.f62ff25a.chunk.css",
-  "main.js": "/react-scatter-board/static/js/main.cb00e973.chunk.js",
-  "main.js.map": "/react-scatter-board/static/js/main.cb00e973.chunk.js.map",
-  "static/js/1.993350bf.chunk.js": "/react-scatter-board/static/js/1.993350bf.chunk.js",
-  "static/js/1.993350bf.chunk.js.map": "/react-scatter-board/static/js/1.993350bf.chunk.js.map",
+  "main.css": "/react-scatter-board/static/css/main.ef43d83c.chunk.css",
+  "main.js": "/react-scatter-board/static/js/main.e4d8309c.chunk.js",
+  "main.js.map": "/react-scatter-board/static/js/main.e4d8309c.chunk.js.map",
+  "static/js/1.56957601.chunk.js": "/react-scatter-board/static/js/1.56957601.chunk.js",
+  "static/js/1.56957601.chunk.js.map": "/react-scatter-board/static/js/1.56957601.chunk.js.map",
   "runtime~main.js": "/react-scatter-board/static/js/runtime~main.6dbf1178.js",
   "runtime~main.js.map": "/react-scatter-board/static/js/runtime~main.6dbf1178.js.map",
-  "static/css/main.f62ff25a.chunk.css.map": "/react-scatter-board/static/css/main.f62ff25a.chunk.css.map",
+  "static/css/main.ef43d83c.chunk.css.map": "/react-scatter-board/static/css/main.ef43d83c.chunk.css.map",
   "index.html": "/react-scatter-board/index.html",
-  "precache-manifest.a7060a6d8f90350dd5fe60c59d8a63cf.js": "/react-scatter-board/precache-manifest.a7060a6d8f90350dd5fe60c59d8a63cf.js",
+  "precache-manifest.69337511fcd94b5b6db86c78114e2642.js": "/react-scatter-board/precache-manifest.69337511fcd94b5b6db86c78114e2642.js",
   "service-worker.js": "/react-scatter-board/service-worker.js"
 }
