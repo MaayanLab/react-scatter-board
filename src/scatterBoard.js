@@ -14,6 +14,7 @@ class ScatterBoard extends React.Component {
       colorKey: this.props.colorKey,
       shapeKey: this.props.shapeKey,
       labelKeys: this.props.labelKeys,
+      searchKeys: this.props.searchKeys,
       is3d: this.props.is3d
     }
     // events
@@ -34,7 +35,7 @@ class ScatterBoard extends React.Component {
 
   render() {
     // variables to be passed to children's states
-    const { colorKey, shapeKey, labelKeys, is3d } = this.state
+    const { colorKey, shapeKey, labelKeys, searchKeys, is3d } = this.state
     const { colorScale, shapeScale, shapeLabels } = this.state
     const { width, height } = this.props
     let colorOptions = null
@@ -43,7 +44,7 @@ class ScatterBoard extends React.Component {
     if (this.state.model) {
       colorOptions = this.state.model.getColorOptions()
       shapeOptions = this.state.model.getShapeOptions()
-      searchOptions = this.state.model.getSearchOptions(labelKeys)
+      searchOptions = this.state.model.getSearchOptions(searchKeys)
     }
     return (
       <div

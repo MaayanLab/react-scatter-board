@@ -14,6 +14,7 @@ const board2d = (
     shapeKey='Time'
     colorKey='MOA'
     labelKeys={['sig_id', 'MOA']}
+    searchKeys={['MOA', 'Phase']}
     width={colWidth}
     height={colWidth}
   />
@@ -27,6 +28,7 @@ const board3d = (
     shapeKey='strain'
     colorKey='description'
     labelKeys={['sample_id', 'description']}
+    searchKeys={['sample_id', 'description', 'source_name_ch1']}
     is3d={true}
     width={colWidth}
     height={colWidth}

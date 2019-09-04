@@ -194,7 +194,6 @@ class ScatterData {
   getSearchOptions(labelKeys) {
     // labelKeys: array of strings
     // return an array of objects as input for Select.options
-    // let allLabels = new Array(labelKeys.length)
     let allLabels = []
     for (const labelKey of labelKeys) {
       let labels = this.getAttr(labelKey)
@@ -203,11 +202,9 @@ class ScatterData {
       labels = labels.map(x => {
         return { value: x, label: x, key: labelKey }
       })
+      labels = { label: labelKey, options: labels }
       allLabels.push(labels)
     }
-    allLabels = allLabels.reduce((x, y) => {
-      return x.concat(y)
-    })
     return allLabels
   }
 
