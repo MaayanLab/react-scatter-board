@@ -35,6 +35,19 @@ const board3d = (
   />
 )
 
+// 3d example (disable search)
+const board3dNoSearch = (
+  <ScatterBoard
+    url={dataUrl3}
+    shapeKey='strain'
+    colorKey='description'
+    labelKeys={['sample_id', 'description']}
+    is3d={true}
+    width={colWidth}
+    height={colWidth}
+  />
+)
+
 export default class App extends Component {
   render() {
     return (
@@ -50,6 +63,12 @@ export default class App extends Component {
             <h1>3d Example:</h1>
           </Col>
           <Col xs={9}>{board3d}</Col>
+        </Row>
+        <Row>
+          <Col xs={3}>
+            <h1>3d Example: disabling search</h1>
+          </Col>
+          <Col xs={9}>{board3dNoSearch}</Col>
         </Row>
       </Container>
     )

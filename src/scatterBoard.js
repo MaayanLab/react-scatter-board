@@ -45,7 +45,9 @@ class ScatterBoard extends React.Component {
     if (this.state.model) {
       colorOptions = this.state.model.getColorOptions()
       shapeOptions = this.state.model.getShapeOptions()
-      searchOptions = this.state.model.getSearchOptions(searchKeys)
+      if (searchKeys) {
+        searchOptions = this.state.model.getSearchOptions(searchKeys)
+      }
     }
     return (
       <div
@@ -90,33 +92,39 @@ class ScatterBoard extends React.Component {
             position: 'absolute'
           }}
         >
-          <scatterWidgets.SelectDropdown
-            label='Color by:'
-            defaultValue={{
-              value: colorKey,
-              label: colorKey
-            }}
-            options={colorOptions}
-            onSelectChange={this.handleColorKeyChange}
-            width={180}
-          />
-          <scatterWidgets.SelectDropdown
-            label='Shape by:'
-            defaultValue={{
-              value: shapeKey,
-              label: shapeKey
-            }}
-            options={shapeOptions}
-            onSelectChange={this.handleShapeKeyChange}
-            width={180}
-          />
-          <scatterWidgets.SearchSelectize
-            label='Search:'
-            options={searchOptions}
-            onInputChange={this.handleSearchInputChange}
-            onClearBtnClicked={this.handleClearBtnClick}
-            width={180}
-          />
+          {colorOptions && colorOptions.length > 1 && (
+            <scatterWidgets.SelectDropdown
+              label='Color by:'
+              defaultValue={{
+                value: colorKey,
+                label: colorKey
+              }}
+              options={colorOptions}
+              onSelectChange={this.handleColorKeyChange}
+              width={180}
+            />
+          )}
+          {shapeOptions && shapeOptions.length > 1 && (
+            <scatterWidgets.SelectDropdown
+              label='Shape by:'
+              defaultValue={{
+                value: shapeKey,
+                label: shapeKey
+              }}
+              options={shapeOptions}
+              onSelectChange={this.handleShapeKeyChange}
+              width={180}
+            />
+          )}
+          {searchKeys && searchKeys.length > 1 && (
+            <scatterWidgets.SearchSelectize
+              label='Search:'
+              options={searchOptions}
+              onInputChange={this.handleSearchInputChange}
+              onClearBtnClicked={this.handleClearBtnClick}
+              width={180}
+            />
+          )}
         </div>
       </div>
     )
