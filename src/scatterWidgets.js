@@ -4,7 +4,6 @@ The widgets for the interactive scatter plot.
 import React from 'react'
 import d3 from 'd3'
 import legend from 'd3-svg-legend/no-extend'
-import _ from 'underscore'
 import Select from 'react-select'
 
 class Legend extends React.Component {
@@ -150,7 +149,14 @@ class SearchSelectize extends React.Component {
         <Select
           defaultValue=''
           defaultInputValue=''
+          placeholder='Type to search...'
+          options={this.props.options}
           onChange={this.handleChange}
+          styles={{
+            container: () => ({
+              width: this.props.width
+            })
+          }}
         />
       </div>
     )

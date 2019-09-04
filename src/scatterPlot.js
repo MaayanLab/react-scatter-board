@@ -129,7 +129,7 @@ class ScatterData {
   }
 
   groupBy(metaKey) {
-    // group by a metaKey and return an object of _ScatterDataSubset objects keyed by metaKey
+    // group by a metaKey and return an object of ScatterDataSubset objects keyed by metaKey
     const dataSubsets = _.groupBy(this.data, metaKey)
     const scatterDataSubsets = _.mapObject(dataSubsets, (records, key) => {
       return new ScatterDataSubset(records)
@@ -189,6 +189,26 @@ class ScatterData {
       return { value: meta.name, label: meta.name }
     })
     return shapeOptions
+  }
+
+  getSearchOptions(labelKeys) {
+    // labelKeys: array of strings
+    // return an array of objects as input for Select.options
+    // let allLabels = new Array(labelKeys.length)
+    let allLabels = []
+    for (const labelKey of labelKeys) {
+      let labels = this.getAttr(labelKey)
+      // take the unique values
+      labels = [...new Set(labels)]
+      labels = labels.map(x => {
+        return { value: x, label: x, key: labelKey }
+      })
+      allLabels.push(labels)
+    }
+    allLabels = allLabels.reduce((x, y) => {
+      return x.concat(y)
+    })
+    return allLabels
   }
 
   calculateColorScale(metaKey) {
@@ -889,29 +909,53 @@ class Scatter3dView extends React.Component {
     window.cancelAnimationFrame(this.animateId)
   }
 
-  // highlightSubset (idsToHighlight) {
-  //   const dataSubset = this.props.model.getSubset(idsToHighlight)
-  //   const highlightCould = this.createHighlightCloud(dataSubset)
-  //   highlightCould.setSingleColor('yellow')
-  //   highlightCould.name = 'highlight'
-  //   this.scene.add(highlightCould)
-  //   this.renderScatter()
-  // }
+  highlightQuery(metaKey, query) {
+    // To highlight a query result by adding a new PointsGeometry
+    // instance to the scene
+    this.removeHighlightedPoints()
+    // get the reordered data in geometry
+    const reorderedData = utils.orderArray(
+      this.props.model.data,
+      this.points.geometry.userData.index
+    )
+    // find the matched data points
+    const matchedData = reorderedData.filter(rec => {
+      return rec[metaKey] === query
+    })
+    const dataSubset = new ScatterDataSubset(matchedData)
+    const highlightCould = this.createHighlightCloud(dataSubset)
+    highlightCould.name = 'highlight-' + this.id
+    this.scene.add(highlightCould)
+    this.renderScatter()
+  }
 
-  // createHighlightCloud (dataSubset) {
-  //   // dataSubset should be a ScatterDataSubset instance
-  //   const geometryHighlight = new PointsGeometry(dataSubset)
+  createHighlightCloud(dataSubset) {
+    // dataSubset should be a ScatterDataSubset instance
+    const geometryHighlight = new PointsGeometry({ model: dataSubset })
+    const material = new THREE.PointsMaterial({
+      size: this.state.pointSize * 5,
+      sizeAttenuation: this.state.is3d,
+      map: this.materials[0].map,
+      transparent: true,
+      opacity: 0.4,
+      color: 0xffff00
+    })
 
-  //   const material = new THREE.PointsMaterial({
-  //     vertexColors: THREE.VertexColors,
-  //     size: this.state.pointSize * 5,
-  //     sizeAttenuation: false,
-  //     map: this.materials[0].map,
-  //     transparent: true,
-  //     opacity: 0.4
-  //   })
-  //   const pointsHighlight = new THREE.Points(geometryHighlight, material)
-  // }
+    const highlightPoints = new THREE.Points(
+      geometryHighlight.geometry,
+      material
+    )
+    // update rotation
+    highlightPoints.rotation.x = this.points.rotation.x
+    highlightPoints.rotation.y = this.points.rotation.y
+    return highlightPoints
+  }
+
+  removeHighlightedPoints() {
+    const scene = this.scene
+    scene.remove(scene.getObjectByName('highlight-' + this.id))
+    this.renderScatter()
+  }
 }
 
 export { ScatterData, Scatter3dView }

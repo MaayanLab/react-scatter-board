@@ -19,6 +19,7 @@ class ScatterBoard extends React.Component {
     // events
     this.handleColorKeyChange = this.handleColorKeyChange.bind(this)
     this.handleShapeKeyChange = this.handleShapeKeyChange.bind(this)
+    this.handleSearchInputChange = this.handleSearchInputChange.bind(this)
 
     fetch(this.props.url)
       .then(response => {
@@ -38,9 +39,11 @@ class ScatterBoard extends React.Component {
     const { width, height } = this.props
     let colorOptions = null
     let shapeOptions = null
+    let searchOptions = null
     if (this.state.model) {
       colorOptions = this.state.model.getColorOptions()
       shapeOptions = this.state.model.getShapeOptions()
+      searchOptions = this.state.model.getSearchOptions(labelKeys)
     }
     return (
       <div
@@ -105,6 +108,12 @@ class ScatterBoard extends React.Component {
             onSelectChange={this.handleShapeKeyChange}
             width={180}
           />
+          <scatterWidgets.SearchSelectize
+            label='Search:'
+            options={searchOptions}
+            onInputChange={this.handleSearchInputChange}
+            width={180}
+          />
         </div>
       </div>
     )
@@ -134,10 +143,15 @@ class ScatterBoard extends React.Component {
     }
   }
 
+  handleSearchInputChange(valueObj) {
+    // update highlights for new search
+    const { key, value } = valueObj
+    this.scatter3dView.highlightQuery(key, value)
+  }
+
   componentDidUpdate(prevProps, prevState) {
     if (prevState.data === null && prevState.data !== this.state.data) {
       // data has been fetched for the first time
-      // const { colorKey, shapeKey } = this.scatter3dView.state
       const { colorKey, shapeKey } = this.state
       const model = this.state.model
 

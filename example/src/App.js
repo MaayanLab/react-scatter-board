@@ -13,7 +13,7 @@ const board2d = (
     url={dataUrl2}
     shapeKey='Time'
     colorKey='MOA'
-    labelKeys={['sig_id']}
+    labelKeys={['sig_id', 'MOA']}
     width={colWidth}
     height={colWidth}
   />
