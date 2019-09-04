@@ -137,12 +137,15 @@ class SearchSelectize extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      searchStr: ''
+      searchStr: '',
+      searched: false
     }
     this.handleChange = this.handleChange.bind(this)
+    this.handleClear = this.handleClear.bind(this)
   }
 
   render() {
+    const searched = this.state.searched
     return (
       <div ref={ref => (this.mount = ref)}>
         <label>{this.props.label}</label>
@@ -158,12 +161,27 @@ class SearchSelectize extends React.Component {
             })
           }}
         />
+        {searched && (
+          <button
+            onClick={this.handleClear}
+            className='btn btn-sm btn-outline-secondary'
+            style={{ marginTop: 5 }}
+          >
+            Clear highlighted points
+          </button>
+        )}
       </div>
     )
   }
 
   handleChange(value) {
+    this.setState({ searched: true })
     this.props.onInputChange(value)
+  }
+
+  handleClear() {
+    this.setState({ searched: false })
+    this.props.onClearBtnClicked()
   }
 }
 

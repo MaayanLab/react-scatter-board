@@ -21,6 +21,7 @@ class ScatterBoard extends React.Component {
     this.handleColorKeyChange = this.handleColorKeyChange.bind(this)
     this.handleShapeKeyChange = this.handleShapeKeyChange.bind(this)
     this.handleSearchInputChange = this.handleSearchInputChange.bind(this)
+    this.handleClearBtnClick = this.handleClearBtnClick.bind(this)
 
     fetch(this.props.url)
       .then(response => {
@@ -113,6 +114,7 @@ class ScatterBoard extends React.Component {
             label='Search:'
             options={searchOptions}
             onInputChange={this.handleSearchInputChange}
+            onClearBtnClicked={this.handleClearBtnClick}
             width={180}
           />
         </div>
@@ -148,6 +150,10 @@ class ScatterBoard extends React.Component {
     // update highlights for new search
     const { key, value } = valueObj
     this.scatter3dView.highlightQuery(key, value)
+  }
+
+  handleClearBtnClick() {
+    this.scatter3dView.removeHighlightedPoints()
   }
 
   componentDidUpdate(prevProps, prevState) {
