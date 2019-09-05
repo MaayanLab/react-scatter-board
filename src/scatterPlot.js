@@ -4,7 +4,7 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { BufferGeometryUtils } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 import _ from 'underscore'
-import Texture from './texture'
+import { Texture, symbolTypes } from './texture'
 import * as utils from './utils'
 
 class ScatterDataSubset {
@@ -114,13 +114,7 @@ class ScatterData {
     for (const record of this.data) {
       let label = ''
       for (const labelKey of labelKeys) {
-        if (labelKey === 'Time') {
-          label += labelKey + ': ' + record[labelKey] + ' hours\n'
-        } else if (labelKey === 'Dose') {
-          label += labelKey + ': ' + record[labelKey] + ' μM\n'
-        } else {
-          label += labelKey + ': ' + record[labelKey] + ' \n'
-        }
+        label += labelKey + ': ' + record[labelKey] + ' \n'
       }
       labels[i] = label
       i++
@@ -258,14 +252,7 @@ class ScatterData {
       .domain([minScore, (minScore + maxScore) / 2, maxScore])
       .range(['#1f77b4', '#ddd', '#d62728'])
 
-    if (meta.name === 'Scores' || meta.name === 'R2_Score') {
-      // similarity scores should center at 0
-      colorExtent = d3.extent(metas)
-      colorScale = d3.scale
-        .pow()
-        .domain([colorExtent[0], 0, colorExtent[1]])
-        .range(['#1f77b4', '#ddd', '#d62728'])
-    } else if (dtype === 'boolean') {
+    if (dtype === 'boolean') {
       colorScale = d3.scale
         .ordinal()
         .domain([true, false])
@@ -471,7 +458,6 @@ class Scatter3dView extends React.Component {
       colorKey: this.props.colorKey, // which metaKey to use as colors
       shapeKey: this.props.shapeKey,
       pointSize: is3d ? 0.5 : 12, // the size of the points
-      showStats: false, // whether to show Stats
       is3d: is3d, // 3d or 2d
       colorScale: this.props.colorScale,
       shapeScale: this.props.shapeScale,
@@ -527,6 +513,9 @@ class Scatter3dView extends React.Component {
         this.renderScatter()
         if (this.state.is3d) {
           this.startAnimate()
+        } else {
+          // sometimes the canvas doesn't show
+          setTimeout(() => this.renderScatter(), 500)
         }
       } else if (this.props.colorKey !== prevProps.colorKey) {
         // colorKey changed through parent state passed as prop
@@ -557,6 +546,8 @@ class Scatter3dView extends React.Component {
 
     // set up scene, camera, renderer
     const scene = new THREE.Scene()
+    // set the id for this object
+    this.id = scene.uuid
 
     const renderer = new THREE.WebGLRenderer()
     renderer.setClearColor(0xffffff)
@@ -591,7 +582,7 @@ class Scatter3dView extends React.Component {
     }
 
     // Put the renderer's DOM into the container
-    renderer.domElement.id = 'renderer'
+    renderer.domElement.id = 'renderer-' + this.id
     this.mount.appendChild(renderer.domElement)
 
     // set up orbit controls
@@ -626,15 +617,13 @@ class Scatter3dView extends React.Component {
 
     const mouse = new THREE.Vector2()
 
-    // bind three js object to component
+    // bind three js objects to component
     this.scene = scene
     this.renderer = renderer
     this.camera = camera
     this.controls = controls
     this.raycaster = raycaster
     this.mouse = mouse
-    // set the id for this object
-    this.id = scene.uuid
   }
 
   handleMouseMove(e) {
@@ -657,14 +646,6 @@ class Scatter3dView extends React.Component {
   }
 
   makeMaterial() {
-    const symbolTypes = [
-      'circle',
-      'cross',
-      'diamond',
-      'square',
-      'triangle-down',
-      'triangle-up'
-    ]
     const materials = []
     for (const symbolType of symbolTypes) {
       const textureResult = new Texture(symbolType).load()
