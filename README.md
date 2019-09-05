@@ -14,7 +14,6 @@ npm install --save maayanlab/react-scatter-board
 
 ```jsx
 import React, { Component } from "react";
-
 import { ScatterBoard } from "react-scatter-board";
 import "./App.css";
 
@@ -35,7 +34,7 @@ export default class App extends Component {
 
 ## Examples
 
-TBD
+Please read the [documentions](https://maayanlab.github.io/react-scatter-board/).
 
 ## Development
 
