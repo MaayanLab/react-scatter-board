@@ -648,7 +648,10 @@ class Scatter3dView extends React.Component {
 
   handleMouseClick(e) {
     this.stopAnimate()
-    if (e.shiftKey) {
+    if (
+      e.shiftKey &&
+      typeof this.props.mouseShiftClickCallback === 'function'
+    ) {
       this.mouseShiftClick(this.props.mouseShiftClickCallback)
     }
   }

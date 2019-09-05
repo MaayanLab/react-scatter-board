@@ -10,8 +10,11 @@
     "react": "^16.5.2",
     "react-bootstrap": "^1.0.0-beta.12",
     "react-dom": "^16.5.2",
+    "react-markdown": "^4.2.2",
     "react-scatter-board": "file:..",
-    "react-scripts": "2.0.4"
+    "react-scripts": "2.0.4",
+    "react-scrollspy": "^3.4.0",
+    "react-syntax-highlighter": "^11.0.2"
   },
   "scripts": {
     "start": "react-scripts start",
