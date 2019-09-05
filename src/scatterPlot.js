@@ -648,6 +648,9 @@ class Scatter3dView extends React.Component {
 
   handleMouseClick(e) {
     this.stopAnimate()
+    if (e.shiftKey) {
+      this.mouseShiftClick(this.props.mouseShiftClickCallback)
+    }
   }
 
   makeMaterial() {
@@ -952,6 +955,23 @@ class Scatter3dView extends React.Component {
     const scene = this.scene
     scene.remove(scene.getObjectByName('highlight-' + this.id))
     this.renderScatter()
+  }
+
+  mouseShiftClick(callback) {
+    // fire when shift + click
+    const { raycaster, mouse, camera } = this
+    // update the picking ray with the camera and mouse position
+    raycaster.setFromCamera(mouse, camera)
+
+    // calculate objects intersecting the picking ray
+    const intersects = raycaster.intersectObjects([this.points])
+    if (intersects.length > 0) {
+      const intersect = intersects[0]
+      const idx = intersect.index
+      const trueIdx = intersect.object.geometry.userData.index[idx]
+      const datum = this.props.model.data[trueIdx]
+      callback(datum)
+    }
   }
 }
 

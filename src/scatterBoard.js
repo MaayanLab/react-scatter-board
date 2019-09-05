@@ -71,6 +71,7 @@ class ScatterBoard extends React.Component {
           shapeScale={shapeScale}
           shapeLabels={shapeScale}
           is3d={is3d}
+          mouseShiftClickCallback={this.props.mouseShiftClickCallback}
           // create a ref for the parent to refer to the child
           ref={scatter3dView => {
             this.scatter3dView = scatter3dView
