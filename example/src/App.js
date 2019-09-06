@@ -14,7 +14,7 @@ const colWidth = rootElem.clientWidth * 0.66
 // navbar with scrollspy
 const navbar = (
   <Navbar fixed='top' bg='primary' variant='dark'>
-    <Navbar.Brand href='#home'>React Scatter Board</Navbar.Brand>
+    <Navbar.Brand href='#'>React Scatter Board</Navbar.Brand>
     <Scrollspy
       items={['section-1', 'section-2', 'section-3', 'section-4']}
       offset={-56}
@@ -64,6 +64,30 @@ export default class App extends Component {
   }
 }
 `
+const inputDataDocSting = `
+## Input data format
+The input data used for rendering the scatter plot should be passed through 
+a URL that returns a JSON array of objects. Each object should at least contains 
+\`x\`, \`y\` and optionally \`z\` attributes to define their coordinates in the 2d/3d 
+space. It is recommended to normalize the ranges of \`x\`, \`y\`, and \`z\` to 
+(-10, 10) for the ease of visualization. Objects in the JSON array can also have 
+arbitrary continuous and categorical attributes for coloring and shaping. It is also 
+recommended to have at least one attribute that uniquely identify each object in the 
+JSON array. An example JSON array can be found 
+[here](https://amp.pharm.mssm.edu/scavi/graph/GSE48968/tSNE/3).
+
+## Interactivity
+
+- Scatter plot
+  + **Zoom**: mouse wheel or touch with two-finger spread or squish.
+  + **Pan**: left mouse drag or arrow keys on keyboard.
+  + **Rotation (3d only)**: left mouse drag or touch with one-finger move.
+  + **Show tooltip**: mouse hover points in scatter plot.
+  + **Activate custom point event**: Shift + mouse left click. See [mouseShiftClickCallback](#section-3) for details. 
+- Color/Shape dropdowns: click on the dropdown select to update colors/shapes in the scatter plot.
+- Search box: type anything to search and highlight for point(s) in the scatter plot.
+`
+
 // 2d example
 const dataUrl2 = 'https://amp.pharm.mssm.edu/l1000fwd/graph/A549_kNN_5'
 const board2d = (
@@ -207,6 +231,7 @@ export default class App extends Component {
   render() {
     return (
       <div>
+        {navbar}
         <Jumbotron fluid>
           <Container>
             <h1>React Scatter Board</h1>
@@ -224,11 +249,10 @@ export default class App extends Component {
         </Jumbotron>
 
         <Container fluid={true}>
-          {navbar}
           <Row id='section-1' className='justify-content-md-center'>
             <Col md={10}>
               <h1>Getting started</h1>
-              <h2>Install:</h2>
+              <h2>Install</h2>
               <SyntaxHighlighter language='bash' style={ghcolors}>
                 {'npm install --save maayanlab/react-scatter-board'}
               </SyntaxHighlighter>
@@ -236,6 +260,7 @@ export default class App extends Component {
               <SyntaxHighlighter language='javascript' style={ghcolors}>
                 {usageCode}
               </SyntaxHighlighter>
+              <ReactMarkdown source={inputDataDocSting} />
             </Col>
           </Row>
           <div id='section-2'>

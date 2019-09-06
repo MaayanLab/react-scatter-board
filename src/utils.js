@@ -30,7 +30,7 @@ function orderArray(arr, indices) {
 }
 
 function encodeRareCategories(arr, k) {
-  // Count occurences of each unique categories in arr,
+  // Count occurrences of each unique categories in arr,
   // then keep top k and encode rare categories as 'rares'
   let counts = _.countBy(arr)
   // sort values
