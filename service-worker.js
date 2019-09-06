@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/react-scatter-board/precache-manifest.a473e21d993f827b94a3e9a287895001.js"
+  "/react-scatter-board/precache-manifest.112383b6a8065f93f344b01f1822c396.js"
 );
 
 workbox.clientsClaim();
