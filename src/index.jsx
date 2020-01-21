@@ -5,4 +5,3 @@ import * as ScatterWidgets from './scatterWidgets'
 import { ScatterBoard } from './scatterBoard'
 
 export { ScatterBoard, ScatterData, Scatter3dView, ScatterWidgets }
-export default { ScatterBoard }

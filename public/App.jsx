@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
 import { Container, Row, Col, Navbar, Jumbotron, Button } from 'react-bootstrap'
 import Scrollspy from 'react-scrollspy'
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import { ghcolors } from 'react-syntax-highlighter/dist/esm/styles/prism'
+import SyntaxHighlighter from 'react-syntax-highlighter'
+import ghcolors from 'react-syntax-highlighter/dist/styles/prism/ghcolors'
 import ReactMarkdown from 'react-markdown'
 
-import { ScatterBoard } from 'react-scatter-board'
+import { ScatterBoard } from '../src'
 
 // get the Bootstrap column width
 const rootElem = document.getElementById('root')

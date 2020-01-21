@@ -1,15 +1,16 @@
 import _ from 'underscore'
-import d3 from 'd3'
+import * as d3 from 'd3'
 /*
  * Utility functions
  */
 
-function getCanvasColor(color) {
+export function getCanvasColor(color) {
   return 'rgba(' + color.r + ',' + color.g + ',' + color.b + ',' + color.a + ')'
 }
-const RARE = 'other'
 
-function getDataType(value) {
+export const RARE = 'other'
+
+export function getDataType(value) {
   let type = typeof value
   if (type === 'number') {
     type = 'int'
@@ -20,7 +21,7 @@ function getDataType(value) {
   return type
 }
 
-function orderArray(arr, indices) {
+export function orderArray(arr, indices) {
   // Reorder arr based on indices
   const orderedArr = new Array(arr.length)
   for (let i = 0; i < arr.length; i++) {
@@ -29,7 +30,7 @@ function orderArray(arr, indices) {
   return orderedArr
 }
 
-function encodeRareCategories(arr, k) {
+export function encodeRareCategories(arr, k) {
   // Count occurrences of each unique categories in arr,
   // then keep top k and encode rare categories as 'rares'
   let counts = _.countBy(arr)
@@ -45,7 +46,7 @@ function encodeRareCategories(arr, k) {
   return arr
 }
 
-function binValues(arr, nbins) {
+export function binValues(arr, nbins) {
   // Binning continues array of values in to nbins
   var extent = d3.extent(arr)
   var min = parseFloat(extent[0])
@@ -75,7 +76,7 @@ function binValues(arr, nbins) {
   }
 }
 
-function binValues2(arr, domain) {
+export function binValues2(arr, domain) {
   // Binning continues array of values by a given binEdges (domain)
   // domain: [0.001, 0.01, 0.05, 0.1, 1]
   // domain should include the largest (rightest) value
@@ -93,7 +94,7 @@ function binValues2(arr, domain) {
   return { labels: labels, domain: domain.slice(0, -1), min: min, max: max }
 }
 
-function binBy(list, key, nbins) {
+export function binBy(list, key, nbins) {
   // similar to _.groupBy but applying to continues values using `binValues`
   // list: an array of objects
   // key: name of the continues variable
@@ -115,7 +116,7 @@ function binBy(list, key, nbins) {
   return grouped
 }
 
-function binBy2(list, key, domain) {
+export function binBy2(list, key, domain) {
   // wrapper for `binValuesBy`
   var values = _.pluck(list, key)
   var binnedValues = binValues2(values, domain)
@@ -128,16 +129,4 @@ function binBy2(list, key, domain) {
     return labels[i]
   })
   return grouped
-}
-
-export {
-  RARE,
-  getCanvasColor,
-  getDataType,
-  orderArray,
-  encodeRareCategories,
-  binValues,
-  binValues2,
-  binBy,
-  binBy2
 }

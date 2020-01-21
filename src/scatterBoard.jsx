@@ -2,7 +2,7 @@ import React from 'react'
 import { Scatter3dView, ScatterData } from './scatterPlot'
 import * as scatterWidgets from './scatterWidgets'
 
-class ScatterBoard extends React.Component {
+export class ScatterBoard extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -181,5 +181,3 @@ class ScatterBoard extends React.Component {
     }
   }
 }
-
-export { ScatterBoard }

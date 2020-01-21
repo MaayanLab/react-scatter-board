@@ -19,15 +19,26 @@
   },
   "homepage": "https://github.com/MaayanLab/react-scatter-board#readme",
   "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
     "microbundle": "^0.11.0",
     "parcel-bundler": "^1.12.4",
     "react-dom": "^16.11.0"
   },
   "dependencies": {
+    "d3": "^5.12.0",
+    "d3-scale": "^3.2.0",
+    "d3-scale-chromatic": "^1.5.0",
+    "d3-svg-legend": "^2.25.6",
     "react": "^16.11.0",
     "react-bootstrap": "^1.0.0-beta.14",
     "react-markdown": "^4.2.2",
     "react-scrollspy": "^3.4.0",
-    "react-syntax-highlighter": "^11.0.2"
+    "react-select": "^3.0.8",
+    "react-syntax-highlighter": "^9.0.1",
+    "three": "^0.106.2",
+    "underscore": "^1.9.1"
   }
 }

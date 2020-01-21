@@ -1,5 +1,6 @@
 import React from 'react'
-import d3 from 'd3'
+import * as d3 from 'd3'
+import * as d3Scale from 'd3-scale'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { BufferGeometryUtils } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
@@ -62,7 +63,7 @@ class PointsGeometry {
   }
 }
 
-class ScatterData {
+export class ScatterData {
   constructor(data) {
     this.data = data
     this.n = data.length
@@ -247,20 +248,20 @@ class ScatterData {
     let colorExtent = d3.extent(metas)
     const minScore = colorExtent[0]
     const maxScore = colorExtent[1]
-    let colorScale = d3.scale
-      .pow()
+    let colorScale = d3Scale
+      .scalePow()
       .domain([minScore, (minScore + maxScore) / 2, maxScore])
       .range(['#1f77b4', '#ddd', '#d62728'])
 
     if (dtype === 'boolean') {
-      colorScale = d3.scale
-        .ordinal()
+      colorScale = d3Scale
+        .scaleOrdinal()
         .domain([true, false])
         .range(['#cc0000', '#cccccc'])
     } else if (nUniqueCats < 11) {
-      colorScale = d3.scale.category10().domain(uniqueCats)
+      colorScale = d3Scale.scaleOrdinal(d3.schemeCategory10).domain(uniqueCats)
     } else if (nUniqueCats > 10 && nUniqueCats <= 20) {
-      colorScale = d3.scale.category20().domain(uniqueCats)
+      colorScale = d3Scale.scaleOrdinal(d3.schemeCategory10).domain(uniqueCats)
     } else if (nUniqueCats <= 40) {
       const colors40 = [
         '#1b70fc',
@@ -379,8 +380,8 @@ class ScatterData {
         '#ff7463',
         '#bea1fd'
       ]
-      colorScale = d3.scale
-        .ordinal()
+      colorScale = d3Scale
+        .scaleOrdinal()
         .range(colors40)
         .domain(uniqueCats)
     }
@@ -389,7 +390,7 @@ class ScatterData {
   }
 
   calculateShapeScale(metaKey) {
-    let symbols = d3.svg.symbolTypes.map(t => d3.svg.symbol().type(t)())
+    let symbols = d3.symbols.map(t => d3.symbol().type(t)())
 
     // make shapeScale for d3.legend
     const meta = _.findWhere(this.metas, { name: metaKey })
@@ -398,8 +399,8 @@ class ScatterData {
     // get grouped datasets, each group is going to be a cloud
     let scatterDataSubsets = this.groupBy(metaKey)
     let shapeLabels
-    let shapeScale = d3.scale
-      .ordinal()
+    let shapeScale = d3Scale
+      .scaleOrdinal()
       .domain(Object.keys(scatterDataSubsets))
       .range(symbols)
 
@@ -420,15 +421,15 @@ class ScatterData {
         )
         // overwrite the symbols map to make it having the same length with pValueDomain
         symbols = _.map(
-          d3.svg.symbolTypes.slice(0, pValueDomain.length),
+          d3.symbols.slice(0, pValueDomain.length),
           function(t) {
-            return d3.svg.symbol().type(t)()
+            return d3.symbol().type(t)()
           }
         )
       }
 
-      shapeScale = d3.scale
-        .threshold()
+      shapeScale = d3Scale
+        .scaleThreshold()
         .domain(binnedValues.domain)
         .range(symbols)
       shapeLabels = binnedValues.labels
@@ -441,7 +442,7 @@ class ScatterData {
   }
 }
 
-class Scatter3dView extends React.Component {
+export class Scatter3dView extends React.Component {
   constructor(props) {
     super(props)
     const is3d = this.props.is3d
@@ -958,5 +959,3 @@ class Scatter3dView extends React.Component {
     }
   }
 }
-
-export { ScatterData, Scatter3dView }

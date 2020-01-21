@@ -2,11 +2,11 @@
 The widgets for the interactive scatter plot.
 */
 import React from 'react'
-import d3 from 'd3'
-import legend from 'd3-svg-legend/no-extend'
+import * as d3 from 'd3'
+import legend from 'd3-svg-legend'
 import Select from 'react-select'
 
-class Legend extends React.Component {
+export class Legend extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -76,7 +76,7 @@ class Legend extends React.Component {
 
   displayShapeLegend(shapeScale, shapeKey, shapeLabels) {
     const legendShape = legend
-      .symbol()
+      .legendSymbol()
       .scale(shapeScale)
       .orient('vertical')
       .title(shapeKey)
@@ -88,7 +88,7 @@ class Legend extends React.Component {
 
   displayColorLegend(colorScale, colorKey) {
     const legendColor = legend
-      .color()
+      .legendColor()
       .title(colorKey)
       .shapeWidth(20)
       .cells(5)
@@ -99,7 +99,7 @@ class Legend extends React.Component {
   }
 }
 
-class SelectDropdown extends React.Component {
+export class SelectDropdown extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -133,7 +133,7 @@ class SelectDropdown extends React.Component {
   }
 }
 
-class SearchSelectize extends React.Component {
+export class SearchSelectize extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
@@ -184,5 +184,3 @@ class SearchSelectize extends React.Component {
     this.props.onClearBtnClicked()
   }
 }
-
-export { Legend, SelectDropdown, SearchSelectize }

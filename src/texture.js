@@ -16,7 +16,7 @@ const imageData = {
     ',iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAC3UlEQVRYR+2VP2gTURzHLyG5tOnFXD0uJsTj3u9dB4s4iIIOIk5uDnUQQdChuApOBScFh4KDg4uDOgkKKoKO4iAI4lIciiD03rtoSnOJTbzcJTmS651EraTm312a2qVvvd/v+/2873vvdyFml1dol/2ZPYBtJUApfdk+QgCYG/UoRwZQVfVULBZ77Xke02w2zymK8n4UiJEBKKU0k8mgtmmhUKAIIfzfAAgh8xzH3RVFMdE2LRaLZq1Wu44xfhgUYqQEVFVtAUAkFPrd7rouo2maoyhKdMcBCCH3eJ6fn56enuw0q1QqjWq1+gAhdC0IRKAECCFyOBxelmWZ62WSy+WsjY2Nw4qifPULEQhA07QPoiiejMfjPfVrtRpTKpXeAcCZsQMQQs6yLPskm83uHyS+urpabjabFzHGb/xA+E6AUlrIZrMHotHB96zVajH5fF7HGKfHBkApXZiamrohiuI+P6KlUqlar9dvI4TuDKsfmoDneWFCSAtjHB4m1vmdEOIpijK0ZyiApmmPeZ6fSyaTvW9eHyrDMOqGYTyXZfnKIPCBAJqmzTIM81GW5V8TL+jK5XKG67onMMZf+vUOA1hKpVJHJye3zBzfHI1Gg9F1fQkAjgUGWFlZmYvH448ymQzv27FH4drammHb9mWM8ateOn0TIIRUJEniI5HIdvwZx3Haz7IMAIJvAErpzUQisSAIwsS23P80r6+v26ZpLgLArX/1uhIoFoucZVnfASA2DvNNjfZTZlk2KUlSo1O3C4BS+kIQhPOJxEgXvy+zaZpMuVx+hhC60BdAVdXj0Wj0rSRJviZe0ITy+bzpOM5pAPi02bslAUrp53Q6PTsxMZaj7+Kzbbv9LJcRQke6AFRVvcRx3P1UKtXzXx90t/3qdV23LMu6OjMz87Rd8zcBQojGsuyORN8J43leyHGcHwAAWwAopYdc1z04rp0OnP+h0LfN8Tz0Z7TTQHsAPwHv3BIw9zTkUQAAAABJRU5ErkJggg=='
 }
 
-class Texture {
+export class Texture {
   constructor(symbolType) {
     this.symbolType = symbolType
   }
@@ -30,5 +30,5 @@ class Texture {
     return texture
   }
 }
-const symbolTypes = Object.keys(imageData)
-export { symbolTypes, Texture }
+export const symbolTypes = Object.keys(imageData)
+
