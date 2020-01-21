@@ -2,10 +2,12 @@
   "name": "react-scatter-board",
   "version": "1.0.0",
   "description": "A React implementation of THREE.js 2d/3d scatter plot",
-  "main": "src/index.js",
-  "module": "dist/index.js",
+  "source": "src/index.jsx",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "unpkg": "dist/index.umd.js",
   "scripts": {
-    "build": "microbundle build --jsx React.createElement --globals react=React",
+    "build": "microbundle build -f es,umd --jsx React.createElement --globals react=React",
     "dev": "parcel --no-cache public/index.html --no-source-maps -d build"
   },
   "repository": {

@@ -1,6 +1,6 @@
 import React from 'react'
-import { Scatter3dView, ScatterData } from './scatterPlot'
-import * as scatterWidgets from './scatterWidgets'
+import { Scatter3dView, ScatterData } from './scatterPlot.jsx'
+import * as scatterWidgets from './scatterWidgets.jsx'
 
 export class ScatterBoard extends React.Component {
   constructor(props) {
