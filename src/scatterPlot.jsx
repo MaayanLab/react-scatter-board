@@ -465,8 +465,8 @@ export class Scatter3dView extends React.Component {
       shapeLabels: this.props.shapeLabels
     }
     // events
-    this.handleMouseMove = this.handleMouseMove.bind(this)
-    this.handleMouseClick = this.handleMouseClick.bind(this)
+    this.onMouseMove = this.onMouseMove.bind(this)
+    this.onClick = this.onClick.bind(this)
   }
 
   componentDidMount() {
@@ -534,8 +534,8 @@ export class Scatter3dView extends React.Component {
     return (
       <div
         ref={ref => (this.mount = ref)}
-        onMouseMove={e => this.handleMouseMove(e)}
-        onClick={e => this.handleMouseClick(e)}
+        onMouseMove={e => this.onMouseMove(e)}
+        onClick={e => this.onClick(e)}
       />
     )
   }
@@ -628,7 +628,7 @@ export class Scatter3dView extends React.Component {
     this.mouse = mouse
   }
 
-  handleMouseMove(e) {
+  onMouseMove(e) {
     const mouse = this.mouse
     const { WIDTH, HEIGHT } = this.state
     mouse.x = (e.nativeEvent.offsetX / WIDTH) * 2 - 1
@@ -637,13 +637,10 @@ export class Scatter3dView extends React.Component {
     this.renderScatter()
   }
 
-  handleMouseClick(e) {
+  onClick(evt) {
     this.stopAnimate()
-    if (
-      e.shiftKey &&
-      typeof this.props.mouseShiftClickCallback === 'function'
-    ) {
-      this.mouseShiftClick(this.props.mouseShiftClickCallback)
+    if (typeof this.props.onClick === 'function') {
+      this.props.onClick(evt, this.getPoint())
     }
   }
 
@@ -771,6 +768,12 @@ export class Scatter3dView extends React.Component {
 
       textCanvas.id = 'text-label-' + this.id
       this.mount.appendChild(textCanvas)
+
+      if (typeof this.props.onMouseOver === 'function') {
+        const trueIdx = intersect.object.geometry.userData.index[idx]
+        const datum = this.props.model.data[trueIdx]
+        this.props.onMouseOver(datum)
+      }
     }
 
     renderer.render(scene, camera)
@@ -943,8 +946,7 @@ export class Scatter3dView extends React.Component {
     this.renderScatter()
   }
 
-  mouseShiftClick(callback) {
-    // fire when shift + click
+  getPoint() {
     const { raycaster, mouse, camera } = this
     // update the picking ray with the camera and mouse position
     raycaster.setFromCamera(mouse, camera)
@@ -956,7 +958,7 @@ export class Scatter3dView extends React.Component {
       const idx = intersect.index
       const trueIdx = intersect.object.geometry.userData.index[idx]
       const datum = this.props.model.data[trueIdx]
-      callback(datum)
+      return datum
     }
   }
 }

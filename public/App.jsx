@@ -90,7 +90,7 @@ JSON array. An example JSON array can be found
   + **Pan**: left mouse drag or arrow keys on keyboard.
   + **Rotation (3d only)**: left mouse drag or touch with one-finger move.
   + **Show tooltip**: mouse hover points in scatter plot.
-  + **Activate custom point event**: Shift + mouse left click. See [mouseShiftClickCallback](#section-3) for details. 
+  + **Activate custom point event**: mouse left click. See [onClick](#section-3) for details. 
 - Color/Shape dropdowns: click on the dropdown select to update colors/shapes in the scatter plot.
 - Search box: type anything to search and highlight for point(s) in the scatter plot.
 `
@@ -109,7 +109,7 @@ const board2d = (
         searchKeys={['MOA', 'Phase']}
         width={colWidth}
         height={colWidth}
-        mouseShiftClickCallback={datum => alert(JSON.stringify(datum))}
+        onClick={(evt, datum) => { if (datum !== undefined) { alert(JSON.stringify(datum)) } }}
       />
     ))
   }</Lazy>
@@ -127,7 +127,7 @@ const codeExample1 = `
       searchKeys={['MOA', 'Phase']}
       width={colWidth}
       height={colWidth}
-      mouseShiftClickCallback={datum => alert(JSON.stringify(datum))}
+      onClick={(evt, datum) => { if (datum !== undefined) { alert(JSON.stringify(datum)) } }}
     />
   ))
 }</Lazy>
@@ -217,7 +217,8 @@ const propsDocString = `
 - **width** (_number_): the width of the component in pixels. Default: 1400.
 - **height** (_number_): the height of the component in pixels. Default: 800.
 - **is3d** (_boolean_): should the scatter plot in 3-D (true) or 2-D (false). 
-- **mouseShiftClickCallback** (_function_): a callback function handling when user shift+click a data point. The input of the function is the datum object being clicked.  
+- **onClick** (_function_): a callback function handling when user click a data point. The input of the function is mouse event and the datum object being clicked.  
+- **onMouseOver** (_function_): a callback function handling when user hovers over a data point. The input of the function is the datum object being clicked.  
 `
 
 const developerGuide = (
