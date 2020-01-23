@@ -606,13 +606,14 @@ export class Scatter3dView extends React.Component {
     })
     // set up raycaster, mouse
     const raycaster = new THREE.Raycaster()
+
     if (this.state.raycasterThreshold) {
       raycaster.params.Points.threshold = this.raycasterThreshold
     } else {
       if (this.state.is3d) {
         raycaster.params.Points.threshold = this.state.pointSize / 5
       } else {
-        raycaster.params.Points.threshold = this.state.pointSize / 500
+        raycaster.params.Points.threshold = this.state.pointSize / 50
       }
     }
 
