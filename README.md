@@ -14,19 +14,25 @@ npm install --save maayanlab/react-scatter-board
 
 ```jsx
 import React, { Component } from "react";
-import { ScatterBoard } from "react-scatter-board";
+import { ScatterBoard, Lazy } from "react-scatter-board";
 import "./App.css";
 
 export default class App extends Component {
   render() {
     return (
-      <ScatterBoard
-        url={"http://localhost:8080/GSE48968_tSNE_3.json"}
-        shapeKey="strain"
-        colorKey="description"
-        labelKeys={["sample_id"]}
-        is3d={true}
-      />
+      <Lazy loading={<div>Loading...</div>}>{() =>
+        fetch('http://localhost:8080/GSE48968_tSNE_3.json').then(
+          response => response.json()
+        ).then(data => (
+          <ScatterBoard
+            data={data}
+            shapeKey="strain"
+            colorKey="description"
+            labelKeys={["sample_id"]}
+            is3d={true}
+          />
+        ))
+      }</Lazy>
     );
   }
 }
