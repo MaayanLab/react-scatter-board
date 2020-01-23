@@ -22,16 +22,31 @@ export class ScatterBoard extends React.Component {
     this.handleShapeKeyChange = this.handleShapeKeyChange.bind(this)
     this.handleSearchInputChange = this.handleSearchInputChange.bind(this)
     this.handleClearBtnClick = this.handleClearBtnClick.bind(this)
+  }
 
-    fetch(this.props.url)
-      .then(response => {
-        if (response.ok) {
-          return response.json()
-        } else {
-          throw new Error('Something went wrong when fetching data ...')
-        }
+  componentDidMount() {
+    if (this.props.data !== undefined) {
+      this.setState({
+        data: this.props.data,
+        model: new ScatterData(this.props.data),
       })
-      .then(data => this.setState({ data: data, model: new ScatterData(data) }))
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.data !== this.props.data) {
+      if (this.props.data === undefined) {
+        this.setState({
+          data: null,
+          model: null,
+        })
+      } else {
+        this.setState({
+          data: this.props.data,
+          model: new ScatterData(this.props.data),
+        })
+      }
+    }
   }
 
   render() {

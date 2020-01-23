@@ -6,6 +6,7 @@ import ghcolors from 'react-syntax-highlighter/dist/styles/prism/ghcolors'
 import ReactMarkdown from 'react-markdown'
 
 import { ScatterBoard } from '../src'
+import { Lazy } from '../src'
 
 // get the Bootstrap column width
 const rootElem = document.getElementById('root')
@@ -52,14 +53,20 @@ import './App.css';
 export default class App extends Component {
   render() {
     return (
-      <ScatterBoard
-        url={'https://amp.pharm.mssm.edu/scavi/graph/GSE48968/tSNE/3'}
-        shapeKey='strain'
-        colorKey='description'
-        labelKeys={['sample_id']}
-        searchKeys={['sample_id', 'description', 'source_name_ch1']}
-        is3d={true}
-      />
+      <Lazy loading={<div>Loading...</div>}>{() =>
+        fetch('https://amp.pharm.mssm.edu/scavi/graph/GSE48968/tSNE/3').then(
+          response => response.json()
+        ).then(data => (
+          <ScatterBoard
+            data={data}
+            shapeKey='strain'
+            colorKey='description'
+            labelKeys={['sample_id']}
+            searchKeys={['sample_id', 'description', 'source_name_ch1']}
+            is3d={true}
+          />
+        ))
+      }</Lazy>
     );
   }
 }
@@ -89,81 +96,115 @@ JSON array. An example JSON array can be found
 `
 
 // 2d example
-const dataUrl2 = 'https://amp.pharm.mssm.edu/l1000fwd/graph/A549_kNN_5'
 const board2d = (
-  <ScatterBoard
-    url={dataUrl2}
-    shapeKey='Time'
-    colorKey='MOA'
-    labelKeys={['sig_id', 'MOA']}
-    searchKeys={['MOA', 'Phase']}
-    width={colWidth}
-    height={colWidth}
-    mouseShiftClickCallback={datum => alert(JSON.stringify(datum))}
-  />
+  <Lazy loading={<div>Loading...</div>}>{() =>
+    fetch('https://amp.pharm.mssm.edu/l1000fwd/graph/A549_kNN_5').then(
+      response => response.json()
+    ).then(data => (
+      <ScatterBoard
+        data={data}
+        shapeKey='Time'
+        colorKey='MOA'
+        labelKeys={['sig_id', 'MOA']}
+        searchKeys={['MOA', 'Phase']}
+        width={colWidth}
+        height={colWidth}
+        mouseShiftClickCallback={datum => alert(JSON.stringify(datum))}
+      />
+    ))
+  }</Lazy>
 )
 const codeExample1 = `
-<ScatterBoard
-  url='https://amp.pharm.mssm.edu/l1000fwd/graph/A549_kNN_5'
-  shapeKey='Time'
-  colorKey='MOA'
-  labelKeys={['sig_id', 'MOA']}
-  searchKeys={['MOA', 'Phase']}
-  width={colWidth}
-  height={colWidth}
-  mouseShiftClickCallback={datum => alert(JSON.stringify(datum))}
-/>
+<Lazy loading={<div>Loading...</div>}>{() =>
+  fetch('https://amp.pharm.mssm.edu/l1000fwd/graph/A549_kNN_5').then(
+    response => response.json()
+  ).then(data => (
+    <ScatterBoard
+      data={data}
+      shapeKey='Time'
+      colorKey='MOA'
+      labelKeys={['sig_id', 'MOA']}
+      searchKeys={['MOA', 'Phase']}
+      width={colWidth}
+      height={colWidth}
+      mouseShiftClickCallback={datum => alert(JSON.stringify(datum))}
+    />
+  ))
+}</Lazy>
 `
 
 // 3d example
-const dataUrl3 = 'https://amp.pharm.mssm.edu/scavi/graph/GSE48968/tSNE/3'
 const board3d = (
-  <ScatterBoard
-    url={dataUrl3}
-    shapeKey='strain'
-    colorKey='description'
-    labelKeys={['sample_id', 'description']}
-    searchKeys={['sample_id', 'description', 'source_name_ch1']}
-    is3d={true}
-    width={colWidth}
-    height={colWidth}
-  />
+  <Lazy loading={<div>Loading...</div>}>{() =>
+    fetch('https://amp.pharm.mssm.edu/scavi/graph/GSE48968/tSNE/3').then(
+      response => response.json()
+    ).then(data => (
+      <ScatterBoard
+        data={data}
+        shapeKey='strain'
+        colorKey='description'
+        labelKeys={['sample_id', 'description']}
+        searchKeys={['sample_id', 'description', 'source_name_ch1']}
+        is3d={true}
+        width={colWidth}
+        height={colWidth}
+      />
+    ))
+  }</Lazy>
 )
 const codeExample2 = `
-<ScatterBoard
-  url='https://amp.pharm.mssm.edu/scavi/graph/GSE48968/tSNE/3'
-  shapeKey='strain'
-  colorKey='description'
-  labelKeys={['sample_id', 'description']}
-  searchKeys={['sample_id', 'description', 'source_name_ch1']}
-  is3d={true}
-  width={colWidth}
-  height={colWidth}
-/>
+<Lazy loading={<div>Loading...</div>}>{() =>
+  fetch('https://amp.pharm.mssm.edu/scavi/graph/GSE48968/tSNE/3').then(
+    response => response.json()
+  ).then(data => (
+    <ScatterBoard
+      data={data}
+      shapeKey='strain'
+      colorKey='description'
+      labelKeys={['sample_id', 'description']}
+      searchKeys={['sample_id', 'description', 'source_name_ch1']}
+      is3d={true}
+      width={colWidth}
+      height={colWidth}
+    />
+  ))
+}</Lazy>
 `
 
 // 3d example (disable search)
 const board3dNoSearch = (
-  <ScatterBoard
-    url='https://amp.pharm.mssm.edu/scavi/graph/GSE48968/tSNE/3'
-    shapeKey='strain'
-    colorKey='molecule_ch1'
-    labelKeys={['sample_id', 'description']}
-    is3d={true}
-    width={colWidth}
-    height={colWidth}
-  />
+  <Lazy loading={<div>Loading...</div>}>{() =>
+    fetch('https://amp.pharm.mssm.edu/scavi/graph/GSE48968/tSNE/3').then(
+      response => response.json()
+    ).then(data => (
+      <ScatterBoard
+        data={data}
+        shapeKey='strain'
+        colorKey='molecule_ch1'
+        labelKeys={['sample_id', 'description']}
+        is3d={true}
+        width={colWidth}
+        height={colWidth}
+      />
+    ))
+  }</Lazy>
 )
 const codeExample3 = `
-<ScatterBoard
-  url='https://amp.pharm.mssm.edu/scavi/graph/GSE48968/tSNE/3'
-  shapeKey='strain'
-  colorKey='molecule_ch1'
-  labelKeys={['sample_id', 'description']}
-  is3d={true}
-  width={colWidth}
-  height={colWidth}
-/>
+<Lazy loading={<div>Loading...</div>}>{() =>
+  fetch('https://amp.pharm.mssm.edu/scavi/graph/GSE48968/tSNE/3').then(
+    response => response.json()
+  ).then(data => (
+    <ScatterBoard
+      data={data}
+      shapeKey='strain'
+      colorKey='molecule_ch1'
+      labelKeys={['sample_id', 'description']}
+      is3d={true}
+      width={colWidth}
+      height={colWidth}
+    />
+  ))
+}</Lazy>
 `
 
 const propsDocString = `
