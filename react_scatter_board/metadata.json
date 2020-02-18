@@ -1,0 +1,669 @@
+{
+  "src/DashScatterBoard.jsx": {
+    "description": "A Dash-compatible wrapper to the React implementation",
+    "displayName": "DashScatterBoard",
+    "methods": [
+      {
+        "name": "onClick",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "evt",
+            "type": null
+          },
+          {
+            "name": "node",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "onMouseOver",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "node",
+            "type": null
+          }
+        ],
+        "returns": null
+      }
+    ],
+    "props": {
+      "data": {
+        "type": {
+          "name": "arrayOf",
+          "value": {
+            "name": "shape",
+            "value": {
+              "x": {
+                "name": "number",
+                "required": true
+              },
+              "y": {
+                "name": "number",
+                "required": true
+              },
+              "z": {
+                "name": "number",
+                "required": false
+              }
+            }
+          }
+        },
+        "required": false,
+        "description": "([{x: 0, y: 0, z: 0, ...}]): the json formatted data"
+      },
+      "shapeKey": {
+        "type": {
+          "name": "string"
+        },
+        "required": false,
+        "description": "(_string_): the key to shape the dots by default."
+      },
+      "colorKey": {
+        "type": {
+          "name": "string"
+        },
+        "required": false,
+        "description": "(_string_): the key to color the dots by default."
+      },
+      "labelKeys": {
+        "type": {
+          "name": "arrayOf",
+          "value": {
+            "name": "string"
+          }
+        },
+        "required": false,
+        "description": "(_Array_ of strings): the ordered list of keys of attributes to display for the dots when mouse hovers."
+      },
+      "searchKeys": {
+        "type": {
+          "name": "arrayOf",
+          "value": {
+            "name": "string"
+          }
+        },
+        "required": false,
+        "description": "(_Array_ of strings): the list of keys of attributes to enable the search functionality to query against. If not provided, the SearchSelectize component will not be rendered."
+      },
+      "width": {
+        "type": {
+          "name": "number"
+        },
+        "required": false,
+        "description": "(_number_): the width of the component in pixels. Default: 1400."
+      },
+      "height": {
+        "type": {
+          "name": "number"
+        },
+        "required": false,
+        "description": "(_number_): the height of the component in pixels. Default: 800."
+      },
+      "is3d": {
+        "type": {
+          "name": "bool"
+        },
+        "required": false,
+        "description": "(_boolean_): should the scatter plot in 3-D (true) or 2-D (false)."
+      },
+      "id": {
+        "type": {
+          "name": "string"
+        },
+        "required": false,
+        "description": "The ID used to identify this component in Dash callbacks."
+      },
+      "setProps": {
+        "type": {
+          "name": "func"
+        },
+        "required": false,
+        "description": "Dash-assigned callback that should be called to report property changes\nto Dash, to make them available for callbacks."
+      },
+      "clickData": {
+        "type": {
+          "name": "object"
+        },
+        "required": false,
+        "description": "Click data",
+        "defaultValue": {
+          "value": "null",
+          "computed": false
+        }
+      },
+      "hoverData": {
+        "type": {
+          "name": "object"
+        },
+        "required": false,
+        "description": "Hover data",
+        "defaultValue": {
+          "value": "null",
+          "computed": false
+        }
+      }
+    }
+  },
+  "src/Lazy.jsx": {
+    "description": "Lazy react component helper for constructing objects with async render functions",
+    "displayName": "Lazy",
+    "methods": [],
+    "props": {
+      "children": {
+        "type": {
+          "name": "func"
+        },
+        "required": false,
+        "description": "A function returning a promise that resolves to a react element"
+      },
+      "loading": {
+        "type": {
+          "name": "union",
+          "value": [
+            {
+              "name": "element"
+            },
+            {
+              "name": "elementType"
+            }
+          ]
+        },
+        "required": false,
+        "description": "Loading indicator (node or react component)"
+      }
+    }
+  },
+  "src/ScatterBoard.jsx": {
+    "description": "A React implementation of THREE.js 2d/3d scatter plot.",
+    "displayName": "ScatterBoard",
+    "methods": [
+      {
+        "name": "handleColorKeyChange",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "value",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "handleShapeKeyChange",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "value",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "handleSearchInputChange",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "valueObj",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "handleClearBtnClick",
+        "docblock": null,
+        "modifiers": [],
+        "params": [],
+        "returns": null
+      }
+    ],
+    "props": {
+      "data": {
+        "type": {
+          "name": "arrayOf",
+          "value": {
+            "name": "shape",
+            "value": {
+              "x": {
+                "name": "number",
+                "required": true
+              },
+              "y": {
+                "name": "number",
+                "required": true
+              },
+              "z": {
+                "name": "number",
+                "required": false
+              }
+            }
+          }
+        },
+        "required": false,
+        "description": "([{x: 0, y: 0, z: 0, ...}]): the json formatted data"
+      },
+      "shapeKey": {
+        "type": {
+          "name": "string"
+        },
+        "required": false,
+        "description": "(_string_): the key to shape the dots by default."
+      },
+      "colorKey": {
+        "type": {
+          "name": "string"
+        },
+        "required": false,
+        "description": "(_string_): the key to color the dots by default."
+      },
+      "labelKeys": {
+        "type": {
+          "name": "arrayOf",
+          "value": {
+            "name": "string"
+          }
+        },
+        "required": false,
+        "description": "(_Array_ of strings): the ordered list of keys of attributes to display for the dots when mouse hovers."
+      },
+      "searchKeys": {
+        "type": {
+          "name": "arrayOf",
+          "value": {
+            "name": "string"
+          }
+        },
+        "required": false,
+        "description": "(_Array_ of strings): the list of keys of attributes to enable the search functionality to query against. If not provided, the SearchSelectize component will not be rendered."
+      },
+      "width": {
+        "type": {
+          "name": "number"
+        },
+        "required": false,
+        "description": "(_number_): the width of the component in pixels. Default: 1400."
+      },
+      "height": {
+        "type": {
+          "name": "number"
+        },
+        "required": false,
+        "description": "(_number_): the height of the component in pixels. Default: 800."
+      },
+      "is3d": {
+        "type": {
+          "name": "bool"
+        },
+        "required": false,
+        "description": "(_boolean_): should the scatter plot in 3-D (true) or 2-D (false)."
+      },
+      "onClick": {
+        "type": {
+          "name": "func"
+        },
+        "required": false,
+        "description": "(_function_): a callback function handling when user click a data point. The input of the function is mouse event and the datum object being clicked."
+      },
+      "onMouseOver": {
+        "type": {
+          "name": "func"
+        },
+        "required": false,
+        "description": "(_function_): a callback function handling when user hovers over a data point. The input of the function is the datum object being clicked."
+      },
+      "id": {
+        "type": {
+          "name": "string"
+        },
+        "required": false,
+        "description": "The ID used to identify this component in Dash callbacks."
+      },
+      "setProps": {
+        "type": {
+          "name": "func"
+        },
+        "required": false,
+        "description": "Dash-assigned callback that should be called to report property changes\nto Dash, to make them available for callbacks."
+      }
+    }
+  },
+  "src/ScatterPlot.jsx": {
+    "description": "The 3d canvas view underyling the scatterBoard",
+    "displayName": "Scatter3dView",
+    "methods": [
+      {
+        "name": "setUpStage",
+        "docblock": null,
+        "modifiers": [],
+        "params": [],
+        "returns": null
+      },
+      {
+        "name": "onMouseMove",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "e",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "onClick",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "evt",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "makeMaterial",
+        "docblock": null,
+        "modifiers": [],
+        "params": [],
+        "returns": null
+      },
+      {
+        "name": "clearScene",
+        "docblock": null,
+        "modifiers": [],
+        "params": [],
+        "returns": null
+      },
+      {
+        "name": "shapeBy",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "metaKey",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "renderScatter",
+        "docblock": null,
+        "modifiers": [],
+        "params": [],
+        "returns": null
+      },
+      {
+        "name": "makeTextCanvas",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "message",
+            "type": null
+          },
+          {
+            "name": "x",
+            "type": null
+          },
+          {
+            "name": "y",
+            "type": null
+          },
+          {
+            "name": "z",
+            "type": null
+          },
+          {
+            "name": "euler",
+            "type": null
+          },
+          {
+            "name": "parameters",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "resetColors",
+        "docblock": null,
+        "modifiers": [],
+        "params": [],
+        "returns": null
+      },
+      {
+        "name": "setColors",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "colorScale",
+            "type": null
+          },
+          {
+            "name": "metaKey",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "startAnimate",
+        "docblock": null,
+        "modifiers": [],
+        "params": [],
+        "returns": null
+      },
+      {
+        "name": "animate",
+        "docblock": null,
+        "modifiers": [],
+        "params": [],
+        "returns": null
+      },
+      {
+        "name": "rotate",
+        "docblock": null,
+        "modifiers": [],
+        "params": [],
+        "returns": null
+      },
+      {
+        "name": "stopAnimate",
+        "docblock": null,
+        "modifiers": [],
+        "params": [],
+        "returns": null
+      },
+      {
+        "name": "highlightQuery",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "metaKey",
+            "type": null
+          },
+          {
+            "name": "query",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "createHighlightCloud",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "dataSubset",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
+        "name": "removeHighlightedPoints",
+        "docblock": null,
+        "modifiers": [],
+        "params": [],
+        "returns": null
+      },
+      {
+        "name": "getPoint",
+        "docblock": null,
+        "modifiers": [],
+        "params": [],
+        "returns": null
+      }
+    ],
+    "props": {
+      "data": {
+        "type": {
+          "name": "arrayOf",
+          "value": {
+            "name": "shape",
+            "value": {
+              "x": {
+                "name": "number",
+                "required": true
+              },
+              "y": {
+                "name": "number",
+                "required": true
+              },
+              "z": {
+                "name": "number",
+                "required": false
+              }
+            }
+          }
+        },
+        "required": false,
+        "description": "([{x: 0, y: 0, z: 0, ...}]): the json formatted data"
+      },
+      "model": {
+        "type": {
+          "name": "any"
+        },
+        "required": false,
+        "description": "ScatterData(data)"
+      },
+      "width": {
+        "type": {
+          "name": "number"
+        },
+        "required": false,
+        "description": "(_number_): the width of the component in pixels. Default: 1400."
+      },
+      "height": {
+        "type": {
+          "name": "number"
+        },
+        "required": false,
+        "description": "(_number_): the height of the component in pixels. Default: 800."
+      },
+      "DPR": {
+        "type": {
+          "name": "number"
+        },
+        "required": false,
+        "description": "(_number_): the device pixel ratio (window.devicePixelRatio)"
+      },
+      "colorKey": {
+        "type": {
+          "name": "string"
+        },
+        "required": false,
+        "description": "(_string_): the key to color the dots by default."
+      },
+      "shapeKey": {
+        "type": {
+          "name": "string"
+        },
+        "required": false,
+        "description": "(_string_): the key to shape the dots by default."
+      },
+      "labelKeys": {
+        "type": {
+          "name": "arrayOf",
+          "value": {
+            "name": "string"
+          }
+        },
+        "required": false,
+        "description": "(_Array_ of strings): the ordered list of keys of attributes to display for the dots when mouse hovers."
+      },
+      "colorScale": {
+        "type": {
+          "name": "any"
+        },
+        "required": false,
+        "description": "(d3-color-scale): Color scale"
+      },
+      "shapeScale": {
+        "type": {
+          "name": "any"
+        },
+        "required": false,
+        "description": "(d3-color-scale): Color scale"
+      },
+      "shapeLabels": {
+        "type": {
+          "name": "any"
+        },
+        "required": false,
+        "description": "(d3-color-scale): Color scale"
+      },
+      "is3d": {
+        "type": {
+          "name": "bool"
+        },
+        "required": false,
+        "description": "(_boolean_): should the scatter plot in 3-D (true) or 2-D (false)."
+      },
+      "onClick": {
+        "type": {
+          "name": "func"
+        },
+        "required": false,
+        "description": "(_function_): a callback function handling when user click a data point. The input of the function is mouse event and the datum object being clicked."
+      },
+      "onMouseOver": {
+        "type": {
+          "name": "func"
+        },
+        "required": false,
+        "description": "(_function_): a callback function handling when user hovers over a data point. The input of the function is the datum object being clicked."
+      },
+      "id": {
+        "type": {
+          "name": "string"
+        },
+        "required": false,
+        "description": "The ID used to identify this component in Dash callbacks."
+      },
+      "setProps": {
+        "type": {
+          "name": "func"
+        },
+        "required": false,
+        "description": "Dash-assigned callback that should be called to report property changes\nto Dash, to make them available for callbacks."
+      }
+    }
+  }
+}
