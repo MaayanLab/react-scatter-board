@@ -1,8 +1,17 @@
 import './index.css'
 
-import { ScatterData, Scatter3dView } from './scatterPlot.jsx'
-import * as ScatterWidgets from './scatterWidgets.jsx'
-import { ScatterBoard } from './scatterBoard.jsx'
-import { Lazy } from './lazy.jsx'
+import { Scatter3dView } from './ScatterPlot.jsx'
+import { ScatterData } from './ScatterData.js'
+import * as ScatterWidgets from './ScatterWidgets.jsx'
+import { ScatterBoard } from './ScatterBoard.jsx'
+import { DashScatterBoard } from './DashScatterBoard.jsx'
+import { Lazy } from './Lazy.jsx'
 
-export { ScatterBoard, ScatterData, Scatter3dView, ScatterWidgets, Lazy }
+export {
+  DashScatterBoard,
+  Lazy,
+  Scatter3dView,
+  ScatterBoard,
+  ScatterData,
+  ScatterWidgets,
+}
