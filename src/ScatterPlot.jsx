@@ -313,6 +313,15 @@ export class Scatter3dView extends React.Component {
   }
 
   renderScatter() {
+    const { is3d } = this.state
+    if (is3d) {
+      this.renderScatter3d()
+    } else {
+      this.renderScatter2d()
+    }
+  }
+
+  renderScatter3d() {
     const { raycaster, mouse, camera, renderer, scene } = this
     // update the picking ray with the camera and mouse position
     raycaster.setFromCamera(mouse, camera)
@@ -351,6 +360,80 @@ export class Scatter3dView extends React.Component {
       // add text canvas
       const textCanvas = this.makeTextCanvas(
         geometry.userData.labels[idx],
+        pointPosition.x,
+        pointPosition.y,
+        pointPosition.z,
+        this.points.rotation,
+        {
+          fontsize: 24,
+          fontface: 'arial, sans-serif',
+          textColor: { r: 0, g: 0, b: 0, a: 0.8 }
+        }
+      )
+
+      textCanvas.id = 'text-label-' + this.id
+      this.mount.appendChild(textCanvas)
+
+      if (typeof this.props.onMouseOver === 'function') {
+        const trueIdx = intersect.object.geometry.userData.index[idx]
+        const datum = this.props.model.data[trueIdx]
+        this.props.onMouseOver(datum)
+      }
+    }
+
+    renderer.render(scene, camera)
+  }
+
+  renderScatter2d() {
+    const { raycaster, mouse, camera, renderer, scene } = this
+    // update the picking ray with the camera and mouse position
+    raycaster.setFromCamera(mouse, camera)
+
+    // calculate objects intersecting the picking ray
+    // const intersects = raycaster.intersectObjects([this.points])
+    let closestPoint = undefined
+    let closestDist = undefined
+    let point = new THREE.Vector3()
+    for (const pointIndex of this.points.geometry.index.array) {
+      const pointPosition = new THREE.Vector3(
+        this.points.geometry.attributes.position.array[pointIndex * 3],
+        this.points.geometry.attributes.position.array[pointIndex * 3 + 1],
+        this.points.geometry.attributes.position.array[pointIndex * 3 + 2]
+      )
+      raycaster.ray.closestPointToPoint(pointPosition, point)
+      const dist = point.distanceToSquared(pointPosition)
+      if (dist < Math.min(1.0, 1/(camera.zoom*camera.zoom)) && (closestDist === undefined || dist < closestDist)) {
+        closestPoint = pointIndex
+        closestDist = dist
+      }
+    }
+
+    // reset colors
+    this.resetColors()
+    // remove text-label if exists
+    const textLabel = document.getElementById('text-label-' + this.id)
+    if (textLabel) {
+      textLabel.remove()
+    }
+
+    // add interactivities if there is intesecting points
+    if (closestPoint !== undefined) {
+      // change color of the point
+      this.points.geometry.attributes.color.needsUpdate = true
+
+      this.points.geometry.attributes.color.array[closestPoint * 3] = 0.1
+      this.points.geometry.attributes.color.array[closestPoint * 3 + 1] = 0.8
+      this.points.geometry.attributes.color.array[closestPoint * 3 + 2] = 0.1
+
+      // find the position of the point
+      const pointPosition = {
+        x: this.points.geometry.attributes.position.array[closestPoint * 3],
+        y: this.points.geometry.attributes.position.array[closestPoint * 3 + 1],
+        z: this.points.geometry.attributes.position.array[closestPoint * 3 + 2]
+      }
+      // add text canvas
+      const textCanvas = this.makeTextCanvas(
+        this.points.geometry.userData.labels[closestPoint],
         pointPosition.x,
         pointPosition.y,
         pointPosition.z,

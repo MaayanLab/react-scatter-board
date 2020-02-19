@@ -12,7 +12,9 @@
     "build:dash": "npm run build:dash:py && npm run build:dash:js",
     "build:react:js": "microbundle build --target web -f es,umd --name react_scatter_board --jsx React.createElement --globals react=React,react-dom=ReactDOM,plotly.js=Plotly,prop-types=PropTypes -d NODE_ENV=production",
     "build:react": "npm run build:react:js",
-    "dev": "parcel --no-cache public/index.html --no-source-maps -d build"
+    "dev": "parcel --no-cache public/index.html --no-source-maps -d build",
+    "install:dash:py": "python3 setup.py install --user",
+    "install:dash": "npm run build:dash && npm run install:dash:py"
   },
   "repository": {
     "type": "git",

@@ -406,6 +406,20 @@
         "returns": null
       },
       {
+        "name": "renderScatter3d",
+        "docblock": null,
+        "modifiers": [],
+        "params": [],
+        "returns": null
+      },
+      {
+        "name": "renderScatter2d",
+        "docblock": null,
+        "modifiers": [],
+        "params": [],
+        "returns": null
+      },
+      {
         "name": "makeTextCanvas",
         "docblock": null,
         "modifiers": [],
