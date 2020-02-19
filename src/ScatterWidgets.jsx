@@ -72,6 +72,7 @@ export class Legend extends React.Component {
     this.mount.style.overflow = 'visible'
     this.mount.style.left = 0
     this.mount.style.top = 0
+    this.mount.style.pointerEvents = 'none'
   }
 
   displayShapeLegend(shapeScale, shapeKey, shapeLabels) {
