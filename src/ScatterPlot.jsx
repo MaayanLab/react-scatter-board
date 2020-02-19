@@ -449,7 +449,7 @@ export class Scatter3dView extends React.Component {
       this.mount.appendChild(textCanvas)
 
       if (typeof this.props.onMouseOver === 'function') {
-        const trueIdx = intersect.object.geometry.userData.index[idx]
+        const trueIdx = this.points.geometry.userData.index[closestPoint]
         const datum = this.props.model.data[trueIdx]
         this.props.onMouseOver(datum)
       }
