@@ -30,10 +30,33 @@ app.index_string = '''
 '''
 app.layout = html.Div(className='row', children=[
   html.Div(
-    className='col-sm-12',
+    className='col-sm-6',
     children=[
       DashScatterBoard(
-        id='scatterboard',
+        id='scatterboard-2d',
+        is3d=False,
+        data=[
+          dict(x=0, y=0, label='a', shape='s', color='r'),
+          dict(x=1, y=1, label='b', shape='t', color='g'),
+          dict(x=-1, y=-1, label='c', shape='c', color='b'),
+          dict(x=-1, y=0, label='d', shape='c', color='r'),
+          dict(x=0, y=1, label='e', shape='t', color='g'),
+          dict(x=1, y=0, label='f', shape='t', color='b'),
+        ],
+        shapeKey='shape',
+        colorKey='color',
+        labelKeys=['label'],
+        searchKeys=['label', 'shape', 'color'],
+        width=600,
+        height=400,
+      ),
+    ],
+  ),
+  html.Div(
+    className='col-sm-6',
+    children=[
+      DashScatterBoard(
+        id='scatterboard-3d',
         is3d=True,
         data=[
           dict(x=0, y=0, z=0, label='a', shape='s', color='r'),
@@ -47,7 +70,7 @@ app.layout = html.Div(className='row', children=[
         colorKey='color',
         labelKeys=['label'],
         searchKeys=['label', 'shape', 'color'],
-        width=800,
+        width=600,
         height=400,
       ),
     ],
@@ -64,17 +87,23 @@ app.layout = html.Div(className='row', children=[
 
 @app.callback(
     Output('clickStatus', 'children'),
-    [Input('scatterboard', 'clickData')]
+    [
+      Input('scatterboard-2d', 'clickData'),
+      Input('scatterboard-3d', 'clickData'),
+    ]
 )
-def update_click(clickData):
-  return 'click:' + json.dumps(clickData)
+def update_click(clickData2, clickData3):
+  return 'click 2d:' + json.dumps(clickData2) + '<br />' + 'click 3d:' + json.dumps(clickData3)
 
 @app.callback(
     Output('hoverStatus', 'children'),
-    [Input('scatterboard', 'hoverData')]
+    [
+      Input('scatterboard-2d', 'hoverData'),
+      Input('scatterboard-3d', 'hoverData'),
+    ]
 )
-def update_click(hoverData):
-  return 'hover:' + json.dumps(hoverData)
+def update_hover(hoverData2, hoverData3):
+  return 'hover 2d:' + json.dumps(hoverData2) + '<br />' + 'hover 3d: ' + json.dumps(hoverData3)
 
 app.run_server(
   host=os.environ.get('HOST', '0.0.0.0'),
