@@ -13,9 +13,9 @@ setup(
   long_description=open('README.md', 'r').read(),
   packages=find_packages(),
   include_package_data=True,
-  package_data={'': [
-    'react_scatter_board/package-info.json',
-    'react_scatter_board/react_scatter_board.min.js',
+  package_data={'react_scatter_board': [
+    'package-info.json',
+    'react_scatter_board.min.js',
   ]},
   requires=['dash'],
 )
