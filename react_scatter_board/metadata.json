@@ -349,6 +349,18 @@
         "returns": null
       },
       {
+        "name": "onMouseDown",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "e",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
         "name": "onMouseMove",
         "docblock": null,
         "modifiers": [],
@@ -361,7 +373,7 @@
         "returns": null
       },
       {
-        "name": "onClick",
+        "name": "onMouseUp",
         "docblock": null,
         "modifiers": [],
         "params": [
@@ -400,20 +412,6 @@
       },
       {
         "name": "renderScatter",
-        "docblock": null,
-        "modifiers": [],
-        "params": [],
-        "returns": null
-      },
-      {
-        "name": "renderScatter3d",
-        "docblock": null,
-        "modifiers": [],
-        "params": [],
-        "returns": null
-      },
-      {
-        "name": "renderScatter2d",
         "docblock": null,
         "modifiers": [],
         "params": [],
@@ -483,13 +481,6 @@
       },
       {
         "name": "animate",
-        "docblock": null,
-        "modifiers": [],
-        "params": [],
-        "returns": null
-      },
-      {
-        "name": "rotate",
         "docblock": null,
         "modifiers": [],
         "params": [],
