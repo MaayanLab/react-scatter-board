@@ -89,7 +89,6 @@ export class Scatter3dView extends React.Component {
           this.makeMaterial()
           this.setUpStage()
           this.shapeBy(this.state.shapeKey)
-          this.renderScatter()
         })
     }
   }
@@ -111,7 +110,6 @@ export class Scatter3dView extends React.Component {
         this.startAnimate()
       } else if (this.props.colorKey !== prevProps.colorKey) {
         // colorKey changed through parent state passed as prop
-        this.renderScatter()
       }
     }
   }
@@ -182,6 +180,8 @@ export class Scatter3dView extends React.Component {
     const controls = new OrbitControls(camera, renderer.domElement)
 
     controls.enableZoom = true
+    controls.enableDamping = true
+    controls.dampingFactor = 0.25
     controls.screenSpacePanning = true
 
     if (!this.state.is3d) {
@@ -356,8 +356,6 @@ export class Scatter3dView extends React.Component {
         this.props.onMouseOver(datum)
       }
     }
-
-    renderer.render(scene, camera)
   }
 
   makeTextCanvas(message, x, y, z, euler, parameters) {
@@ -462,11 +460,13 @@ export class Scatter3dView extends React.Component {
     }
   }
   animate() {
+    const { renderer, scene, camera } = this
     this.controls.update()
     if (this.updated) {
       this.renderScatter()
       this.updated = false
     }
+    renderer.render(scene, camera)
     this.animateId = window.requestAnimationFrame(() => this.animate())
   }
 
@@ -491,7 +491,6 @@ export class Scatter3dView extends React.Component {
     const highlightCould = this.createHighlightCloud(dataSubset)
     highlightCould.name = 'highlight-' + this.id
     this.scene.add(highlightCould)
-    this.renderScatter()
   }
 
   createHighlightCloud(dataSubset) {
@@ -519,7 +518,6 @@ export class Scatter3dView extends React.Component {
   removeHighlightedPoints() {
     const scene = this.scene
     scene.remove(scene.getObjectByName('highlight-' + this.id))
-    this.renderScatter()
   }
 
   getPoint() {
