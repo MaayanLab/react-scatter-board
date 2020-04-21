@@ -313,101 +313,9 @@ export class Scatter3dView extends React.Component {
   }
 
   renderScatter() {
-    const { is3d } = this.state
-    if (is3d) {
-      this.renderScatter3d()
-    } else {
-      this.renderScatter2d()
-    }
-  }
+    const { camera, renderer, scene } = this
 
-  renderScatter3d() {
-    const { raycaster, mouse, camera, renderer, scene } = this
-    // update the picking ray with the camera and mouse position
-    raycaster.setFromCamera(mouse, camera)
-
-    // calculate objects intersecting the picking ray
-    const intersects = raycaster.intersectObjects([this.points])
-
-    // reset colors
-    this.resetColors()
-    // remove text-label if exists
-    const textLabel = document.getElementById('text-label-' + this.id)
-    if (textLabel) {
-      textLabel.remove()
-    }
-
-    // add interactivities if there is intesecting points
-    if (intersects.length > 0) {
-      // only highlight the closest object
-      const intersect = intersects[0]
-      const idx = intersect.index
-      const geometry = intersect.object.geometry
-
-      // change color of the point
-      geometry.attributes.color.needsUpdate = true
-
-      geometry.attributes.color.array[(idx * 3)] = 0.1
-      geometry.attributes.color.array[(idx * 3) + 1] = 0.8
-      geometry.attributes.color.array[(idx * 3) + 2] = 0.1
-
-      // find the position of the point
-      const pointPosition = {
-        x: geometry.attributes.position.array[(idx * 3)],
-        y: geometry.attributes.position.array[(idx * 3) + 1],
-        z: geometry.attributes.position.array[(idx * 3) + 2]
-      }
-      // add text canvas
-      const textCanvas = this.makeTextCanvas(
-        geometry.userData.labels[idx],
-        pointPosition.x,
-        pointPosition.y,
-        pointPosition.z,
-        this.points.rotation,
-        {
-          fontsize: 24,
-          fontface: 'arial, sans-serif',
-          textColor: { r: 0, g: 0, b: 0, a: 0.8 }
-        }
-      )
-
-      textCanvas.id = 'text-label-' + this.id
-      this.mount.appendChild(textCanvas)
-
-      if (typeof this.props.onMouseOver === 'function') {
-        const trueIdx = intersect.object.geometry.userData.index[idx]
-        const datum = this.props.model.data[trueIdx]
-        this.props.onMouseOver(datum)
-      }
-    }
-
-    renderer.render(scene, camera)
-  }
-
-  renderScatter2d() {
-    const { raycaster, mouse, camera, renderer, scene } = this
-    // update the picking ray with the camera and mouse position
-    raycaster.setFromCamera(mouse, camera)
-
-    // calculate objects intersecting the picking ray
-    // const intersects = raycaster.intersectObjects([this.points])
-    let closestPoint = undefined
-    let closestDist = undefined
-    let point = new THREE.Vector3()
-    for (const pointIndex of this.points.geometry.index.array) {
-      const pointPosition = new THREE.Vector3(
-        this.points.geometry.attributes.position.array[pointIndex * 3],
-        this.points.geometry.attributes.position.array[pointIndex * 3 + 1],
-        this.points.geometry.attributes.position.array[pointIndex * 3 + 2]
-      )
-      raycaster.ray.closestPointToPoint(pointPosition, point)
-      const dist = point.distanceToSquared(pointPosition)
-      if (dist < Math.min(1.0, 1/(camera.zoom*camera.zoom)) && (closestDist === undefined || dist < closestDist)) {
-        closestPoint = pointIndex
-        closestDist = dist
-      }
-    }
-
+    const closestPoint = this.getPoint()
     // reset colors
     this.resetColors()
     // remove text-label if exists
@@ -560,17 +468,9 @@ export class Scatter3dView extends React.Component {
     }
   }
   animate() {
-    this.rotate()
-    this.animateId = window.requestAnimationFrame(() => this.animate())
-  }
-
-  rotate() {
-    let time = Date.now() * 0.001
-    for (const child of this.scene.children) {
-      child.rotation.x = time * 0.05
-      child.rotation.y = time * 0.1
-    }
+    this.controls.update()
     this.renderScatter()
+    this.animateId = window.requestAnimationFrame(() => this.animate())
   }
 
   stopAnimate() {
@@ -626,19 +526,28 @@ export class Scatter3dView extends React.Component {
   }
 
   getPoint() {
-    const { raycaster, mouse, camera } = this
-    // update the picking ray with the camera and mouse position
-    raycaster.setFromCamera(mouse, camera)
+    const { mouse, camera } = this
 
-    // calculate objects intersecting the picking ray
-    const intersects = raycaster.intersectObjects([this.points])
-    if (intersects.length > 0) {
-      const intersect = intersects[0]
-      const idx = intersect.index
-      const trueIdx = intersect.object.geometry.userData.index[idx]
-      const datum = this.props.model.data[trueIdx]
-      return datum
+    let closestPoint = undefined
+    let closestDist = undefined
+    let point3 = new THREE.Vector3()
+    let point2 = new THREE.Vector2()
+
+    for (const pointIndex of this.points.geometry.index.array) {
+      point3.set(
+        this.points.geometry.attributes.position.array[pointIndex * 3],
+        this.points.geometry.attributes.position.array[pointIndex * 3 + 1],
+        this.points.geometry.attributes.position.array[pointIndex * 3 + 2]
+      )
+      point3.project(camera)
+      point2.set(point3.x, point3.y)
+      const dist = point2.distanceToSquared(mouse)
+      if (dist < Math.min(1.0, 1 / (camera.zoom * camera.zoom)) && (closestDist === undefined || dist < closestDist)) {
+        closestPoint = pointIndex
+        closestDist = dist
+      }
     }
+    return closestPoint
   }
 }
 
