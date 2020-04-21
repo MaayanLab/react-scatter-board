@@ -62,7 +62,8 @@ export class Scatter3dView extends React.Component {
     }
     // events
     this.onMouseMove = this.onMouseMove.bind(this)
-    this.onClick = this.onClick.bind(this)
+    this.onMouseDown = this.onMouseDown.bind(this)
+    this.onMouseUp = this.onMouseUp.bind(this)
   }
 
   componentDidMount() {
@@ -107,13 +108,7 @@ export class Scatter3dView extends React.Component {
         this.setUpStage()
       } else if (this.props.data !== null && this.props.shapeScale !== null) {
         this.shapeBy(this.props.shapeKey) // will update state shapeScale etc.
-        this.renderScatter()
-        if (this.state.is3d) {
-          this.startAnimate()
-        } else {
-          // sometimes the canvas doesn't show
-          setTimeout(() => this.renderScatter(), 500)
-        }
+        this.startAnimate()
       } else if (this.props.colorKey !== prevProps.colorKey) {
         // colorKey changed through parent state passed as prop
         this.renderScatter()
@@ -130,8 +125,9 @@ export class Scatter3dView extends React.Component {
     return (
       <div
         ref={ref => (this.mount = ref)}
+        onMouseDown={e => this.onMouseDown(e)}
         onMouseMove={e => this.onMouseMove(e)}
-        onClick={e => this.onClick(e)}
+        onMouseUp={e => this.onMouseUp(e)}
       />
     )
   }
@@ -195,23 +191,14 @@ export class Scatter3dView extends React.Component {
         MIDDLE: THREE.MOUSE.DOLLY,
         RIGHT: THREE.MOUSE.LEFT
       }
-    }
-
-    controls.addEventListener('change', e => {
-      this.renderScatter()
-    })
-    // set up raycaster, mouse
-    const raycaster = new THREE.Raycaster()
-
-    if (this.state.raycasterThreshold) {
-      raycaster.params.Points.threshold = this.raycasterThreshold
     } else {
-      if (this.state.is3d) {
-        raycaster.params.Points.threshold = this.state.pointSize / 5
-      } else {
-        raycaster.params.Points.threshold = this.state.pointSize / 50
-      }
+      controls.autoRotate = true
+      controls.autoRotateSpeed = 2.0
     }
+
+    controls.addEventListener('start', function () {
+      controls.autoRotate = false
+    })
 
     const mouse = new THREE.Vector2()
 
@@ -220,8 +207,12 @@ export class Scatter3dView extends React.Component {
     this.renderer = renderer
     this.camera = camera
     this.controls = controls
-    this.raycaster = raycaster
     this.mouse = mouse
+    this.updated = true
+  }
+
+  onMouseDown(e) {
+    this.mouseMoved = false
   }
 
   onMouseMove(e) {
@@ -230,13 +221,16 @@ export class Scatter3dView extends React.Component {
     mouse.x = (e.nativeEvent.offsetX / WIDTH) * 2 - 1
     mouse.y = -(e.nativeEvent.offsetY / HEIGHT) * 2 + 1
     this.mouse = mouse
-    this.renderScatter()
+    this.updated = true
+    this.mouseMoved = true
   }
 
-  onClick(evt) {
-    this.stopAnimate()
+  onMouseUp(evt) {
+    if (this.mouseMoved) return
     if (typeof this.props.onClick === 'function') {
-      this.props.onClick(evt, this.getPoint())
+      const trueIdx = this.points.geometry.userData.index[this.getPoint()]
+      const datum = this.props.model.data[trueIdx]
+      this.props.onClick(evt, datum)
     }
   }
 
@@ -469,7 +463,10 @@ export class Scatter3dView extends React.Component {
   }
   animate() {
     this.controls.update()
-    this.renderScatter()
+    if (this.updated) {
+      this.renderScatter()
+      this.updated = false
+    }
     this.animateId = window.requestAnimationFrame(() => this.animate())
   }
 
