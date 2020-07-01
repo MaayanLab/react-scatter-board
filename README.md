@@ -6,6 +6,61 @@ A React implementation of THREE.js 2d/3d scatter plot. This library was created 
 
 ## Install
 
+### Python
+```bash
+pip install --user --upgrade git+git://github.com/maayanlab/react-scatter-board
+```
+
+#### Jupyter
+
+```python
+from react_scatter_board.jupyter_compat import ScatterBoard
+ScatterBoard(
+  id='scatterboard-3d',
+  is3d=True,
+  data=[
+    dict(x=0, y=0, z=0, label='a', shape='s', color='r'),
+    dict(x=1, y=1, z=-1, label='b', shape='t', color='g'),
+    dict(x=-1, y=-1, z=-1, label='c', shape='c', color='b'),
+    dict(x=0, y=0, z=1, label='d', shape='c', color='r'),
+    dict(x=0, y=1, z=0, label='e', shape='t', color='g'),
+    dict(x=0, y=0, z=-1, label='f', shape='t', color='b'),
+  ],
+  shapeKey='shape',
+  colorKey='color',
+  labelKeys=['label'],
+  searchKeys=['label', 'shape', 'color'],
+  width=600,
+  height=400,
+)
+```
+
+#### Dash
+```python
+from react_scatter_board import DashScatterBoard
+
+app = dash.Dash(__name__)
+app.layout = DashScatterBoard(
+  id='scatterboard-2d',
+  is3d=False,
+  data=[
+    dict(x=0, y=0, label='a', shape='s', color='r'),
+    dict(x=1, y=1, label='b', shape='t', color='g'),
+    dict(x=-1, y=-1, label='c', shape='c', color='b'),
+    dict(x=-1, y=0, label='d', shape='c', color='r'),
+    dict(x=0, y=1, label='e', shape='t', color='g'),
+    dict(x=1, y=0, label='f', shape='t', color='b'),
+  ],
+  shapeKey='shape',
+  colorKey='color',
+  labelKeys=['label'],
+  searchKeys=['label', 'shape', 'color'],
+  width=600,
+  height=400,
+)
+```
+
+### NodeJS
 ```bash
 npm install --save maayanlab/react-scatter-board
 ```
