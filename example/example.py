@@ -1,3 +1,4 @@
+import sys; sys.path.insert(0, '..') # not necessary when pip installed
 import os
 import json
 import dash
