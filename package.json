@@ -62,7 +62,7 @@
     "react-scrollspy": "^3.4.2",
     "react-select": "^3.0.8",
     "react-syntax-highlighter": "^9.0.1",
-    "three": "^0.106.2",
+    "three": "^0.125.0",
     "underscore": "^1.9.2"
   }
 }
