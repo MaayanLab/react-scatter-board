@@ -5,7 +5,6 @@ import { Canvas, useFrame } from '@react-three/fiber'
 import { Text, MapControls, OrbitControls, Html } from '@react-three/drei'
 import Select from 'react-select'
 import customFont from '../font/glyphter-font/fonts/Glyphter.ttf'
-import { PerspectiveCamera } from 'three'
 
 const shapes = {
   circle: 'A',
@@ -17,14 +16,13 @@ const shapes = {
   wye: 'G',
 }
 
-function Point({ position, shape, color, opacity, label, selected, data }) {
+function Point({ position, shape, color, opacity, label, selected, scale, data }) {
   const ref = useRef()
-  const size = 0.75
   const fontProps = {
     font: customFont,
     fontWeight: '900',
-    fontSize: selected === true ? 2 * size : size,
-    lineHeight: size,
+    fontSize: selected === true ? 2 * scale : scale,
+    lineHeight: scale,
   }
   const [hovered, setHovered] = useState(false)
   const over = (e) => (e.stopPropagation(), setHovered(true))
@@ -60,7 +58,7 @@ function Point({ position, shape, color, opacity, label, selected, data }) {
   )
 }
 
-function ScatterPlot({ data }) {
+function ScatterPlot({ scale, data }) {
   const points = useMemo(() => {
     const _points = []
     for (const d of data) {
@@ -77,7 +75,7 @@ function ScatterPlot({ data }) {
     }
     return _points
   }, [data])
-  return points.map((props, ind) => <Point key={ind} {...props} />)
+  return points.map((props, ind) => <Point key={ind} scale={scale} {...props} />)
 }
 
 export function useFacets(data) {
@@ -108,7 +106,6 @@ export function Legend({ facets }) {
 }
 
 export function ReactScatterPlot({ is3d, data }) {
-  const fov = 45
   const span = useMemo(() => {
     let minX, minY, minZ,
         maxX, maxY, maxZ
@@ -142,36 +139,24 @@ export function ReactScatterPlot({ is3d, data }) {
       maxSpan, spanX, spanY, spanZ,
     }
   }, [data])
-  console.log(span)
   if (is3d === true) {
     return (
       <Canvas dpr={[1, 2]} camera={{
-        fov,
-        autoRotate: true,
-        aspect: span.spanX / span.spanY,
-        far: span.maxZ,
-        near: span.minZ,
         position: [span.centerX, span.centerY, span.centerZ],
-        zoom: 0.1,
+        zoom: 100 / Math.max(200, span.maxSpan),
       }}>
-        <ScatterPlot data={data} />
+        <ScatterPlot data={data} scale={0.1*span.maxSpan} />
         <OrbitControls />
       </Canvas>
     )
   } else {
     return (
       <Canvas dpr={[1, 2]} orthographic camera={{
-        left: span.minX,
-        right: span.maxX,
-        top: span.minY,
-        bottom: span.maxY,
-        near: 0,
-        far: Math.max(2000, Math.pow(span.maxSpan, 2)),
+        position: [span.centerX, span.centerY, span.maxSpan],
         up: [0, 0, 1],
-        position: [span.centerX, span.centerY, -span.maxSpan],
-        zoom: 100,
+        zoom: 500 / span.maxSpan,
       }}>
-        <ScatterPlot data={data} />
+        <ScatterPlot data={data} scale={0.1 * span.maxSpan} />
         <MapControls />
       </Canvas>
     )
