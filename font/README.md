@@ -1,0 +1,4 @@
+- Svgs Extracted from d3.symbol
+- Svgs Imported to [Glyphter](https://glyphter.com/)
+- Font exported from Glyphter and extracted to this directory
+- Resulting ttf file is used for shapes
