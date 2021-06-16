@@ -5,6 +5,8 @@ import { Canvas, useFrame } from '@react-three/fiber'
 import { Text, MapControls, OrbitControls, Html } from '@react-three/drei'
 import Select from 'react-select'
 import customFont from '../font/glyphter-font/fonts/Glyphter.ttf'
+import * as d3ScaleChromatic from 'd3-scale-chromatic'
+import * as d3Scale from 'd3-scale'
 
 const shapes = {
   circle: 'A',
@@ -16,7 +18,89 @@ const shapes = {
   wye: 'G',
 }
 
-function Point({ position, shape, color, opacity, label, selected, scale, data }) {
+function validColor(c) {
+  let s = (new Option()).style
+  s.color = c
+  return s.color === c
+}
+
+export function useFacets(data) {
+  return useMemo(() => {
+    // identify key/values in data
+    const facets = {}
+    for (const { x, y, z, ...d } of data) {
+      for (const k in d) {
+        if (!(k in facets)) facets[k] = { type: typeof d[k], values: {} }
+        if (!(d[k] in facets[k].values)) facets[k].values[d[k]] = 0
+        facets[k].values[d[k]] += 1
+      }
+    }
+    // produce applicable scales
+    for (const key in facets) {
+      const facet = facets[key]
+      if (facet.type === 'string') {
+        if (Object.keys(facet.values).filter(v => !validColor(v)).length === 0) {
+          // if colors are all interpretable as valid colors, passthrough
+          facet.colorScale = color => color
+        } else if (Object.keys(facet.values).length <= d3ScaleChromatic.schemeCategory10.length) {
+          // if there are enough colors for all the catagories, map them to the chromatic scale
+          facet.colorScale = d3Scale.scaleOrdinal()
+            .domain(Object.keys(facet.values))
+            .range(d3ScaleChromatic.schemeCategory10)
+        }
+        if (Object.keys(facet.values).filter(k => shapes[k] === undefined).length === 0) {
+          // if the shapes are interpretable as valid shapes, passthrough
+          facet.shapeScale = shape => shape
+        } else if (Object.keys(facet.values).length <= Object.keys(shapes).length) {
+          // if there are enough shapes for the categories, map them to the shapes
+          facet.shapeScale = d3Scale.scaleOrdinal()
+            .domain(Object.keys(facet.values))
+            .range(Object.keys(shapes))
+        }
+      }
+      if (facet.type === 'bigint') {
+        if (Object.keys(facet.values).length <= d3ScaleChromatic.schemeCategory10.length) {
+          // if there are enough colors for the categories, map them to the chromatic scale
+          facet.colorScale = d3Scale.scaleOrdinal()
+            .domain(Object.keys(facet.values))
+            .range(d3ScaleChromatic.schemeCategory10)
+        } else {
+          // not enough categorical colors -- treat integer as linearly interpolated
+          const domain = [
+            Object.keys(facet.values).reduce((m, v) => Math.min(m, v|0)),
+            Object.keys(facet.values).reduce((m, v) => Math.max(m, v|0)),
+          ]
+          facet.colorScale = d3Scale.scaleLinear()
+            .domain(domain)
+            .range(['red', 'blue'])
+        }
+        if (Object.keys(facet.values).length <= Object.keys(shapes).length) {
+          // if there are enough colors for the categories, map them to the shapes
+          facet.shapeScale = d3Scale.scaleOrdinal()
+            .domain(Object.keys(facet.values))
+            .range(Object.keys(shapes))
+        }
+      }
+      if (facet.type === 'number') {
+        const domain = [
+          Object.keys(facet.values).reduce((m, v) => Math.min(m, v*1.0)),
+          Object.keys(facet.values).reduce((m, v) => Math.max(m, v*1.0)),
+        ]
+        // linearly interpolate colors on numeric columns
+        facet.colorScale = d3Scale.scaleLinear()
+          .domain(domain)
+          .range(['red', 'blue'])
+        // quantize shapes
+        facet.shapeScale = d3Scale.scaleQuantile()
+          .domain(domain)
+          .range(Object.keys(shapes))
+      }
+    }
+    return facets
+  })
+}
+
+export function Point({ position, shape, color, opacity, label, selected, scale, data }) {
   const ref = useRef()
   const fontProps = {
     font: customFont,
@@ -58,7 +142,7 @@ function Point({ position, shape, color, opacity, label, selected, scale, data }
   )
 }
 
-function ScatterPlot({ scale, data }) {
+export function ScatterPlot({ scale, data }) {
   const points = useMemo(() => {
     const _points = []
     for (const d of data) {
@@ -76,33 +160,6 @@ function ScatterPlot({ scale, data }) {
     return _points
   }, [data])
   return points.map((props, ind) => <Point key={ind} scale={scale} {...props} />)
-}
-
-export function useFacets(data) {
-  return useMemo(() => {
-    const facets = {}
-    for (const { x, y, z, ...d } of data) {
-      for (const k in d) {
-        if (!(k in facets)) facets[k] = { type: typeof d[k], values: {} }
-        if (!(d[k] in facets[k].values)) facets[k].values[d[k]] = 0
-        facets[k].values[d[k]] += 1
-      }
-    }
-    return facets
-  })
-}
-
-export function Legend({ facets }) {
-  return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-    >
-      {Object.keys(facets).map(f => <div key={f}>{f} ({facets[f].type}: {Object.keys(facets[f].values).length})</div>)}
-    </div>
-  )
 }
 
 export function ReactScatterPlot({ is3d, data }) {
@@ -278,16 +335,32 @@ export default function ReactScatterBoard({
     }}>
       <ReactScatterPlot
         is3d={is3d}
-        data={data.map(datum => ({
-          ...datum,
-          x: datum.x,
-          y: datum.y,
-          z: is3d === false ? 0 : datum.z,
-          label: (labelKeys||[]).map(labelKey => `${labelKey}: ${datum[labelKey]}`).join('<br />'),
-          shape: datum[shapeKey] || 'circle',
-          color: datum[colorKey] || 'black',
-          selected: selectValue === undefined ? false : datum[selectValue.key] === selectValue.value,
-        }))}
+        data={data.map(_datum => {
+          const datum = {..._datum}
+          if (is3d === false) {
+            datum.z = 0
+            datum.opacity = 1.0
+          } else {
+            datum.opacity = 0.8
+          }
+          datum.label = (labelKeys||[]).map(labelKey => `${labelKey}: ${datum[labelKey]}`).join('<br />')
+          if (shapeKey !== undefined && shapeKey in datum && shapeKey in facets && 'shapeScale' in facets[shapeKey]) {
+            datum.shape = facets[shapeKey].shapeScale(datum[shapeKey])
+          } else {
+            datum.shape = 'circle'
+          }
+          if (colorKey !== undefined && colorKey in datum && colorKey in facets && 'colorScale' in facets[colorKey]) {
+            datum.color = facets[colorKey].colorScale(datum[colorKey])
+          } else {
+            datum.color = 'black'
+          }
+          if (selectValue !== undefined && datum[selectValue.key] === selectValue.value) {
+            datum.selected = true
+          } else {
+            datum.selected = false
+          }
+          return datum
+        })}
       />
       <div style={{
         position: 'absolute',
@@ -298,26 +371,26 @@ export default function ReactScatterBoard({
         pointerEvents: 'none'
       }}>
         <div style={{ display: 'flex', flexDirection: 'column', overflow: 'auto' }}>
-          {shapeKey !== undefined ? (
+          {shapeKey !== undefined && shapeKey in facets && 'shapeScale' in facets[shapeKey] ? (
             <ReactLegend
               label="Shape"
               facet={facets[shapeKey]}
             >{({ value, count }) =>
               <span>
-                <span style={{ fontFamily: 'Glyphter' }}>{shapes[value]}</span>
+                <span style={{ fontFamily: 'Glyphter' }}>{shapes[facets[shapeKey].shapeScale(value)]}</span>
                 &nbsp;
                 {value}
                 &nbsp;
                 ({count})
               </span>}</ReactLegend>
           ) : null}
-          {colorKey !== undefined ? (
+          {colorKey !== undefined && colorKey in facets && 'colorScale' in facets[colorKey] ? (
             <ReactLegend
               label="Color"
               facet={facets[colorKey]}
             >{({ value, count }) => (
               <span>
-                <span style={{ fontFamily: 'Glyphter', color: value }}>{shapes.square}</span>
+                <span style={{ fontFamily: 'Glyphter', color: facets[colorKey].colorScale(value) }}>{shapes.square}</span>
                 &nbsp;
                 {value}
                 &nbsp;
