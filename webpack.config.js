@@ -48,7 +48,7 @@ module.exports = function (_env, argv) {
           }
         },
         {
-          test: /\.(eot|otf|ttf|svg|woff|woff2)$/,
+          test: /\.(eot|otf|ttf|svg|woff|woff2|json)$/,
           loader: require.resolve("file-loader"),
           options: {
             name: "static/media/[name].[hash:8].[ext]"
@@ -118,6 +118,7 @@ module.exports = function (_env, argv) {
       runtimeChunk: "single"
     },
     devServer: {
+      contentBase: path.join(__dirname, 'dist'),
       port: 5000,
       compress: true,
       historyApiFallback: true,

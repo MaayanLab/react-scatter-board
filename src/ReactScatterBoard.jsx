@@ -1,12 +1,13 @@
 import '../font/glyphter-font/css/Glyphter.css'
 import React, { useMemo, useRef, useState, useEffect } from 'react'
 import * as THREE from 'three'
-import { Canvas, useFrame } from '@react-three/fiber'
+import { Canvas, useFrame, useLoader } from '@react-three/fiber'
 import { Text, MapControls, OrbitControls, Html } from '@react-three/drei'
-import Select from 'react-select'
-import customFont from '../font/glyphter-font/fonts/Glyphter.ttf'
+// import customFont from '../font/glyphter-font/fonts/Glyphter.ttf'
 import * as d3ScaleChromatic from 'd3-scale-chromatic'
 import * as d3Scale from 'd3-scale'
+
+const Select = React.lazy(() => import('react-select'))
 
 const shapes = {
   circle: 'A',
@@ -16,6 +17,19 @@ const shapes = {
   star: 'E',
   triangle: 'F',
   wye: 'G',
+}
+
+function useShapes() {
+  // TODO: extract from font
+  return {
+    circle: useLoader(THREE.TextureLoader, 'shapes/circle.png'),
+    cross: useLoader(THREE.TextureLoader, 'shapes/cross.png'),
+    diamond: useLoader(THREE.TextureLoader, 'shapes/diamond.png'),
+    square: useLoader(THREE.TextureLoader, 'shapes/square.png'),
+    star: useLoader(THREE.TextureLoader, 'shapes/star.png'),
+    triangle: useLoader(THREE.TextureLoader, 'shapes/triangle.png'),
+    wye: useLoader(THREE.TextureLoader, 'shapes/wye.png'),
+  }
 }
 
 function validColor(c) {
@@ -100,38 +114,35 @@ export function useFacets(data) {
   })
 }
 
-export function Point({ position, shape, color, opacity, label, selected, scale, data }) {
+export function Point({ is3d, scale, position, shape, color, opacity, label, selected, data }) {
   const ref = useRef()
-  const fontProps = {
-    font: customFont,
-    fontWeight: '900',
-    fontSize: selected === true ? 2 * scale : scale,
-    lineHeight: scale,
-  }
   const [hovered, setHovered] = useState(false)
-  const over = (e) => (e.stopPropagation(), setHovered(true))
-  const out = () => setHovered(false)
   useEffect(() => {
     if (hovered) document.body.style.cursor = 'pointer'
     return () => (document.body.style.cursor = 'auto')
   }, [hovered])
-  useFrame(({ camera }) => {
-    // Make text face the camera
-    ref.current.quaternion.copy(camera.quaternion)
-  })
+  if (is3d) {
+    useFrame(({ camera }) => {
+      // Make text face the camera
+      ref.current.quaternion.copy(camera.quaternion)
+    })
+  }
   return (
     <>
-      <Text
+      <mesh
         ref={ref}
         position={position}
-        onPointerOver={over}
-        onPointerOut={out}
-        color={color}
-        fillOpacity={opacity}
-        anchorX="center"
-        anchorY="middle"
-        {...fontProps}
-      >{shape}</Text>
+      >
+        <planeBufferGeometry attach="geometry" args={[1, 1]} />
+        <meshBasicMaterial
+          attach="material"
+          alphaMap={shape}
+          color={color}
+          transparent={true}
+          alphaTest={0.1}
+          opacity={opacity}
+        />
+      </mesh>
       {hovered ? (
         <Html
           style={{ pointerEvents: 'none', whiteSpace: 'nowrap' }}
@@ -142,16 +153,19 @@ export function Point({ position, shape, color, opacity, label, selected, scale,
   )
 }
 
-export function ScatterPlot({ scale, data }) {
+export function ScatterPlot({ is3d, scale, data }) {
+  const shape_textures = useShapes()
   const points = useMemo(() => {
     const _points = []
+    let i = 0
+    let step = 10 / data.length
     for (const d of data) {
       if (!(d.shape in shapes)) console.warn('Invalid shape')
       _points.push({
-        position: new THREE.Vector3(d.x, d.y, d.z),
+        position: new THREE.Vector3(d.x, d.y, is3d ? d.z : (i++)*step),
         label: d.label || JSON.stringify(d),
         color: new THREE.Color(d.color || 'grey'),
-        shape: shapes[d.shape] || shapes.circle,
+        shape: shape_textures[d.shape] || shape_textures.circle,
         selected: d.selected,
         opacity: d.opacity || 0.8,
         data: d,
@@ -159,7 +173,7 @@ export function ScatterPlot({ scale, data }) {
     }
     return _points
   }, [data])
-  return points.map((props, ind) => <Point key={ind} scale={scale} {...props} />)
+  return points.map((props, ind) => <Point key={ind} is3d={is3d} scale={scale} {...props} />)
 }
 
 export function ReactScatterPlot({ is3d, data }) {
@@ -198,23 +212,53 @@ export function ReactScatterPlot({ is3d, data }) {
   }, [data])
   if (is3d === true) {
     return (
-      <Canvas dpr={[1, 2]} camera={{
-        position: [span.centerX, span.centerY, span.centerZ],
-        zoom: 100 / Math.max(200, span.maxSpan),
-      }}>
-        <ScatterPlot data={data} scale={0.1*span.maxSpan} />
-        <OrbitControls />
+      <Canvas dpr={[1, 2]}
+        gl={{
+          logarithmicDepthBuffer: true,
+          alpha: true
+        }}
+        camera={{
+          position: [span.centerX, span.centerY, span.centerZ],
+          zoom: 100 / Math.max(200, span.maxSpan),
+          near: 1,
+        }}
+        onPointerMove={null}
+      >
+        <ScatterPlot
+          is3d={is3d}
+          scale={0.5}
+          data={data}
+        />
+        <OrbitControls
+          enableZoom={true}
+          enableDamping={true}
+          dampingFactor={0.25}
+          screenSpacePanning={true}
+        />
       </Canvas>
     )
   } else {
     return (
-      <Canvas dpr={[1, 2]} orthographic camera={{
-        position: [span.centerX, span.centerY, span.maxSpan],
-        up: [0, 0, 1],
-        zoom: 500 / span.maxSpan,
-      }}>
-        <ScatterPlot data={data} scale={0.1 * span.maxSpan} />
-        <MapControls />
+      <Canvas
+        orthographic
+        camera={{
+          position: [span.centerX, span.centerY, span.maxSpan],
+          up: [0, 0, 1],
+          zoom: 500 / span.maxSpan,
+        }}
+        onPointerMove={null}
+      >
+        <ScatterPlot
+          is3d={is3d}
+          scale={0.5}
+          data={data}
+        />
+        <MapControls
+          enableZoom={true}
+          enableDamping={true}
+          dampingFactor={0.25}
+          screenSpacePanning={true}
+        />
       </Canvas>
     )
   }
@@ -226,11 +270,13 @@ export function ReactLegend({ label, facet, children }) {
     <div
       style={{
         width: '200px',
+        maxHeight: '50%',
         marginBottom: '10px',
         color: 'black',
         pointerEvents: 'auto',
         display: 'flex',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        overflow: 'auto'
       }}
     >
       <b>{label}</b>
@@ -327,6 +373,32 @@ export default function ReactScatterBoard({
   const [shapeKey, setShapeKey] = useState(initShapeKey)
   const [colorKey, setColorKey] = useState(initColorKey)
   const [selectValue, setSelectValue] = useState(initSelectValue)
+  const dataFixed = useMemo(() => data.map(_datum => {
+    const datum = { ..._datum }
+    if (is3d === false) {
+      datum.z = 0
+      datum.opacity = 1
+    } else {
+      datum.opacity = 0.8
+    }
+    datum.label = (labelKeys || []).map(labelKey => `${labelKey}: ${datum[labelKey]}`).join('<br />')
+    if (shapeKey !== undefined && shapeKey in datum && shapeKey in facets && 'shapeScale' in facets[shapeKey]) {
+      datum.shape = facets[shapeKey].shapeScale(datum[shapeKey])
+    } else {
+      datum.shape = 'circle'
+    }
+    if (colorKey !== undefined && colorKey in datum && colorKey in facets && 'colorScale' in facets[colorKey]) {
+      datum.color = facets[colorKey].colorScale(datum[colorKey])
+    } else {
+      datum.color = 'black'
+    }
+    if (selectValue !== undefined && datum[selectValue.key] === selectValue.value) {
+      datum.selected = true
+    } else {
+      datum.selected = false
+    }
+    return datum
+  }), [data, facets, shapeKey, colorKey, selectValue])
   return (
     <div style={{
       flex: '1 1 auto',
@@ -335,32 +407,7 @@ export default function ReactScatterBoard({
     }}>
       <ReactScatterPlot
         is3d={is3d}
-        data={data.map(_datum => {
-          const datum = {..._datum}
-          if (is3d === false) {
-            datum.z = 0
-            datum.opacity = 1.0
-          } else {
-            datum.opacity = 0.8
-          }
-          datum.label = (labelKeys||[]).map(labelKey => `${labelKey}: ${datum[labelKey]}`).join('<br />')
-          if (shapeKey !== undefined && shapeKey in datum && shapeKey in facets && 'shapeScale' in facets[shapeKey]) {
-            datum.shape = facets[shapeKey].shapeScale(datum[shapeKey])
-          } else {
-            datum.shape = 'circle'
-          }
-          if (colorKey !== undefined && colorKey in datum && colorKey in facets && 'colorScale' in facets[colorKey]) {
-            datum.color = facets[colorKey].colorScale(datum[colorKey])
-          } else {
-            datum.color = 'black'
-          }
-          if (selectValue !== undefined && datum[selectValue.key] === selectValue.value) {
-            datum.selected = true
-          } else {
-            datum.selected = false
-          }
-          return datum
-        })}
+        data={dataFixed}
       />
       <div style={{
         position: 'absolute',
@@ -370,7 +417,7 @@ export default function ReactScatterBoard({
         display: 'flex',
         pointerEvents: 'none'
       }}>
-        <div style={{ display: 'flex', flexDirection: 'column', overflow: 'auto' }}>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
           {shapeKey !== undefined && shapeKey in facets && 'shapeScale' in facets[shapeKey] ? (
             <ReactLegend
               label="Shape"
