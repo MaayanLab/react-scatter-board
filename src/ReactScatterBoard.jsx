@@ -1,36 +1,12 @@
-import '../font/glyphter-font/css/Glyphter.css'
 import React, { useMemo, useRef, useState, useEffect } from 'react'
 import * as THREE from 'three'
-import { Canvas, useFrame, useLoader } from '@react-three/fiber'
-import { Text, MapControls, OrbitControls, Html } from '@react-three/drei'
-// import customFont from '../font/glyphter-font/fonts/Glyphter.ttf'
+import { Canvas, useFrame } from '@react-three/fiber'
+import { MapControls, OrbitControls, Html } from '@react-three/drei'
 import * as d3ScaleChromatic from 'd3-scale-chromatic'
 import * as d3Scale from 'd3-scale'
+import { shapes, useShapeGeometry } from './shapes'
 
 const Select = React.lazy(() => import('react-select'))
-
-const shapes = {
-  circle: 'A',
-  cross: 'B',
-  diamond: 'C',
-  square: 'D',
-  star: 'E',
-  triangle: 'F',
-  wye: 'G',
-}
-
-function useShapes() {
-  // TODO: extract from font
-  return {
-    circle: useLoader(THREE.TextureLoader, 'shapes/circle.png'),
-    cross: useLoader(THREE.TextureLoader, 'shapes/cross.png'),
-    diamond: useLoader(THREE.TextureLoader, 'shapes/diamond.png'),
-    square: useLoader(THREE.TextureLoader, 'shapes/square.png'),
-    star: useLoader(THREE.TextureLoader, 'shapes/star.png'),
-    triangle: useLoader(THREE.TextureLoader, 'shapes/triangle.png'),
-    wye: useLoader(THREE.TextureLoader, 'shapes/wye.png'),
-  }
-}
 
 function validColor(c) {
   let s = (new Option()).style
@@ -114,13 +90,9 @@ export function useFacets(data) {
   })
 }
 
-export function Point({ is3d, scale, position, shape, color, opacity, label, selected, data }) {
+export function Point({ is3d, position, shape, color, opacity, label, selected, data }) {
   const ref = useRef()
-  const [hovered, setHovered] = useState(false)
-  useEffect(() => {
-    if (hovered) document.body.style.cursor = 'pointer'
-    return () => (document.body.style.cursor = 'auto')
-  }, [hovered])
+  const hovered = false
   if (is3d) {
     useFrame(({ camera }) => {
       // Make text face the camera
@@ -132,11 +104,10 @@ export function Point({ is3d, scale, position, shape, color, opacity, label, sel
       <mesh
         ref={ref}
         position={position}
+        {...shape}
       >
-        <planeBufferGeometry attach="geometry" args={[1, 1]} />
         <meshBasicMaterial
           attach="material"
-          alphaMap={shape}
           color={color}
           transparent={true}
           alphaTest={0.1}
@@ -153,8 +124,8 @@ export function Point({ is3d, scale, position, shape, color, opacity, label, sel
   )
 }
 
-export function ScatterPlot({ is3d, scale, data }) {
-  const shape_textures = useShapes()
+export function ScatterPlot({ is3d, data }) {
+  const shape_textures = useShapeGeometry()
   const points = useMemo(() => {
     const _points = []
     let i = 0
@@ -173,7 +144,7 @@ export function ScatterPlot({ is3d, scale, data }) {
     }
     return _points
   }, [data])
-  return points.map((props, ind) => <Point key={ind} is3d={is3d} scale={scale} {...props} />)
+  return points.map((props, ind) => <Point key={ind} is3d={is3d} {...props} />)
 }
 
 export function ReactScatterPlot({ is3d, data }) {
@@ -226,7 +197,6 @@ export function ReactScatterPlot({ is3d, data }) {
       >
         <ScatterPlot
           is3d={is3d}
-          scale={0.5}
           data={data}
         />
         <OrbitControls
@@ -250,7 +220,6 @@ export function ReactScatterPlot({ is3d, data }) {
       >
         <ScatterPlot
           is3d={is3d}
-          scale={0.5}
           data={data}
         />
         <MapControls
@@ -422,28 +391,35 @@ export default function ReactScatterBoard({
             <ReactLegend
               label="Shape"
               facet={facets[shapeKey]}
-            >{({ value, count }) =>
-              <span>
-                <span style={{ fontFamily: 'Glyphter' }}>{shapes[facets[shapeKey].shapeScale(value)]}</span>
-                &nbsp;
-                {value}
-                &nbsp;
-                ({count})
-              </span>}</ReactLegend>
+            >{({ value, count }) => {
+              const Shape = shapes[facets[shapeKey].shapeScale(value)]
+              return (
+                <span>
+                  <Shape />
+                  &nbsp;
+                  {value}
+                  &nbsp;
+                  ({count})
+                </span>
+              )
+            }}</ReactLegend>
           ) : null}
           {colorKey !== undefined && colorKey in facets && 'colorScale' in facets[colorKey] ? (
             <ReactLegend
               label="Color"
               facet={facets[colorKey]}
-            >{({ value, count }) => (
-              <span>
-                <span style={{ fontFamily: 'Glyphter', color: facets[colorKey].colorScale(value) }}>{shapes.square}</span>
-                &nbsp;
-                {value}
-                &nbsp;
-                ({count})
-              </span>
-            )}</ReactLegend>
+            >{({ value, count }) => {
+              const Shape = shapes.square
+              return (
+                <span>
+                  <Shape fill={facets[colorKey].colorScale(value)} />
+                  &nbsp;
+                  {value}
+                  &nbsp;
+                  ({count})
+                </span>
+              )
+            }}</ReactLegend>
           ) : null}
         </div>
         <div style={{ flex: '1 1 auto' }}>&nbsp;</div>

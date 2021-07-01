@@ -13,6 +13,7 @@
     "@babel/plugin-transform-runtime": "^7.14.5",
     "@babel/preset-env": "^7.14.5",
     "@babel/preset-react": "^7.14.5",
+    "@svgr/webpack": "^5.5.0",
     "babel-loader": "^8.2.2",
     "css-loader": "^5.2.6",
     "file-loader": "^6.2.0",
@@ -33,6 +34,7 @@
     "d3-scale-chromatic": "^3.0.0",
     "react": "^17.0.2",
     "react-select": "^4.3.1",
-    "three": "^0.129.0"
+    "three": "^0.129.0",
+    "use-asset": "^1.0.4"
   }
 }

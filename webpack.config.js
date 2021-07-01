@@ -48,7 +48,11 @@ module.exports = function (_env, argv) {
           }
         },
         {
-          test: /\.(eot|otf|ttf|svg|woff|woff2|json)$/,
+          test: /\.svg$/,
+          use: ['@svgr/webpack'],
+        },
+        {
+          test: /\.json$/,
           loader: require.resolve("file-loader"),
           options: {
             name: "static/media/[name].[hash:8].[ext]"
