@@ -103,6 +103,7 @@ export function ScatterPlot({ is3d, data }) {
         n: 0,
         positions: [],
         colors: [],
+        sizes: [],
       }
       groups[d.shape].positions.push(d.x)
       groups[d.shape].positions.push(d.y)
@@ -114,6 +115,8 @@ export function ScatterPlot({ is3d, data }) {
       groups[d.shape].colors.push(color.b)
       groups[d.shape].colors.push(d.opacity)
 
+      groups[d.shape].sizes.push(d.size || 1)
+
       groups[d.shape].n++
     }
 
@@ -124,6 +127,7 @@ export function ScatterPlot({ is3d, data }) {
       const geometry = new THREE.BufferGeometry()
       geometry.setAttribute('position', new THREE.Float32BufferAttribute(groups[shape].positions, 3))
       geometry.setAttribute('color', new THREE.Float32BufferAttribute(groups[shape].colors, 4))
+      geometry.setAttribute('size', new THREE.Float32BufferAttribute(groups[shape].sizes, 1))
       geometry.computeBoundingSphere()
       geometries.push(geometry)
       materials.push(shapeMaterials[shape])
@@ -349,9 +353,9 @@ export default function ReactScatterBoard({
       datum.color = 'black'
     }
     if (selectValue !== undefined && datum[selectValue.key] === selectValue.value) {
-      datum.selected = true
+      datum.size = 5
     } else {
-      datum.selected = false
+      datum.size = 1
     }
     return datum
   }), [data, facets, shapeKey, colorKey, selectValue])

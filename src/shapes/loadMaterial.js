@@ -23,6 +23,10 @@ export default async function loadMaterial(src) {
         '	if (texture2D( alphaMap, uv ).g < 0.9) discard;',
       ].join('\n'),
     )
+    shader.vertexShader = shader.vertexShader.replace(
+      'uniform float size',
+      'attribute float size',
+    )
   }
   return material
 }
