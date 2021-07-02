@@ -30,6 +30,7 @@ module.exports = function (_env, argv) {
                 "@babel/preset-react"
               ],
               plugins: [
+                "@babel/plugin-transform-runtime",
                 "dynamic-import-webpack",
                 "remove-webpack"
               ],

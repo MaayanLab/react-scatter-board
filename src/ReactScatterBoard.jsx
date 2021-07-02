@@ -1,10 +1,11 @@
-import React, { useMemo, useRef, useState, useEffect } from 'react'
+import React from 'react'
 import * as THREE from 'three'
-import { Canvas, useFrame } from '@react-three/fiber'
+import { Canvas } from '@react-three/fiber'
 import { MapControls, OrbitControls, Html } from '@react-three/drei'
 import * as d3ScaleChromatic from 'd3-scale-chromatic'
 import * as d3Scale from 'd3-scale'
-import { shapes, useShapeGeometry } from './shapes'
+import { shapes, useShapeMaterial } from './shapes'
+import { BufferGeometryUtils } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 
 const Select = React.lazy(() => import('react-select'))
 
@@ -15,7 +16,7 @@ function validColor(c) {
 }
 
 export function useFacets(data) {
-  return useMemo(() => {
+  return React.useMemo(() => {
     // identify key/values in data
     const facets = {}
     for (const { x, y, z, ...d } of data) {
@@ -89,66 +90,52 @@ export function useFacets(data) {
     return facets
   })
 }
-
-export function Point({ is3d, position, shape, color, opacity, label, selected, data }) {
-  const ref = useRef()
-  const hovered = false
-  if (is3d) {
-    useFrame(({ camera }) => {
-      // Make text face the camera
-      ref.current.quaternion.copy(camera.quaternion)
-    })
-  }
-  return (
-    <>
-      <mesh
-        ref={ref}
-        position={position}
-        {...shape}
-      >
-        <meshBasicMaterial
-          attach="material"
-          color={color}
-          transparent={true}
-          alphaTest={0.1}
-          opacity={opacity}
-        />
-      </mesh>
-      {hovered ? (
-        <Html
-          style={{ pointerEvents: 'none', whiteSpace: 'nowrap' }}
-          position={position}
-        >{label}</Html>
-      ) : null}
-    </>
-  )
-}
-
 export function ScatterPlot({ is3d, data }) {
-  const shape_textures = useShapeGeometry()
-  const points = useMemo(() => {
-    const _points = []
+  const shapeMaterials = useShapeMaterial()
+  const { geometry, material } = React.useMemo(() => {
+    const groups = {}
+    const color = new THREE.Color()
     let i = 0
     let step = 10 / data.length
     for (const d of data) {
       if (!(d.shape in shapes)) console.warn('Invalid shape')
-      _points.push({
-        position: new THREE.Vector3(d.x, d.y, is3d ? d.z : (i++)*step),
-        label: d.label || JSON.stringify(d),
-        color: new THREE.Color(d.color || 'grey'),
-        shape: shape_textures[d.shape] || shape_textures.circle,
-        selected: d.selected,
-        opacity: d.opacity || 0.8,
-        data: d,
-      })
+      if (!(d.shape in groups)) groups[d.shape] = {
+        n: 0,
+        positions: [],
+        colors: [],
+      }
+      groups[d.shape].positions.push(d.x)
+      groups[d.shape].positions.push(d.y)
+      groups[d.shape].positions.push(is3d ? d.z : (i++) * step)
+
+      color.set(d.color || 'grey')
+      groups[d.shape].colors.push(color.r)
+      groups[d.shape].colors.push(color.g)
+      groups[d.shape].colors.push(color.b)
+      groups[d.shape].colors.push(d.opacity)
+
+      groups[d.shape].n++
     }
-    return _points
+
+    const geometries = []
+    const materials = []
+    i = 0
+    for (const shape in groups) {
+      const geometry = new THREE.BufferGeometry()
+      geometry.setAttribute('position', new THREE.Float32BufferAttribute(groups[shape].positions, 3))
+      geometry.setAttribute('color', new THREE.Float32BufferAttribute(groups[shape].colors, 4))
+      geometry.computeBoundingSphere()
+      geometries.push(geometry)
+      materials.push(shapeMaterials[shape])
+    }
+    const mergedGeometries = BufferGeometryUtils.mergeBufferGeometries(geometries, true)
+    return {geometry: mergedGeometries, material: materials}
   }, [data])
-  return points.map((props, ind) => <Point key={ind} is3d={is3d} {...props} />)
+  return <points geometry={geometry} material={material} />
 }
 
 export function ReactScatterPlot({ is3d, data }) {
-  const span = useMemo(() => {
+  const span = React.useMemo(() => {
     let minX, minY, minZ,
         maxX, maxY, maxZ
     for (const {x, y, z} of data) {
@@ -339,10 +326,10 @@ export default function ReactScatterBoard({
   selectValue: initSelectValue,
 }) {
   const facets = useFacets(data)
-  const [shapeKey, setShapeKey] = useState(initShapeKey)
-  const [colorKey, setColorKey] = useState(initColorKey)
-  const [selectValue, setSelectValue] = useState(initSelectValue)
-  const dataFixed = useMemo(() => data.map(_datum => {
+  const [shapeKey, setShapeKey] = React.useState(initShapeKey)
+  const [colorKey, setColorKey] = React.useState(initColorKey)
+  const [selectValue, setSelectValue] = React.useState(initSelectValue)
+  const dataFixed = React.useMemo(() => data.map(_datum => {
     const datum = { ..._datum }
     if (is3d === false) {
       datum.z = 0
