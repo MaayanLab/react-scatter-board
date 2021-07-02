@@ -11,8 +11,20 @@ export default function loadSvgSingularGeometry(src) {
     loader.load(
       src,
       data => {
-        const width = data.xml.getAttribute('width') | 0
-        const height = data.xml.getAttribute('height') | 0
+        let width = 1, height = 1
+        const viewBox = data.xml.getAttribute('viewBox')
+        if (viewBox !== null) {
+          const [_left, _top, _right, _bottom] = viewBox.split(' ')
+          const _width = (_right - _left)|0
+          if (_width > 0) width = _width
+          const _height = (_bottom - _top)|0
+          if (_height > 0) height = _height
+        } else {
+          const _width = data.xml.getAttribute('width')|0
+          if (_width > 0) width = _width
+          const _height = data.xml.getAttribute('height')|0
+          if (_height > 0) height = _height
+        }
         const paths = data.paths
         if (paths.length !== 1) throw new Error('NotSupported')
         for (let i = 0; i < paths.length; i++) {

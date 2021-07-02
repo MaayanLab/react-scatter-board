@@ -26,7 +26,19 @@ module.exports = function (_env, argv) {
             options: {
               cacheDirectory: true,
               cacheCompression: false,
-              envName: isProduction ? "production" : "development"
+              envName: isProduction ? "production" : "development",
+              presets: [
+                [
+                  "@babel/preset-env",
+                  {
+                    modules: false
+                  }
+                ],
+                "@babel/preset-react"
+              ],
+              plugins: [
+                "@babel/plugin-transform-runtime"
+              ],
             }
           }
         },
@@ -39,23 +51,26 @@ module.exports = function (_env, argv) {
         },
         {
           test: /\.(png|jpg|gif)$/i,
+          resourceQuery: /url-loader/,
           use: {
             loader: "url-loader",
             options: {
               limit: 8192,
-              name: "static/media/[name].[hash:8].[ext]"
+              name: "assets/media/[name].[hash:8].[ext]"
             }
           }
         },
         {
           test: /\.svg$/,
+          resourceQuery: /svgr/,
           use: ['@svgr/webpack'],
         },
         {
-          test: /\.json$/,
-          loader: require.resolve("file-loader"),
+          test: /\.(png|jpg|gif|svg|json)$/,
+          resourceQuery: /url-loader/,
+          loader: "file-loader",
           options: {
-            name: "static/media/[name].[hash:8].[ext]"
+            name: "assets/media/[name].[hash:8].[ext]"
           }
         }
       ]

@@ -5,6 +5,7 @@
   "main": "src/App.jsx",
   "scripts": {
     "start": "webpack serve --mode development",
+    "build:lib": "webpack -c lib.webpack.config.js",
     "build": "webpack --mode production"
   },
   "author": "Daniel J. B. Clarke <u8sand@gmail.com>",
@@ -15,6 +16,8 @@
     "@babel/preset-react": "^7.14.5",
     "@svgr/webpack": "^5.5.0",
     "babel-loader": "^8.2.2",
+    "babel-plugin-dynamic-import-webpack": "^1.1.0",
+    "babel-plugin-remove-webpack": "^1.1.0",
     "css-loader": "^5.2.6",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.3.1",

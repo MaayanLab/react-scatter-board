@@ -2,26 +2,34 @@ import React from 'react'
 import { useAsset } from 'use-asset'
 import loadSvg from './loadSvg'
 
+import circle from './circle.svg?url-loader'
+import cross from './cross.svg?url-loader'
+import diamond from './diamond.svg?url-loader'
+import square from './square.svg?url-loader'
+import star from './star.svg?url-loader'
+import triangle from './triangle.svg?url-loader'
+import wye from './wye.svg?url-loader'
+
 // shapes as react components
 export const shapes = {
-  circle: React.lazy(() => import('../shapes/circle.svg')),
-  cross: React.lazy(() => import('../shapes/cross.svg')),
-  diamond: React.lazy(() => import('../shapes/diamond.svg')),
-  square: React.lazy(() => import('../shapes/square.svg')),
-  star: React.lazy(() => import('../shapes/star.svg')),
-  triangle: React.lazy(() => import('../shapes/triangle.svg')),
-  wye: React.lazy(() => import('../shapes/wye.svg')),
+  circle: React.lazy(() => import('./circle.svg?svgr')),
+  cross: React.lazy(() => import('./cross.svg?svgr')),
+  diamond: React.lazy(() => import('./diamond.svg?svgr')),
+  square: React.lazy(() => import('./square.svg?svgr')),
+  star: React.lazy(() => import('./star.svg?svgr')),
+  triangle: React.lazy(() => import('./triangle.svg?svgr')),
+  wye: React.lazy(() => import('./wye.svg?svgr')),
 }
 
 // shapes as THREE-compatible geometries
 export function useShapeGeometry() {
   return {
-    circle: useAsset(loadSvg, 'shapes/circle.svg'),
-    cross: useAsset(loadSvg, 'shapes/cross.svg'),
-    diamond: useAsset(loadSvg, 'shapes/diamond.svg'),
-    square: useAsset(loadSvg, 'shapes/square.svg'),
-    star: useAsset(loadSvg, 'shapes/star.svg'),
-    triangle: useAsset(loadSvg, 'shapes/triangle.svg'),
-    wye: useAsset(loadSvg, 'shapes/wye.svg'),
+    circle: useAsset(loadSvg, circle),
+    cross: useAsset(loadSvg, cross),
+    diamond: useAsset(loadSvg, diamond),
+    square: useAsset(loadSvg, square),
+    star: useAsset(loadSvg, star),
+    triangle: useAsset(loadSvg, triangle),
+    wye: useAsset(loadSvg, wye),
   }
 }
