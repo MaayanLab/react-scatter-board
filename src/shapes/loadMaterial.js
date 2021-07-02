@@ -20,7 +20,7 @@ export default async function loadMaterial(src) {
       '	#include <alphatest_fragment>',
       [ /* Do alphatest (0.99) directly on texture to eliminate white outline */
         '	#include <alphatest_fragment>',
-        '	if (texture2D( alphaMap, uv ).g < 0.99) discard;',
+        '	if (texture2D( alphaMap, uv ).g < 0.9) discard;',
       ].join('\n'),
     )
   }

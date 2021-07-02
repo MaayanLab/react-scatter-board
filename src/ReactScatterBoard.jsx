@@ -381,13 +381,17 @@ export default function ReactScatterBoard({
             >{({ value, count }) => {
               const Shape = shapes[facets[shapeKey].shapeScale(value)]
               return (
-                <span>
-                  <Shape />
-                  &nbsp;
-                  {value}
-                  &nbsp;
-                  ({count})
-                </span>
+                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', }}>
+                  <Shape
+                    width={32} height={32}
+                  />
+                  <span>
+                    &nbsp;
+                    {value}
+                    &nbsp;
+                    ({count})
+                  </span>
+                </div>
               )
             }}</ReactLegend>
           ) : null}
@@ -398,13 +402,18 @@ export default function ReactScatterBoard({
             >{({ value, count }) => {
               const Shape = shapes.square
               return (
-                <span>
-                  <Shape fill={facets[colorKey].colorScale(value)} />
-                  &nbsp;
-                  {value}
-                  &nbsp;
-                  ({count})
-                </span>
+                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', }}>
+                  <Shape
+                    width={32} height={32}
+                    fill={facets[colorKey].colorScale(value)}
+                  />
+                  <span>
+                    &nbsp;
+                    {value}
+                    &nbsp;
+                    ({count})
+                  </span>
+                </div>
               )
             }}</ReactLegend>
           ) : null}
