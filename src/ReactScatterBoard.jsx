@@ -2,11 +2,13 @@ import React from 'react'
 import * as THREE from 'three'
 import { Canvas } from '@react-three/fiber'
 import {
-  PerspectiveCamera,
-  OrthographicCamera,
-  OrbitControls,
-  MapControls,
+  GizmoHelper,
+  GizmoViewport,
   Html,
+  MapControls,
+  OrbitControls,
+  OrthographicCamera,
+  PerspectiveCamera,
 } from '@react-three/drei'
 import * as d3ScaleChromatic from 'd3-scale-chromatic'
 import * as d3Scale from 'd3-scale'
@@ -148,7 +150,7 @@ export function ScatterPlot({ is3d, data }) {
 }
 
 export function ReactScatterPlot({ is3d, data }) {
-  const { centerX, centerY, centerZ } = React.useMemo(() => {
+  const center = React.useMemo(() => {
     let minX, minY, minZ,
         maxX, maxY, maxZ
     for (const {x, y, z} of data) {
@@ -171,7 +173,7 @@ export function ReactScatterPlot({ is3d, data }) {
     if (is3d === true) {
       centerZ = ((maxZ - minZ) / 2)|0
     }
-    return { centerX, centerY, centerZ }
+    return new THREE.Vector3(centerX, centerY, is3d ? centerZ : 1)
   }, [is3d, data])
   return (
     <Canvas onPointerMove={null}>
@@ -184,7 +186,7 @@ export function ReactScatterPlot({ is3d, data }) {
           <PerspectiveCamera
             makeDefault
             fov={90}
-            position={[centerX, centerY, centerZ]}
+            position={center}
             near={0.01}
             far={100}
             zoom={1}
@@ -195,12 +197,26 @@ export function ReactScatterPlot({ is3d, data }) {
             dampingFactor={0.25}
             screenSpacePanning={true}
           />
+          <GizmoHelper
+            alignment="bottom-right" // widget alignment within scene
+            margin={[80, 80]} // widget margins (X, Y)
+            onTarget={evt => center}
+          >
+            <GizmoViewport
+              axisColors={[
+                '#ff8888',
+                '#88ff88',
+                '#8888ff'
+              ]}
+              labelColor="black"
+            />
+          </GizmoHelper>
         </>
       ) : (
         <>
           <OrthographicCamera
             makeDefault
-            position={[centerX, centerY, 1]}
+            position={center}
             up={[0,0,1]}
             near={0.01}
             far={100}
