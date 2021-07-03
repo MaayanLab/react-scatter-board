@@ -99,7 +99,7 @@ export function useFacets(data) {
   })
 }
 
-export function ScatterPlot({ is3d, data }) {
+export function ScatterPlot({ is3d, data, meta }) {
   const shapeMaterials = useShapeMaterial()
   const { geometry, material } = React.useMemo(() => {
     const groups = {}
@@ -110,7 +110,8 @@ export function ScatterPlot({ is3d, data }) {
       / Math.log(8)
       / (is3d ? 15 : 1)
     )
-    for (const d of data) {
+    for (let i = 0; i < data.length; i++) {
+      const d = {...data[i], ...meta[i]}
       if (!(d.shape in shapes)) console.warn('Invalid shape')
       if (!(d.shape in groups)) groups[d.shape] = {
         n: 0,
@@ -146,7 +147,7 @@ export function ScatterPlot({ is3d, data }) {
     }
     const mergedGeometries = BufferGeometryUtils.mergeBufferGeometries(geometries, true)
     return {geometry: mergedGeometries, material: materials}
-  }, [is3d, data])
+  }, [is3d, data, meta])
   return <points geometry={geometry} material={material} />
 }
 
@@ -160,7 +161,7 @@ export function Fog({ color, near, far }) {
   return null
 }
 
-export function ReactScatterPlot({ is3d, data }) {
+export function ReactScatterPlot({ is3d, data, meta }) {
   const {
     center,
     size,
@@ -197,6 +198,7 @@ export function ReactScatterPlot({ is3d, data }) {
       <ScatterPlot
         is3d={is3d}
         data={data}
+        meta={meta}
       />
       {is3d ? (
         <>
@@ -438,25 +440,25 @@ export default function ReactScatterBoard({
   const [shapeKey, setShapeKey] = React.useState(initShapeKey)
   const [colorKey, setColorKey] = React.useState(initColorKey)
   const [selectValue, setSelectValue] = React.useState(initSelectValue)
-  const dataFixed = React.useMemo(() => data.map(_datum => {
-    const datum = { ..._datum }
+  const meta = React.useMemo(() => data.map(_datum => {
+    const datum = {}
     if (is3d === false) {
       datum.opacity = 1.0
     } else {
       datum.opacity = 0.8
     }
-    datum.label = (labelKeys || []).map(labelKey => `${labelKey}: ${datum[labelKey]}`).join('<br />')
-    if (shapeKey !== undefined && shapeKey in datum && shapeKey in facets && 'shapeScale' in facets[shapeKey]) {
-      datum.shape = facets[shapeKey].shapeScale(datum[shapeKey])
+    datum.label = (labelKeys || []).map(labelKey => `${labelKey}: ${_datum[labelKey]}`).join('<br />')
+    if (shapeKey !== undefined && shapeKey in _datum && shapeKey in facets && 'shapeScale' in facets[shapeKey]) {
+      datum.shape = facets[shapeKey].shapeScale(_datum[shapeKey])
     } else {
       datum.shape = 'circle'
     }
-    if (colorKey !== undefined && colorKey in datum && colorKey in facets && 'colorScale' in facets[colorKey]) {
-      datum.color = facets[colorKey].colorScale(datum[colorKey])
+    if (colorKey !== undefined && colorKey in _datum && colorKey in facets && 'colorScale' in facets[colorKey]) {
+      datum.color = facets[colorKey].colorScale(_datum[colorKey])
     } else {
       datum.color = '#002288'
     }
-    if (selectValue !== undefined && datum[selectValue.key] === selectValue.value) {
+    if (selectValue !== undefined && _datum[selectValue.key] === selectValue.value) {
       datum.size = 2.5
     } else {
       datum.size = 1
@@ -471,7 +473,8 @@ export default function ReactScatterBoard({
     }}>
       <ReactScatterPlot
         is3d={is3d}
-        data={dataFixed}
+        data={data}
+        meta={meta}
       />
       <div style={{
         position: 'absolute',
