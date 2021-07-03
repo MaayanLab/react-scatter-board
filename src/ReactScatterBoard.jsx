@@ -143,7 +143,7 @@ export function ScatterPlot({ is3d, data }) {
     }
     const mergedGeometries = BufferGeometryUtils.mergeBufferGeometries(geometries, true)
     return {geometry: mergedGeometries, material: materials}
-  }, [data])
+  }, [is3d, data])
   return <points geometry={geometry} material={material} />
 }
 
@@ -319,13 +319,51 @@ export function ReactGroupSelect({ label, facets, current, onChange }) {
   )
 }
 
+function ReactSwitch({
+  on, off, current, onChange
+}) {
+  return (
+    <div
+      style={{
+        alignSelf: 'center',
+        display: 'flex',
+        justifyContent: 'center',
+        borderRadius: '4px',
+        border: 'solid 1px grey',
+        pointerEvents: 'auto',
+        cursor: 'pointer',
+      }}
+      onClick={evt => onChange(!current)}
+    >
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '40px',
+        height: '40px',
+        backgroundColor: current ? 'white' : '#0088aa'
+      }}>{off}</div>
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: '40px',
+        height: '40px',
+        backgroundColor: current ? '#0088aa' : 'white'
+      }}>{on}</div>
+    </div>
+  )
+}
+
 export default function ReactScatterBoard({
-  data, is3d,
+  data, is3d: init3d, toggle3d,
   shapeKey: initShapeKey, colorKey: initColorKey,
   labelKeys, searchKeys,
   selectValue: initSelectValue,
 }) {
+  if (toggle3d === undefined) toggle3d = init3d
   const facets = useFacets(data)
+  const [is3d, setIs3d] = React.useState(init3d)
   const [shapeKey, setShapeKey] = React.useState(initShapeKey)
   const [colorKey, setColorKey] = React.useState(initColorKey)
   const [selectValue, setSelectValue] = React.useState(initSelectValue)
@@ -353,7 +391,7 @@ export default function ReactScatterBoard({
       datum.size = 1
     }
     return datum
-  }), [data, facets, shapeKey, colorKey, selectValue])
+  }), [data, is3d, facets, shapeKey, colorKey, selectValue])
   return (
     <div style={{
       flex: '1 1 auto',
@@ -437,6 +475,14 @@ export default function ReactScatterBoard({
               facets={searchKeys.reduce((F, searchKey) => ({...F, [searchKey]: facets[searchKey] }), {})}
               current={selectValue}
               onChange={(evt) => setSelectValue(evt)}
+            />
+          ) : null}
+          {toggle3d ? (
+            <ReactSwitch
+              off="2D"
+              on="3D"
+              current={is3d}
+              onChange={(value) => setIs3d(value)}
             />
           ) : null}
         </div>
