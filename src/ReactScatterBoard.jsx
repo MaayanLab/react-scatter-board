@@ -1,7 +1,13 @@
 import React from 'react'
 import * as THREE from 'three'
 import { Canvas } from '@react-three/fiber'
-import { MapControls, OrbitControls, Html } from '@react-three/drei'
+import {
+  PerspectiveCamera,
+  OrthographicCamera,
+  OrbitControls,
+  MapControls,
+  Html,
+} from '@react-three/drei'
 import * as d3ScaleChromatic from 'd3-scale-chromatic'
 import * as d3Scale from 'd3-scale'
 import { shapes, useShapeMaterial } from './shapes'
@@ -95,8 +101,12 @@ export function ScatterPlot({ is3d, data }) {
   const { geometry, material } = React.useMemo(() => {
     const groups = {}
     const color = new THREE.Color()
-    let i = 0
-    let step = 10 / data.length
+    const scale = (
+      200
+      / Math.log(data.length)
+      / Math.log(8)
+      / (is3d ? 25 : 1)
+    )
     for (const d of data) {
       if (!(d.shape in shapes)) console.warn('Invalid shape')
       if (!(d.shape in groups)) groups[d.shape] = {
@@ -107,22 +117,21 @@ export function ScatterPlot({ is3d, data }) {
       }
       groups[d.shape].positions.push(d.x)
       groups[d.shape].positions.push(d.y)
-      groups[d.shape].positions.push(is3d ? d.z : (i++) * step)
+      groups[d.shape].positions.push(is3d ? d.z : 0)
 
-      color.set(d.color || 'grey')
+      color.set(d.color || '#002288')
       groups[d.shape].colors.push(color.r)
       groups[d.shape].colors.push(color.g)
       groups[d.shape].colors.push(color.b)
       groups[d.shape].colors.push(d.opacity)
 
-      groups[d.shape].sizes.push(d.size || 1)
+      groups[d.shape].sizes.push(scale * (d.size || 1))
 
       groups[d.shape].n++
     }
 
     const geometries = []
     const materials = []
-    i = 0
     for (const shape in groups) {
       const geometry = new THREE.BufferGeometry()
       geometry.setAttribute('position', new THREE.Float32BufferAttribute(groups[shape].positions, 3))
@@ -139,7 +148,7 @@ export function ScatterPlot({ is3d, data }) {
 }
 
 export function ReactScatterPlot({ is3d, data }) {
-  const span = React.useMemo(() => {
+  const { centerX, centerY, centerZ } = React.useMemo(() => {
     let minX, minY, minZ,
         maxX, maxY, maxZ
     for (const {x, y, z} of data) {
@@ -152,7 +161,7 @@ export function ReactScatterPlot({ is3d, data }) {
         maxZ = maxZ === undefined ? z : Math.max(maxZ, z)
       }
     }
-    let spanX, spanY, spanZ, maxSpan
+    let spanX, spanY, spanZ
     spanX = maxX - minX
     spanY = maxY - minY
     if (is3d) spanZ = maxZ - minZ
@@ -160,68 +169,55 @@ export function ReactScatterPlot({ is3d, data }) {
     centerX = ((maxX - minX) / 2)|0
     centerY = ((maxY - minY) / 2)|0
     if (is3d === true) {
-      maxSpan = Math.max(Math.max(spanX, spanY), spanZ)
       centerZ = ((maxZ - minZ) / 2)|0
-    } else {
-      maxSpan = Math.max(spanX, spanY)
     }
-    return {
-      minX, minY, minZ,
-      maxX, maxY, maxZ,
-      centerX, centerY, centerZ,
-      maxSpan, spanX, spanY, spanZ,
-    }
-  }, [data])
-  if (is3d === true) {
-    return (
-      <Canvas dpr={[1, 2]}
-        gl={{
-          logarithmicDepthBuffer: true,
-          alpha: true
-        }}
-        camera={{
-          position: [span.centerX, span.centerY, span.centerZ],
-          zoom: 100 / Math.max(200, span.maxSpan),
-          near: 1,
-        }}
-        onPointerMove={null}
-      >
-        <ScatterPlot
-          is3d={is3d}
-          data={data}
-        />
-        <OrbitControls
-          enableZoom={true}
-          enableDamping={true}
-          dampingFactor={0.25}
-          screenSpacePanning={true}
-        />
-      </Canvas>
-    )
-  } else {
-    return (
-      <Canvas
-        orthographic
-        camera={{
-          position: [span.centerX, span.centerY, span.maxSpan],
-          up: [0, 0, 1],
-          zoom: 500 / span.maxSpan,
-        }}
-        onPointerMove={null}
-      >
-        <ScatterPlot
-          is3d={is3d}
-          data={data}
-        />
-        <MapControls
-          enableZoom={true}
-          enableDamping={true}
-          dampingFactor={0.25}
-          screenSpacePanning={true}
-        />
-      </Canvas>
-    )
-  }
+    return { centerX, centerY, centerZ }
+  }, [is3d, data])
+  return (
+    <Canvas onPointerMove={null}>
+      <ScatterPlot
+        is3d={is3d}
+        data={data}
+      />
+      {is3d ? (
+        <>
+          <PerspectiveCamera
+            makeDefault
+            fov={90}
+            position={[centerX, centerY, centerZ]}
+            near={0.01}
+            far={100}
+            zoom={1}
+          />
+          <OrbitControls
+            enableZoom={true}
+            enableDamping={true}
+            dampingFactor={0.25}
+            screenSpacePanning={true}
+          />
+        </>
+      ) : (
+        <>
+          <OrthographicCamera
+            makeDefault
+            position={[centerX, centerY, 1]}
+            up={[0,0,1]}
+            near={0.01}
+            far={100}
+            zoom={25}
+          />
+          <MapControls
+            enableZoom={true}
+            enableDamping={true}
+            dampingFactor={0.25}
+            screenSpacePanning={true}
+            maxPolarAngle={0}
+            minPolarAngle={0}
+          />
+        </>
+      )}
+    </Canvas>
+  )
 }
 
 export function ReactLegend({ label, facet, children }) {
@@ -336,8 +332,7 @@ export default function ReactScatterBoard({
   const dataFixed = React.useMemo(() => data.map(_datum => {
     const datum = { ..._datum }
     if (is3d === false) {
-      datum.z = 0
-      datum.opacity = 1
+      datum.opacity = 1.0
     } else {
       datum.opacity = 0.8
     }
@@ -350,10 +345,10 @@ export default function ReactScatterBoard({
     if (colorKey !== undefined && colorKey in datum && colorKey in facets && 'colorScale' in facets[colorKey]) {
       datum.color = facets[colorKey].colorScale(datum[colorKey])
     } else {
-      datum.color = 'black'
+      datum.color = '#002288'
     }
     if (selectValue !== undefined && datum[selectValue.key] === selectValue.value) {
-      datum.size = 5
+      datum.size = 2.5
     } else {
       datum.size = 1
     }
