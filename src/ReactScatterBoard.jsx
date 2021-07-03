@@ -1,6 +1,6 @@
 import React from 'react'
 import * as THREE from 'three'
-import { Canvas } from '@react-three/fiber'
+import { Canvas, useThree } from '@react-three/fiber'
 import {
   GizmoHelper,
   GizmoViewport,
@@ -98,6 +98,7 @@ export function useFacets(data) {
     return facets
   })
 }
+
 export function ScatterPlot({ is3d, data }) {
   const shapeMaterials = useShapeMaterial()
   const { geometry, material } = React.useMemo(() => {
@@ -149,8 +150,21 @@ export function ScatterPlot({ is3d, data }) {
   return <points geometry={geometry} material={material} />
 }
 
+export function Fog({ color, near, far }) {
+  const { scene } = useThree()
+  React.useEffect(() => {
+    if (!scene) return
+    scene.fog = new THREE.Fog(color, near, far)
+    return () => scene.fog = null
+  }, [scene, color, near, far])
+  return null
+}
+
 export function ReactScatterPlot({ is3d, data }) {
-  const center = React.useMemo(() => {
+  const {
+    center,
+    size,
+  } = React.useMemo(() => {
     let minX, minY, minZ,
         maxX, maxY, maxZ
     for (const {x, y, z} of data) {
@@ -173,7 +187,10 @@ export function ReactScatterPlot({ is3d, data }) {
     if (is3d === true) {
       centerZ = ((maxZ - minZ) / 2)|0
     }
-    return new THREE.Vector3(centerX, centerY, is3d ? centerZ : 1)
+    return {
+      center: new THREE.Vector3(centerX, centerY, is3d ? centerZ : 1),
+      size: new THREE.Vector3(spanX, spanY, is3d ? spanZ : 1),
+    }
   }, [is3d, data])
   return (
     <Canvas onPointerMove={null}>
@@ -183,6 +200,11 @@ export function ReactScatterPlot({ is3d, data }) {
       />
       {is3d ? (
         <>
+          <Fog
+            color="#ffffff"
+            near={0}
+            far={2 * Math.max(size.x, size.y, size.z)}
+          />
           <PerspectiveCamera
             makeDefault
             fov={90}
