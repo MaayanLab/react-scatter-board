@@ -232,7 +232,8 @@ export function ReactLegend({ label, facet, children }) {
         pointerEvents: 'auto',
         display: 'flex',
         flexDirection: 'column',
-        overflow: 'auto'
+        overflow: 'auto',
+        opacity: 0.8,
       }}
     >
       <b>{label}</b>
@@ -250,10 +251,24 @@ export function ReactSelect({ label, facets, current, onChange }) {
         marginBottom: '10px',
         color: 'black',
         pointerEvents: 'auto',
+        opacity: 0.8,
       }}
     >
       <b>{label}</b>
       <Select
+        menuPortalTarget={document.body}
+        styles={{
+          menu: styles => ({
+            ...styles,
+            opacity: 1,
+            zIndex: 2,
+          }),
+          menuPortal: styles => ({
+            ...styles,
+            opacity: 1,
+            zIndex: 2,
+          }),
+        }}
         classNamePrefix="select"
         value={{ value: current, label: current }}
         onChange={evt => {
@@ -270,11 +285,14 @@ export function ReactSelect({ label, facets, current, onChange }) {
 
 function formatGroupLabel(data) {
   return (
-    <div style={{
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-    }}>
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        opacity: 0.8,
+      }}
+    >
       <span>{data.label}</span>
       <span
         style={{
@@ -293,10 +311,24 @@ export function ReactGroupSelect({ label, facets, current, onChange }) {
         marginBottom: '10px',
         color: 'black',
         pointerEvents: 'auto',
+        opacity: 0.8,
       }}
     >
       <b>{label}</b>
       <Select
+        menuPortalTarget={document.body}
+        styles={{
+          menu: styles => ({
+            ...styles,
+            opacity: 1,
+            zIndex: 2,
+          }),
+          menuPortal: styles => ({
+            ...styles,
+            opacity: 1,
+            zIndex: 2,
+          }),
+        }}
         classNamePrefix="select"
         value={current}
         onChange={evt => {
@@ -332,6 +364,7 @@ function ReactSwitch({
         border: 'solid 1px grey',
         pointerEvents: 'auto',
         cursor: 'pointer',
+        opacity: 0.8,
       }}
       onClick={evt => onChange(!current)}
     >
