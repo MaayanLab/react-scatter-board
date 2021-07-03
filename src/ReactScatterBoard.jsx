@@ -108,7 +108,7 @@ export function ScatterPlot({ is3d, data }) {
       200
       / Math.log(data.length)
       / Math.log(8)
-      / (is3d ? 25 : 1)
+      / (is3d ? 15 : 1)
     )
     for (const d of data) {
       if (!(d.shape in shapes)) console.warn('Invalid shape')
@@ -210,7 +210,7 @@ export function ReactScatterPlot({ is3d, data }) {
             fov={90}
             position={center}
             near={0.01}
-            far={100}
+            far={10 * Math.max(size.x, size.y, size.z)}
             zoom={1}
           />
           <OrbitControls
