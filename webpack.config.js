@@ -10,7 +10,7 @@ module.exports = function (_env, argv) {
 
   return {
     devtool: isDevelopment && "cheap-module-source-map",
-    entry: "./src/index.jsx",
+    entry: "./src/demo.jsx",
     output: {
       path: path.resolve(__dirname, "dist"),
       filename: "assets/js/[name].[contenthash:8].js",
@@ -49,17 +49,17 @@ module.exports = function (_env, argv) {
             "css-loader"
           ]
         },
-        {
-          test: /\.(png|jpg|gif)$/i,
-          resourceQuery: /url-loader/,
-          use: {
-            loader: "url-loader",
-            options: {
-              limit: 8192,
-              name: "assets/media/[name].[hash:8].[ext]"
-            }
-          }
-        },
+        // {
+        //   test: /\.(png|jpg|gif)$/i,
+        //   resourceQuery: /url-loader/,
+        //   use: {
+        //     loader: "url-loader",
+        //     options: {
+        //       limit: 8192,
+        //       name: "assets/media/[name].[hash:8].[ext]"
+        //     }
+        //   }
+        // },
         {
           test: /\.svg$/,
           resourceQuery: /svgr/,

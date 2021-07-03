@@ -1,5 +1,4 @@
 import React from 'react'
-import { useAsset } from 'use-asset'
 
 // shapes as react components
 export const shapes = {
@@ -12,8 +11,9 @@ export const shapes = {
   wye: React.lazy(() => import('./wye.svg?svgr')),
 }
 
-// shapes as THREE-compatible materials
-import loadMaterial from './loadMaterial'
+import { useAsset } from 'use-asset'
+import loadMaterial from '../loaders/loadMaterial'
+
 export function useShapeMaterial() {
   return {
     circle: useAsset(loadMaterial, require('./circle.png?url-loader').default),
