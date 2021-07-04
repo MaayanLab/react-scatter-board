@@ -17,7 +17,7 @@ export default function ReactScatterBoard({
 }) {
   if (toggle3d === undefined) toggle3d = init3d
   const facets = useFacets(data)
-  const [is3d, setIs3d] = React.useState(init3d)
+  const [is3d, setIs3d] = React.useState(init3d === true)
   const [shapeKey, setShapeKey] = React.useState(initShapeKey)
   const [colorKey, setColorKey] = React.useState(initColorKey)
   const [selectValue, setSelectValue] = React.useState(initSelectValue)
@@ -127,7 +127,13 @@ export default function ReactScatterBoard({
           {searchKeys ? (
             <ReactGroupSelect
               label="Search..."
-              facets={searchKeys.reduce((F, searchKey) => ({...F, [searchKey]: facets[searchKey] }), {})}
+              facets={searchKeys.reduce((F, searchKey) => {
+                if (facets[searchKey] !== undefined) {
+                  return {...F, [searchKey]: facets[searchKey] }
+                } else {
+                  return F
+                }
+              }, {})}
               current={selectValue}
               onChange={(evt) => setSelectValue(evt)}
             />

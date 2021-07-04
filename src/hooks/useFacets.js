@@ -82,5 +82,5 @@ export default function useFacets(data) {
       }
     }
     return facets
-  })
+  }, [data])
 }

@@ -10,7 +10,7 @@ function App() {
   }, [])
   return (
     <React.Suspense fallback={null}>
-      <ReactScatterBoard is3d={true} data={data} />
+      <ReactScatterBoard toggle3d data={data} />
     </React.Suspense>
   )
 }

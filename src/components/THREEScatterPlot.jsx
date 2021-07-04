@@ -5,6 +5,7 @@ import { BufferGeometryUtils } from 'three/examples/jsm/utils/BufferGeometryUtil
 
 export default function THREEScatterPlot({ is3d, data, meta }) {
   const shapeMaterials = useShapeMaterial()
+  if (data.length === 0 || meta.length === 0) return null
   const { geometry, material } = React.useMemo(() => {
     const groups = {}
     const color = new THREE.Color()
