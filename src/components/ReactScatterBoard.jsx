@@ -28,7 +28,7 @@ export default function ReactScatterBoard({
     } else {
       datum.opacity = 0.8
     }
-    datum.label = (labelKeys || []).map(labelKey => `${labelKey}: ${_datum[labelKey]}`).join('<br />')
+    datum.label = (labelKeys || []).map(labelKey => `${labelKey}: ${_datum[labelKey]}`).join('\n')
     if (shapeKey !== undefined && shapeKey in _datum && shapeKey in facets && 'shapeScale' in facets[shapeKey]) {
       datum.shape = facets[shapeKey].shapeScale(_datum[shapeKey])
     } else {

@@ -12,15 +12,22 @@ import useDataDimensions from '../hooks/useDataDimensions'
 
 const THREEFog = React.lazy(() => import('./THREEFog'))
 const THREEScatterPlot = React.lazy(() => import('./THREEScatterPlot'))
+const THREEScatterPlotTooltip = React.lazy(() => import('./THREEScatterPlotTooltip'))
 
 export default function ReactScatterPlot({ is3d, data, meta }) {
   const { center, size } = useDataDimensions({ is3d, data })
   return (
-    <Canvas onPointerMove={null}>
+    <Canvas>
       <THREEScatterPlot
+        name="three-scatter-points"
         is3d={is3d}
         data={data}
         meta={meta}
+      />
+      <THREEScatterPlotTooltip
+        name="three-closest-point-controller"
+        points="three-scatter-points"
+        is3d={is3d}
       />
       {is3d ? (
         <>

@@ -3,7 +3,7 @@ import * as THREE from 'three'
 import { shapes, useShapeMaterial } from '../shapes'
 import { BufferGeometryUtils } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 
-export default function THREEScatterPlot({ is3d, data, meta }) {
+export default function THREEScatterPlot({ name, is3d, data, meta }) {
   const shapeMaterials = useShapeMaterial()
   if (data.length === 0 || meta.length === 0) return null
   const { geometry, material } = React.useMemo(() => {
@@ -15,15 +15,18 @@ export default function THREEScatterPlot({ is3d, data, meta }) {
       / Math.log(8)
       / (is3d ? 15 : 1)
     )
-    for (let i = 0;i < data.length;i++) {
+    for (let i = 0; i < data.length; i++) {
       const d = { ...data[i], ...meta[i] }
       if (!(d.shape in shapes)) console.warn('Invalid shape')
       if (!(d.shape in groups)) groups[d.shape] = {
         n: 0,
+        labels: [],
         positions: [],
         colors: [],
         sizes: [],
       }
+      groups[d.shape].labels.push(d.label)
+      
       groups[d.shape].positions.push(d.x)
       groups[d.shape].positions.push(d.y)
       groups[d.shape].positions.push(is3d ? d.z : 0)
@@ -41,8 +44,10 @@ export default function THREEScatterPlot({ is3d, data, meta }) {
 
     const geometries = []
     const materials = []
+    const labels = []
     for (const shape in groups) {
       const geometry = new THREE.BufferGeometry()
+      labels.push(...groups[shape].labels)
       geometry.setAttribute('position', new THREE.Float32BufferAttribute(groups[shape].positions, 3))
       geometry.setAttribute('color', new THREE.Float32BufferAttribute(groups[shape].colors, 4))
       geometry.setAttribute('size', new THREE.Float32BufferAttribute(groups[shape].sizes, 1))
@@ -51,7 +56,14 @@ export default function THREEScatterPlot({ is3d, data, meta }) {
       materials.push(shapeMaterials[shape])
     }
     const mergedGeometries = BufferGeometryUtils.mergeBufferGeometries(geometries, true)
+    mergedGeometries.userData.labels = labels
     return { geometry: mergedGeometries, material: materials }
   }, [is3d, data, meta])
-  return <points geometry={geometry} material={material} />
+  return (
+    <points
+      name={name}
+      geometry={geometry}
+      material={material}
+    />
+  )
 }
