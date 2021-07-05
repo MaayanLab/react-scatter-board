@@ -1,6 +1,7 @@
 import React from 'react'
 import * as d3ScaleChromatic from 'd3-scale-chromatic'
 import * as d3Scale from 'd3-scale'
+import objectSort from '../utils/objectSort'
 import { shapes } from '../shapes'
 
 function validColor(c) {
@@ -24,6 +25,7 @@ export default function useFacets(data) {
     for (const key in facets) {
       const facet = facets[key]
       if (facet.type === 'string') {
+        facet.values = objectSort(facet.values, (a, b) => b - a)
         if (Object.keys(facet.values).filter(v => !validColor(v)).length === 0) {
           // if colors are all interpretable as valid colors, passthrough
           facet.colorScale = color => color
@@ -53,6 +55,7 @@ export default function useFacets(data) {
       }
       if (facet.type === 'bigint' || facet.type === 'number') {
         if (Object.keys(facet.values).length <= d3ScaleChromatic.schemeCategory10.length) {
+          facet.values = objectSort(facet.values, (_a, _b, a, b) => (b*1.0) - (a*1.0))
           // if there are enough colors for the categories, map them to the chromatic scale
           facet.colorScale = d3Scale.scaleOrdinal()
             .domain(Object.keys(facet.values))
@@ -69,6 +72,7 @@ export default function useFacets(data) {
             .range(['red', 'blue'])
         }
         if (Object.keys(facet.values).length <= Object.keys(shapes).length) {
+          facet.values = objectSort(facet.values, (_a, _b, a, b) => (b * 1.0) - (a * 1.0))
           // if there are enough shapes for the categories, map them to the shapes
           facet.shapeScale = d3Scale.scaleOrdinal()
             .domain(Object.keys(facet.values))

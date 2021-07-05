@@ -1,10 +1,7 @@
 export default function objectFilter(obj, cb) {
-  return Object.keys(obj)
-    .filter(k => cb(obj[k], k))
-    .reduce((agg, k) =>
-      cb(obj[k], k)
-        ? {...agg, [k]: obj[k]}
-        : agg,
-      {}
-    )
+  const newObj = {}
+  for (const k of Object.keys(obj)) {
+    if (cb(obj[k], k)) newObj[k] = obj[k]
+  }
+  return newObj
 }
