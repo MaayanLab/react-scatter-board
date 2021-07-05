@@ -32,6 +32,14 @@ export default function useFacets(data) {
           facet.colorScale = d3Scale.scaleOrdinal()
             .domain(Object.keys(facet.values))
             .range(d3ScaleChromatic.schemeCategory10)
+        } else if (Object.keys(facet.values).length <= data.length*0.1) {
+          const N = Object.keys(facet.values).length
+          facet.colorScale = d3Scale.scaleOrdinal()
+            .domain(Object.keys(facet.values))
+            .range(
+              Object.keys(facet.values)
+                .map((_, ind) => d3ScaleChromatic.interpolateSinebow(ind/(N-1)))
+            )
         }
         if (Object.keys(facet.values).filter(k => shapes[k] === undefined).length === 0) {
           // if the shapes are interpretable as valid shapes, passthrough
