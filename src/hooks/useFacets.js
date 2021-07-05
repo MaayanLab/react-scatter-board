@@ -43,17 +43,17 @@ export default function useFacets(data) {
             .range(Object.keys(shapes))
         }
       }
-      if (facet.type === 'bigint') {
+      if (facet.type === 'bigint' || facet.type === 'number') {
         if (Object.keys(facet.values).length <= d3ScaleChromatic.schemeCategory10.length) {
           // if there are enough colors for the categories, map them to the chromatic scale
           facet.colorScale = d3Scale.scaleOrdinal()
             .domain(Object.keys(facet.values))
             .range(d3ScaleChromatic.schemeCategory10)
         } else {
-          // not enough categorical colors -- treat integer as linearly interpolated
+          // not enough categorical colors -- treat number as linearly interpolated
           const domain = [
-            Object.keys(facet.values).reduce((m, v) => Math.min(m, v | 0)),
-            Object.keys(facet.values).reduce((m, v) => Math.max(m, v | 0)),
+            Object.keys(facet.values).reduce((m, v) => Math.min(m, v * 1.0)),
+            Object.keys(facet.values).reduce((m, v) => Math.max(m, v * 1.0)),
           ]
           facet.colorScale = d3Scale.scaleLinear()
             .domain(domain)
@@ -65,16 +65,6 @@ export default function useFacets(data) {
             .domain(Object.keys(facet.values))
             .range(Object.keys(shapes))
         }
-      }
-      if (facet.type === 'number') {
-        const domain = [
-          Object.keys(facet.values).reduce((m, v) => Math.min(m, v * 1.0)),
-          Object.keys(facet.values).reduce((m, v) => Math.max(m, v * 1.0)),
-        ]
-        // linearly interpolate colors on numeric columns
-        facet.colorScale = d3Scale.scaleLinear()
-          .domain(domain)
-          .range(['red', 'blue'])
       }
     }
     return facets
