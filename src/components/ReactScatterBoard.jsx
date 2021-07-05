@@ -21,6 +21,10 @@ export default function ReactScatterBoard({
   if (toggle3d === undefined) toggle3d = init3d
   const facets = useFacets(data)
   const [is3d, setIs3d] = React.useState(init3d === true)
+  React.useEffect(() => {
+    if (init3d === undefined) setIs3d(false)
+    else setIs3d(init3d)
+  }, [init3d])
   const [shapeKey, setShapeKey] = React.useState(initShapeKey)
   const shapeFacets = React.useMemo(() =>
     objectFilter(facets, (facet, _k) => facet.shapeScale !== undefined),
