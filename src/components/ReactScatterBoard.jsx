@@ -1,4 +1,5 @@
 import React from 'react'
+import Suspense from './Suspense'
 import { shapes } from '../shapes'
 
 import useFacets from '../hooks/useFacets'
@@ -13,15 +14,45 @@ const ReactGroupSelect = React.lazy(() => import('./ReactGroupSelect'))
 export default function ReactScatterBoard({
   data, is3d: init3d, toggle3d,
   shapeKey: initShapeKey, colorKey: initColorKey,
-  labelKeys, searchKeys,
+  labelKeys: initLabelKeys, searchKeys: initSearchKeys,
   selectValue: initSelectValue,
 }) {
   if (toggle3d === undefined) toggle3d = init3d
   const facets = useFacets(data)
   const [is3d, setIs3d] = React.useState(init3d === true)
   const [shapeKey, setShapeKey] = React.useState(initShapeKey)
+  const shapeFacets = React.useMemo(() =>
+    objectFilter(facets, (facet, _k) => facet.shapeScale !== undefined),
+    [facets]
+  )
   const [colorKey, setColorKey] = React.useState(initColorKey)
+  const colorFacets = React.useMemo(() =>
+    objectFilter(facets, (facet, _k) => facet.colorScale !== undefined),
+    [facets]
+  )
+  const [labelKeys, setLabelKeys] = React.useState([])
+  React.useEffect(() => {
+    if (initLabelKeys === undefined) setLabelKeys(Object.keys(facets))
+    else setLabelKeys(initLabelKeys)
+  }, [initLabelKeys, facets])
   const [selectValue, setSelectValue] = React.useState(initSelectValue)
+  const [searchKeys, setSearchKeys] = React.useState([])
+  React.useEffect(() => {
+    if (initSearchKeys === undefined) setSearchKeys(
+      Object.keys(facets)
+        .filter(facet => Object.keys(facets[facet].values).length <= 10)
+    )
+    else setSearchKeys(initSearchKeys)
+  }, [initSearchKeys, facets])
+  const searchFacets = React.useMemo(() =>
+    (searchKeys || []).reduce(
+      (F, searchKey) =>
+        (facets[searchKey] !== undefined)
+          ? { ...F, [searchKey]: facets[searchKey] }
+          : F
+      , {}),
+    [facets, searchKeys]
+  )
   const meta = React.useMemo(() => data.map(_datum => {
     const datum = {}
     if (is3d === false) {
@@ -46,27 +77,21 @@ export default function ReactScatterBoard({
       datum.size = 1
     }
     return datum
-  }), [data, is3d, facets, shapeKey, colorKey, selectValue])
+  }), [data, is3d, facets, shapeKey, colorKey, selectValue, labelKeys])
 
-  const colorFacets = objectFilter(facets, (facet, _k) => facet.colorScale !== undefined)
-  const shapeFacets = objectFilter(facets, (facet, _k) => facet.shapeScale !== undefined)
-  const searchFacets = (searchKeys||[]).reduce(
-    (F, searchKey) =>
-      (facets[searchKey] !== undefined)
-        ? { ...F, [searchKey]: facets[searchKey] }
-        : F
-    , {})
   return (
     <div style={{
       flex: '1 1 auto',
       position: 'relative',
       overflow: 'hidden',
     }}>
-      <ReactScatterPlot
-        is3d={is3d}
-        data={data}
-        meta={meta}
-      />
+      <Suspense>
+        <ReactScatterPlot
+          is3d={is3d}
+          data={data}
+          meta={meta}
+        />
+      </Suspense>
       <div style={{
         position: 'absolute',
         left: 0, top: 0, zIndex: 1,
@@ -77,79 +102,85 @@ export default function ReactScatterBoard({
       }}>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           {shapeKey !== undefined && shapeKey in shapeFacets ? (
-            <ReactLegend
-              label="Shape"
-              facet={shapeFacets[shapeKey]}
-            >{({ value, count }) => {
-              const Shape = shapes[shapeFacets[shapeKey].shapeScale(value)]
-              return (
-                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', }}>
-                  <Shape
-                    width={32} height={32}
-                  />
-                  <span>
-                    &nbsp;
-                    {value}
-                    &nbsp;
-                    ({count})
-                  </span>
-                </div>
-              )
-            }}</ReactLegend>
+            <Suspense>
+              <ReactLegend
+                label="Shape"
+                facet={shapeFacets[shapeKey]}
+              >{({ value, count }) => {
+                const Shape = shapes[shapeFacets[shapeKey].shapeScale(value)]
+                return (
+                  <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', }}>
+                    <Shape
+                      width={32} height={32}
+                    />
+                    <span>
+                      &nbsp;
+                      {value}
+                      &nbsp;
+                      ({count})
+                    </span>
+                  </div>
+                )
+              }}</ReactLegend>
+            </Suspense>
           ) : null}
           {colorKey !== undefined && colorKey in colorFacets ? (
-            <ReactLegend
-              label="Color"
-              facet={colorFacets[colorKey]}
-            >{({ value, count }) => {
-              const Shape = shapes.square
-              return (
-                <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', }}>
-                  <Shape
-                    width={32} height={32}
-                    fill={colorFacets[colorKey].colorScale(value)}
-                  />
-                  <span>
-                    &nbsp;
-                    {value}
-                    &nbsp;
-                    ({count})
-                  </span>
-                </div>
-              )
-            }}</ReactLegend>
+            <Suspense>
+              <ReactLegend
+                label="Color"
+                facet={colorFacets[colorKey]}
+              >{({ value, count }) => {
+                const Shape = shapes.square
+                return (
+                  <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', }}>
+                    <Shape
+                      width={32} height={32}
+                      fill={colorFacets[colorKey].colorScale(value)}
+                    />
+                    <span>
+                      &nbsp;
+                      {value}
+                      &nbsp;
+                      ({count})
+                    </span>
+                  </div>
+                )
+              }}</ReactLegend>
+            </Suspense>
           ) : null}
         </div>
         <div style={{ flex: '1 1 auto' }}>&nbsp;</div>
         <div style={{ display: 'flex', flexDirection: 'column', overflow: 'auto' }}>
-          <ReactSelect
-            label="Shape By..."
-            facets={shapeFacets}
-            current={shapeKey in shapeFacets ? shapeKey : undefined}
-            onChange={({ value }) => setShapeKey(value)}
-          />
-          <ReactSelect
-            label="Color By..."
-            facets={colorFacets}
-            current={colorKey in colorFacets ? colorKey : undefined}
-            onChange={({ value }) => setColorKey(value)}
-          />
-          {searchKeys ? (
-            <ReactGroupSelect
-              label="Search..."
-              facets={searchFacets}
-              current={selectValue}
-              onChange={(evt) => setSelectValue(evt)}
+          <Suspense>
+            <ReactSelect
+              label="Shape By..."
+              facets={shapeFacets}
+              current={shapeKey in shapeFacets ? shapeKey : undefined}
+              onChange={({ value }) => setShapeKey(value)}
             />
-          ) : null}
-          {toggle3d ? (
-            <ReactSwitch
-              off="2D"
-              on="3D"
-              current={is3d}
-              onChange={(value) => setIs3d(value)}
+            <ReactSelect
+              label="Color By..."
+              facets={colorFacets}
+              current={colorKey in colorFacets ? colorKey : undefined}
+              onChange={({ value }) => setColorKey(value)}
             />
-          ) : null}
+            {searchKeys ? (
+              <ReactGroupSelect
+                label="Search..."
+                facets={searchFacets}
+                current={selectValue}
+                onChange={(evt) => setSelectValue(evt)}
+              />
+            ) : null}
+            {toggle3d ? (
+              <ReactSwitch
+                off="2D"
+                on="3D"
+                current={is3d}
+                onChange={(value) => setIs3d(value)}
+              />
+            ) : null}
+          </Suspense>
         </div>
       </div>
     </div>

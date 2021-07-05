@@ -51,6 +51,7 @@ export default function THREEScatterPlotTooltip({ is3d, name, points }) {
       name={name}
       zIndexRange={[5,0]}
       style={{
+        display: 'none',
         backgroundColor: 'lightgrey',
         borderRadius: 5,
         opacity: 0.9,
