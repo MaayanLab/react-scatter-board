@@ -72,7 +72,7 @@ export default function ReactScatterBoard({
     } else {
       datum.color = '#002288'
     }
-    if (selectValue !== undefined && _datum[selectValue.key] === selectValue.value) {
+    if (selectValue !== undefined && _datum[selectValue.key] == selectValue.value) {
       datum.size = 2.5
     } else {
       datum.size = 1
