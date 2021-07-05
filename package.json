@@ -31,7 +31,7 @@
     "webpack-dev-server": "^3.11.2"
   },
   "dependencies": {
-    "@react-three/drei": "^6.1.2",
+    "@react-three/drei": "^6.2.2",
     "@react-three/fiber": "^7.0.1",
     "d3-scale": "^4.0.0",
     "d3-scale-chromatic": "^3.0.0",

@@ -49,17 +49,6 @@ module.exports = function (_env, argv) {
             "css-loader"
           ]
         },
-        // {
-        //   test: /\.(png|jpg|gif)$/i,
-        //   resourceQuery: /url-loader/,
-        //   use: {
-        //     loader: "url-loader",
-        //     options: {
-        //       limit: 8192,
-        //       name: "assets/media/[name].[hash:8].[ext]"
-        //     }
-        //   }
-        // },
         {
           test: /\.svg$/,
           resourceQuery: /svgr/,
