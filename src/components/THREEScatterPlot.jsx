@@ -17,29 +17,31 @@ export default function THREEScatterPlot({ name, is3d, data, meta }) {
     )
     for (let i = 0; i < data.length; i++) {
       const d = { ...data[i], ...meta[i] }
-      if (!(d.shape in shapes)) console.warn('Invalid shape')
-      if (!(d.shape in groups)) groups[d.shape] = {
+      let shape = d.shape || 'circle'
+      if (!(shape in shapes)) console.warn('Invalid shape')
+      else shape = 'circle'
+      if (!(shape in groups)) groups[shape] = {
         n: 0,
         labels: [],
         positions: [],
         colors: [],
         sizes: [],
       }
-      groups[d.shape].labels.push(d.label)
+      groups[shape].labels.push(d.label)
       
-      groups[d.shape].positions.push(d.x)
-      groups[d.shape].positions.push(d.y)
-      groups[d.shape].positions.push(is3d ? d.z : 0)
+      groups[shape].positions.push(d.x)
+      groups[shape].positions.push(d.y)
+      groups[shape].positions.push(is3d ? d.z : 0)
 
       color.set(d.color || '#002288')
-      groups[d.shape].colors.push(color.r)
-      groups[d.shape].colors.push(color.g)
-      groups[d.shape].colors.push(color.b)
-      groups[d.shape].colors.push(d.opacity)
+      groups[shape].colors.push(color.r)
+      groups[shape].colors.push(color.g)
+      groups[shape].colors.push(color.b)
+      groups[shape].colors.push(d.opacity)
 
-      groups[d.shape].sizes.push(scale * (d.size || 1))
+      groups[shape].sizes.push(scale * (d.size || 1))
 
-      groups[d.shape].n++
+      groups[shape].n++
     }
 
     const geometries = []
