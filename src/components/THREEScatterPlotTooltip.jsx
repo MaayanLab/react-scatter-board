@@ -49,6 +49,7 @@ export default function THREEScatterPlotTooltip({ is3d, name, points }) {
     <Html
       ref={ref}
       name={name}
+      zIndexRange={[5,0]}
       style={{
         backgroundColor: 'lightgrey',
         borderRadius: 5,

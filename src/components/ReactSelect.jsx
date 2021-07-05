@@ -20,12 +20,12 @@ export default function ReactSelect({ label, facets, current, onChange }) {
           menu: styles => ({
             ...styles,
             opacity: 1,
-            zIndex: 2,
+            zIndex: 10,
           }),
           menuPortal: styles => ({
             ...styles,
             opacity: 1,
-            zIndex: 2,
+            zIndex: 10,
           }),
         }}
         classNamePrefix="select"
