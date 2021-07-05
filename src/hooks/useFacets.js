@@ -55,6 +55,7 @@ export default function useFacets(data) {
             Object.keys(facet.values).reduce((m, v) => Math.min(m, v * 1.0)),
             Object.keys(facet.values).reduce((m, v) => Math.max(m, v * 1.0)),
           ]
+          facet.colorbar = domain
           facet.colorScale = d3Scale.scaleLinear()
             .domain(domain)
             .range(['red', 'blue'])

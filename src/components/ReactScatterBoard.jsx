@@ -6,6 +6,7 @@ import useFacets from '../hooks/useFacets'
 import objectFilter from '../utils/objectFilter'
 
 const ReactScatterPlot = React.lazy(() => import('./ReactScatterPlot'))
+const ReactColorbar = React.lazy(() => import('./ReactColorbar'))
 const ReactLegend = React.lazy(() => import('./ReactLegend'))
 const ReactSelect = React.lazy(() => import('./ReactSelect'))
 const ReactSwitch = React.lazy(() => import('./ReactSwitch'))
@@ -126,26 +127,36 @@ export default function ReactScatterBoard({
           ) : null}
           {colorKey !== undefined && colorKey in colorFacets ? (
             <Suspense>
-              <ReactLegend
-                label="Color"
-                facet={colorFacets[colorKey]}
-              >{({ value, count }) => {
-                const Shape = shapes.square
-                return (
-                  <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', }}>
-                    <Shape
-                      width={32} height={32}
-                      fill={colorFacets[colorKey].colorScale(value)}
-                    />
-                    <span>
+              {'colorbar' in colorFacets[colorKey] ? (
+                <ReactColorbar
+                  label="Color"
+                  facet={colorFacets[colorKey]}
+                />
+              ) : (
+                <ReactLegend
+                  label="Color"
+                  facet={colorFacets[colorKey]}
+                >{({ value, count }) => {
+                  return (
+                    <div style={{
+                      display: 'flex',
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                    }}>
+                      <div style={{
+                        width: 16, height: 16,
+                        backgroundColor: colorFacets[colorKey].colorScale(value),
+                      }}>&nbsp;</div>
                       &nbsp;
-                      {value}
-                      &nbsp;
-                      ({count})
-                    </span>
-                  </div>
-                )
-              }}</ReactLegend>
+                      <span>
+                        {value}
+                        &nbsp;
+                        ({count})
+                      </span>
+                    </div>
+                  )
+                }}</ReactLegend>
+              )}
             </Suspense>
           ) : null}
         </div>
