@@ -163,19 +163,23 @@ export default function ReactScatterBoard({
         <div style={{ flex: '1 1 auto' }}>&nbsp;</div>
         <div style={{ display: 'flex', flexDirection: 'column', overflow: 'auto' }}>
           <Suspense>
-            <ReactSelect
-              label="Shape By..."
-              facets={shapeFacets}
-              current={shapeKey in shapeFacets ? shapeKey : undefined}
-              onChange={({ value }) => setShapeKey(value)}
-            />
-            <ReactSelect
-              label="Color By..."
-              facets={colorFacets}
-              current={colorKey in colorFacets ? colorKey : undefined}
-              onChange={({ value }) => setColorKey(value)}
-            />
-            {searchKeys ? (
+            {Object.keys(shapeFacets).length > 0 ? (
+              <ReactSelect
+                label="Shape By..."
+                facets={shapeFacets}
+                current={shapeKey in shapeFacets ? shapeKey : undefined}
+                onChange={({ value }) => setShapeKey(value)}
+              />
+            ) : null}
+            {Object.keys(colorFacets).length > 0 ? (
+              <ReactSelect
+                label="Color By..."
+                facets={colorFacets}
+                current={colorKey in colorFacets ? colorKey : undefined}
+                onChange={({ value }) => setColorKey(value)}
+              />
+            ) : null}
+            {searchKeys.length > 0 ? (
               <ReactGroupSelect
                 label="Search..."
                 facets={searchFacets}
