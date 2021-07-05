@@ -2,6 +2,7 @@ import React from 'react'
 import { shapes } from '../shapes'
 
 import useFacets from '../hooks/useFacets'
+import objectFilter from '../utils/objectFilter'
 
 const ReactScatterPlot = React.lazy(() => import('./ReactScatterPlot'))
 const ReactLegend = React.lazy(() => import('./ReactLegend'))
@@ -46,6 +47,15 @@ export default function ReactScatterBoard({
     }
     return datum
   }), [data, is3d, facets, shapeKey, colorKey, selectValue])
+
+  const colorFacets = objectFilter(facets, (facet, _k) => facet.colorScale !== undefined)
+  const shapeFacets = objectFilter(facets, (facet, _k) => facet.shapeScale !== undefined)
+  const searchFacets = (searchKeys||[]).reduce(
+    (F, searchKey) =>
+      (facets[searchKey] !== undefined)
+        ? { ...F, [searchKey]: facets[searchKey] }
+        : F
+    , {})
   return (
     <div style={{
       flex: '1 1 auto',
@@ -114,26 +124,20 @@ export default function ReactScatterBoard({
         <div style={{ display: 'flex', flexDirection: 'column', overflow: 'auto' }}>
           <ReactSelect
             label="Shape By..."
-            facets={facets}
-            current={shapeKey}
+            facets={shapeFacets}
+            current={shapeKey in shapeFacets ? shapeKey : undefined}
             onChange={({ value }) => setShapeKey(value)}
           />
           <ReactSelect
             label="Color By..."
-            facets={facets}
-            current={colorKey}
+            facets={colorFacets}
+            current={colorKey in colorFacets ? colorKey : undefined}
             onChange={({ value }) => setColorKey(value)}
           />
           {searchKeys ? (
             <ReactGroupSelect
               label="Search..."
-              facets={searchKeys.reduce((F, searchKey) => {
-                if (facets[searchKey] !== undefined) {
-                  return {...F, [searchKey]: facets[searchKey] }
-                } else {
-                  return F
-                }
-              }, {})}
+              facets={searchFacets}
               current={selectValue}
               onChange={(evt) => setSelectValue(evt)}
             />
