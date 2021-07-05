@@ -76,12 +76,12 @@ export default function ReactScatterBoard({
         pointerEvents: 'none'
       }}>
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          {shapeKey !== undefined && shapeKey in facets && 'shapeScale' in facets[shapeKey] ? (
+          {shapeKey !== undefined && shapeKey in shapeFacets ? (
             <ReactLegend
               label="Shape"
-              facet={facets[shapeKey]}
+              facet={shapeFacets[shapeKey]}
             >{({ value, count }) => {
-              const Shape = shapes[facets[shapeKey].shapeScale(value)]
+              const Shape = shapes[shapeFacets[shapeKey].shapeScale(value)]
               return (
                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', }}>
                   <Shape
@@ -97,17 +97,17 @@ export default function ReactScatterBoard({
               )
             }}</ReactLegend>
           ) : null}
-          {colorKey !== undefined && colorKey in facets && 'colorScale' in facets[colorKey] ? (
+          {colorKey !== undefined && colorKey in colorFacets ? (
             <ReactLegend
               label="Color"
-              facet={facets[colorKey]}
+              facet={colorFacets[colorKey]}
             >{({ value, count }) => {
               const Shape = shapes.square
               return (
                 <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', }}>
                   <Shape
                     width={32} height={32}
-                    fill={facets[colorKey].colorScale(value)}
+                    fill={colorFacets[colorKey].colorScale(value)}
                   />
                   <span>
                     &nbsp;
