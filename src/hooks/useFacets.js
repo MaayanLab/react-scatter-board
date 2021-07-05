@@ -60,7 +60,7 @@ export default function useFacets(data) {
             .range(['red', 'blue'])
         }
         if (Object.keys(facet.values).length <= Object.keys(shapes).length) {
-          // if there are enough colors for the categories, map them to the shapes
+          // if there are enough shapes for the categories, map them to the shapes
           facet.shapeScale = d3Scale.scaleOrdinal()
             .domain(Object.keys(facet.values))
             .range(Object.keys(shapes))
@@ -75,10 +75,6 @@ export default function useFacets(data) {
         facet.colorScale = d3Scale.scaleLinear()
           .domain(domain)
           .range(['red', 'blue'])
-        // quantize shapes
-        facet.shapeScale = d3Scale.scaleQuantile()
-          .domain(domain)
-          .range(Object.keys(shapes))
       }
     }
     return facets
