@@ -17,9 +17,13 @@ export default function THREEScatterPlot({ name, is3d, data, meta }) {
     )
     for (let i = 0; i < data.length; i++) {
       const d = { ...data[i], ...meta[i] }
-      let shape = d.shape || 'circle'
-      if (!(shape in shapes)) console.warn('Invalid shape')
-      else shape = 'circle'
+      let shape
+      if (!(d.shape in shapes)) {
+        console.warn(`Invalid shape: ${d.shape}`)
+        shape = 'circle'
+      } else {
+        shape = d.shape
+      }
       if (!(shape in groups)) groups[shape] = {
         n: 0,
         labels: [],
