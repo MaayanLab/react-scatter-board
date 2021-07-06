@@ -12,7 +12,7 @@ def _init():
     __init = True
     display(Javascript(open(Path(__file__).parent/'react_scatter_board.js').read()))
 
-def ScatterBoard(id=None, **kwargs):
+def ReactScatterBoard(id=None, **kwargs):
   _init()
   if id is None:
     id = str(uuid.uuid4())
