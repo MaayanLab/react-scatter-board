@@ -68,14 +68,14 @@ export default function useFacets(data) {
         } else {
           // not enough categorical colors -- treat number as linearly interpolated
           const domain = [
-            Object.keys(facet.values).reduce((m, v) => Math.min(m, v * 1.0)),
-            Object.keys(facet.values).reduce((m, v) => Math.max(m, v * 1.0)),
+            Object.keys(facet.values).reduce((m, v) => isNaN(v) ? m : Math.min(m, v * 1.0)),
+            Object.keys(facet.values).reduce((m, v) => isNaN(v) ? m : Math.max(m, v * 1.0)),
           ]
           facet.colorbar = domain
           const colorScale = d3Scale.scaleLinear()
             .domain(domain)
             .range(['red', 'blue'])
-          facet.colorScale = v => colorScale(v*1.0)
+          facet.colorScale = v => isNaN(v) ? 'lightgrey' : colorScale(v*1.0)
         }
         if (Object.keys(facet.values).length <= Object.keys(shapes).length) {
           facet.values = objectSort(facet.values, (_a, _b, a, b) => (b * 1.0) - (a * 1.0))
