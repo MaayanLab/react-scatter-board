@@ -14,5 +14,5 @@ setup(
   packages=find_packages(),
   include_package_data=True,
   package_data={'react_scatter_board': ['react_scatter_board.js']},
-  requires=['dash'],
+  install_requires=list(map(str.strip, open('requirements.txt', 'r').readlines())),
 )
