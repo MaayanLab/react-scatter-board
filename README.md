@@ -6,7 +6,7 @@ A React implementation of THREE.js 2d/3d scatter plot. This is a remake using re
 
 ### Python
 ```
-pip install --user --upgrade 'react_scatter_board @ git+git://github.com/maayanlab-react-scatter-board@v2'
+pip install --user --upgrade 'git+https://github.com/maayanlab/react-scatter-board@v2'
 ```
 
 #### Usage
