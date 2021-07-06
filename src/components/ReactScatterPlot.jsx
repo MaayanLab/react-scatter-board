@@ -21,6 +21,7 @@ export default function ReactScatterPlot({ is3d, data, meta }) {
       <THREEScatterPlot
         name="three-scatter-points"
         is3d={is3d}
+        scale={Math.max(size.x, size.y, size.z)}
         data={data}
         meta={meta}
       />

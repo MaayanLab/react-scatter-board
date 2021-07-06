@@ -3,15 +3,17 @@ import * as THREE from 'three'
 import { shapes, useShapeMaterial } from '../shapes'
 import { BufferGeometryUtils } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 
-export default function THREEScatterPlot({ name, is3d, data, meta }) {
+export default function THREEScatterPlot({ name, scale, is3d, data, meta }) {
   const shapeMaterials = useShapeMaterial()
   if (data.length === 0 || meta.length === 0) return null
   const { geometry, material } = React.useMemo(() => {
+    console.log(scale)
     const groups = {}
     const color = new THREE.Color()
-    const scale = (
-      200
-      / Math.log(data.length)
+    const pointScale = (
+      10 * scale
+      / Math.log10(scale)
+      / Math.log10(data.length)
       / Math.log(8)
       / (is3d ? 15 : 1)
     )
@@ -43,7 +45,7 @@ export default function THREEScatterPlot({ name, is3d, data, meta }) {
       groups[shape].colors.push(color.b)
       groups[shape].colors.push(d.opacity)
 
-      groups[shape].sizes.push(scale * (d.size || 1))
+      groups[shape].sizes.push(pointScale * (d.size || 1))
 
       groups[shape].n++
     }
