@@ -10,6 +10,13 @@ function validColor(c) {
   return s.color === c
 }
 
+function cmpNaN(a, b) {
+  if (isNaN(a * 1.0) && isNaN(b * 1.0)) return 0
+  else if (isNaN(a * 1.0)) return 1
+  else if (isNaN(b * 1.0)) return -1
+  else return (b * 1.0) - (a * 1.0)
+}
+
 export default function useFacets(data) {
   return React.useMemo(() => {
     // identify key/values in data
@@ -59,7 +66,7 @@ export default function useFacets(data) {
       }
       if (facet.type === 'bigint' || facet.type === 'number') {
         if (Object.keys(facet.values).length <= d3ScaleChromatic.schemeCategory10.length) {
-          facet.values = objectSort(facet.values, (_a, _b, a, b) => (b*1.0) - (a*1.0))
+          facet.values = objectSort(facet.values, (_a, _b, a, b) => cmpNaN(a, b))
           // if there are enough colors for the categories, map them to the chromatic scale
           const colorScale = d3Scale.scaleOrdinal()
             .domain(Object.keys(facet.values))
@@ -68,17 +75,19 @@ export default function useFacets(data) {
         } else {
           // not enough categorical colors -- treat number as linearly interpolated
           const domain = [
-            Object.keys(facet.values).reduce((m, v) => isNaN(v) ? m : Math.min(m, v * 1.0)),
-            Object.keys(facet.values).reduce((m, v) => isNaN(v) ? m : Math.max(m, v * 1.0)),
+            Object.keys(facet.values).map(v => v*1.0).reduce((m, v) => isNaN(v) ? m : Math.min(m, v)),
+            Object.keys(facet.values).map(v => v*1.0).reduce((m, v) => isNaN(v) ? m : Math.max(m, v)),
           ]
-          facet.colorbar = domain
-          const colorScale = d3Scale.scaleLinear()
-            .domain(domain)
-            .range(['red', 'blue'])
-          facet.colorScale = v => isNaN(v) ? 'lightgrey' : colorScale(v*1.0)
+          if (!isNaN(domain[0]) && !isNaN(domain[1])) {
+            facet.colorbar = domain
+            const colorScale = d3Scale.scaleLinear()
+              .domain(domain)
+              .range(['red', 'blue'])
+            facet.colorScale = v => isNaN(v*1.0) ? 'lightgrey' : colorScale(v*1.0)
+          }
         }
         if (Object.keys(facet.values).length <= Object.keys(shapes).length) {
-          facet.values = objectSort(facet.values, (_a, _b, a, b) => (b * 1.0) - (a * 1.0))
+          facet.values = objectSort(facet.values, (_a, _b, a, b) => cmpNaN(a, b))
           // if there are enough shapes for the categories, map them to the shapes
           const shapeScale = d3Scale.scaleOrdinal()
             .domain(Object.keys(facet.values))
