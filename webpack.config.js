@@ -1,13 +1,13 @@
-const path = require("path");
+const path = require('path');
 
 module.exports = function (_env, argv) {
   return {
     mode: 'production',
-    entry: "./src/react_scatterboard.jsx",
+    entry: './src/react_scatter_board.jsx',
     output: {
-      path: path.resolve(__dirname, "dist"),
-      filename: 'react_scatterboard.js',
-      library: 'react_scatterboard',
+      path: path.resolve(__dirname, 'react_scatter_board'),
+      filename: 'react_scatter_board.js',
+      library: 'react_scatter_board',
       libraryTarget: 'umd',
       umdNamedDefine: true,
     },
@@ -17,22 +17,22 @@ module.exports = function (_env, argv) {
           test: /\.jsx?$/,
           exclude: /node_modules/,
           use: {
-            loader: "babel-loader",
+            loader: 'babel-loader',
             options: {
-              envName: "production",
+              envName: 'production',
               presets: [
                 [
-                  "@babel/preset-env",
+                  '@babel/preset-env',
                   {
                     modules: false
                   }
                 ],
-                "@babel/preset-react"
+                '@babel/preset-react'
               ],
               plugins: [
-                "@babel/plugin-transform-runtime",
-                "dynamic-import-webpack",
-                "remove-webpack"
+                '@babel/plugin-transform-runtime',
+                'dynamic-import-webpack',
+                'remove-webpack'
               ],
             }
           }
@@ -40,8 +40,8 @@ module.exports = function (_env, argv) {
         {
           test: /\.css$/,
           use: [
-            "style-loader",
-            "css-loader"
+            'style-loader',
+            'css-loader'
           ]
         },
         {
@@ -53,13 +53,13 @@ module.exports = function (_env, argv) {
           test: /\.(png|jpg|gif|svg)$/i,
           resourceQuery: /url-loader/,
           use: {
-            loader: "url-loader",
+            loader: 'url-loader',
           }
         },
       ]
     },
     resolve: {
-      extensions: [".js", ".jsx"]
+      extensions: ['.js', '.jsx']
     }
   };
 };

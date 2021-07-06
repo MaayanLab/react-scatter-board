@@ -10,7 +10,7 @@ def _init():
   global __init
   if not __init:
     __init = True
-    display(Javascript(open(Path(__file__).parent/'dist/react_scatterboard.js').read()))
+    display(Javascript(open(Path(__file__).parent/'react_scatter_board.js').read()))
 
 def ScatterBoard(id=None, **kwargs):
   _init()
@@ -19,14 +19,17 @@ def ScatterBoard(id=None, **kwargs):
   return HTML(dedent(f'''
     <div id="{id}"></div>
     <script>
-    require(['react_scatterboard'], function (react_scatterboard) {{
-      react_scatterboard.ReactScatterBoard(
-        document.getElementById('{id}'),
+    require(['react_scatter_board'], function (react_scatter_board) {{
+      var self = document.getElementById('{id}')
+      while (self.children.length > 0) self.children[0].remove()
+      react_scatter_board.ReactScatterBoard(
+        self,
         {json.dumps(kwargs)}
       )
     }}, function (e) {{
       console.error(e)
-      document.getElementById('{id}').innerHTML = '<b style="color:red">' + e + '</b>'
+      var self = document.getElementById('{id}')
+      self.innerHTML = '<b style="color:red">' + e + '</b>'
     }})
     </script>
   '''))

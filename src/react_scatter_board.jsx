@@ -1,5 +1,6 @@
 import ReactDOM from 'react-dom'
 import React from 'react'
+import Suspense from './components/Suspense'
 
 const ReactScatterBoardComponent = React.lazy(() => import('./components/ReactScatterBoard'))
 
@@ -7,7 +8,7 @@ export function ReactScatterBoard(container, { width, height, ...props }) {
   if (width === undefined) width = '100%'
   if (height === undefined) height = '500px'
   ReactDOM.render(
-    <React.Suspense fallback={null}>
+    <Suspense>
       <div style={{
         height,
         display: 'flex',
@@ -17,7 +18,7 @@ export function ReactScatterBoard(container, { width, height, ...props }) {
       }}>
         <ReactScatterBoardComponent {...props} />
       </div>
-    </React.Suspense>,
+    </Suspense>,
     container
   )
 }

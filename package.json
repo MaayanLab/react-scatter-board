@@ -4,9 +4,9 @@
   "description": "A recreation of React Scatter Board using React Three Fiber",
   "main": "src/App.jsx",
   "scripts": {
-    "start": "webpack serve --mode development",
-    "build:lib": "webpack -c lib.webpack.config.js",
-    "build": "webpack --mode production"
+    "start": "webpack serve -c demo.webpack.config.js --mode development",
+    "build:lib": "webpack -c webpack.config.js --mode production",
+    "build:demo": "webpack -c demo.webpack.config.js --mode production"
   },
   "author": "Daniel J. B. Clarke <u8sand@gmail.com>",
   "license": "CC-BY-NC-SA-4.0",
