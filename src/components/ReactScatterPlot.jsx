@@ -14,14 +14,15 @@ const THREEFog = React.lazy(() => import('./THREEFog'))
 const THREEScatterPlot = React.lazy(() => import('./THREEScatterPlot'))
 const THREEScatterPlotTooltip = React.lazy(() => import('./THREEScatterPlotTooltip'))
 
-export default function ReactScatterPlot({ is3d, data, meta }) {
+export default function ReactScatterPlot({ is3d, scale, data, meta }) {
   const { center, size } = useDataDimensions({ is3d, data })
+  if (scale === undefined) scale = Math.max(size.x, size.y, size.z)
   return (
     <Canvas>
       <THREEScatterPlot
         name="three-scatter-points"
         is3d={is3d}
-        scale={Math.max(size.x, size.y, size.z)}
+        scale={scale}
         data={data}
         meta={meta}
       />

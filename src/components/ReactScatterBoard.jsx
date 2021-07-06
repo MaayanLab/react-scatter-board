@@ -16,7 +16,7 @@ export default function ReactScatterBoard({
   data, is3d: init3d, toggle3d,
   shapeKey: initShapeKey, colorKey: initColorKey,
   labelKeys: initLabelKeys, searchKeys: initSearchKeys,
-  selectValue: initSelectValue,
+  selectValue: initSelectValue, scale,
 }) {
   if (toggle3d === undefined) toggle3d = init3d
   const facets = useFacets(data)
@@ -101,6 +101,7 @@ export default function ReactScatterBoard({
       <Suspense>
         <ReactScatterPlot
           is3d={is3d}
+          scale={scale}
           data={data}
           meta={meta}
         />
