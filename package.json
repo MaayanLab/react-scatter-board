@@ -1,15 +1,24 @@
 {
-  "name": "react-scatterboard",
-  "version": "1.0.0",
-  "description": "A recreation of React Scatter Board using React Three Fiber",
-  "main": "src/App.jsx",
+  "name": "react-scatter-board",
+  "version": "2.0.0",
+  "description": "A React implementation of THREE.js 2d/3d scatter plot",
+  "source": "src/react_scatter_board.js",
+  "main": "react_scatter_board/react_scatter_board.js",
   "scripts": {
     "start": "webpack serve -c demo.webpack.config.js --mode development",
     "build:lib": "webpack -c webpack.config.js --mode production",
     "build:demo": "webpack -c demo.webpack.config.js --mode production"
   },
-  "author": "Daniel J. B. Clarke <u8sand@gmail.com>",
-  "license": "CC-BY-NC-SA-4.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MaayanLab/react-scatter-board.git"
+  },
+  "author": "MaayanLab",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MaayanLab/react-scatter-board/issues"
+  },
+  "homepage": "https://github.com/MaayanLab/react-scatter-board#readme",
   "devDependencies": {
     "@babel/plugin-transform-runtime": "^7.14.5",
     "@babel/preset-env": "^7.14.5",
