@@ -8,15 +8,16 @@ from IPython.display import display, HTML, Javascript
 def react_scatter_board_js():
   return open(Path(__file__).parent/'react_scatter_board.js', 'r').read()
 
-def define_react_scatter_board():
+def define_react_scatter_board(include_require=False):
+  if include_require: display(HTML('<script src="/static/components/requirejs/require.js"></script>'))
   display(Javascript(react_scatter_board_js()))
 
 _defined = False
 
-def ReactScatterBoard(id=None, **kwargs):
+def ReactScatterBoard(id=None, include_require=False, force_define=False, **kwargs):
   global _defined
-  if not _defined:
-    define_react_scatter_board()
+  if force_define or not _defined:
+    define_react_scatter_board(include_require=include_require)
     _defined = True
   if id is None:
     id = str(uuid.uuid4())
