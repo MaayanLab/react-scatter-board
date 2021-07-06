@@ -45,7 +45,9 @@ export default function ReactScatterBoard({
   React.useEffect(() => {
     if (initSearchKeys === undefined) setSearchKeys(
       Object.keys(facets)
-        .filter(facet => Object.keys(facets[facet].values).length <= 10)
+        .filter(facet =>
+          Object.keys(facets[facet].values).length > 1
+          && Object.keys(facets[facet].values).length <= 10)
     )
     else setSearchKeys(initSearchKeys)
   }, [initSearchKeys, facets])

@@ -24,6 +24,7 @@ export default function useFacets(data) {
     // produce applicable scales
     for (const key in facets) {
       const facet = facets[key]
+      if (Object.keys(facet.values).length <= 1) continue
       if (facet.type === 'string') {
         facet.values = objectSort(facet.values, (a, b) => b - a)
         if (Object.keys(facet.values).filter(v => !validColor(v)).length === 0) {
