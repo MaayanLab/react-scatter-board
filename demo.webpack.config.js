@@ -1,20 +1,20 @@
-const path = require("path");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const webpack = require("webpack");
-const TerserWebpackPlugin = require("terser-webpack-plugin");
+const path = require('path');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
+const TerserWebpackPlugin = require('terser-webpack-plugin');
 
 module.exports = function (_env, argv) {
-  const isProduction = argv.mode === "production";
+  const isProduction = argv.mode === 'production';
   const isDevelopment = !isProduction;
 
   return {
-    devtool: isDevelopment && "cheap-module-source-map",
-    entry: "./src/demo.jsx",
+    devtool: isDevelopment && 'cheap-module-source-map',
+    entry: './src/demo.jsx',
     output: {
-      path: path.resolve(__dirname, "dist"),
-      filename: "assets/js/[name].[contenthash:8].js",
-      publicPath: "/"
+      path: path.resolve(__dirname, 'dist'),
+      filename: 'assets/js/[name].[contenthash:8].js',
+      publicPath: '/'
     },
     module: {
       rules: [
@@ -22,22 +22,22 @@ module.exports = function (_env, argv) {
           test: /\.jsx?$/,
           exclude: /node_modules/,
           use: {
-            loader: "babel-loader",
+            loader: 'babel-loader',
             options: {
               cacheDirectory: true,
               cacheCompression: false,
-              envName: isProduction ? "production" : "development",
+              envName: isProduction ? 'production' : 'development',
               presets: [
                 [
-                  "@babel/preset-env",
+                  '@babel/preset-env',
                   {
                     modules: false
                   }
                 ],
-                "@babel/preset-react"
+                '@babel/preset-react'
               ],
               plugins: [
-                "@babel/plugin-transform-runtime"
+                '@babel/plugin-transform-runtime'
               ],
             }
           }
@@ -45,8 +45,8 @@ module.exports = function (_env, argv) {
         {
           test: /\.css$/,
           use: [
-            isProduction ? MiniCssExtractPlugin.loader : "style-loader",
-            "css-loader"
+            isProduction ? MiniCssExtractPlugin.loader : 'style-loader',
+            'css-loader'
           ]
         },
         {
@@ -58,29 +58,29 @@ module.exports = function (_env, argv) {
           type: 'javascript/auto',
           test: /\.(png|jpg|gif|svg|json)$/,
           resourceQuery: /url-loader/,
-          loader: "file-loader",
+          loader: 'file-loader',
           options: {
-            name: "assets/media/[name].[hash:8].[ext]"
+            name: 'assets/media/[name].[hash:8].[ext]'
           }
         }
       ]
     },
     resolve: {
-      extensions: [".js", ".jsx"]
+      extensions: ['.js', '.jsx']
     },
     plugins: [
       isProduction &&
       new MiniCssExtractPlugin({
-        filename: "assets/css/[name].[contenthash:8].css",
-        chunkFilename: "assets/css/[name].[contenthash:8].chunk.css"
+        filename: 'assets/css/[name].[contenthash:8].css',
+        chunkFilename: 'assets/css/[name].[contenthash:8].chunk.css'
       }),
       new HtmlWebpackPlugin({
-        template: path.resolve(__dirname, "public/index.html"),
+        template: path.resolve(__dirname, 'src/demo.html'),
         inject: true
       }),
       new webpack.DefinePlugin({
-        "process.env.NODE_ENV": JSON.stringify(
-          isProduction ? "production" : "development"
+        'process.env.NODE_ENV': JSON.stringify(
+          isProduction ? 'production' : 'development'
         )
       })
     ].filter(Boolean),
@@ -104,7 +104,7 @@ module.exports = function (_env, argv) {
         }),
       ],
       splitChunks: {
-        chunks: "all",
+        chunks: 'all',
         minSize: 0,
         maxInitialRequests: 10,
         maxAsyncRequests: 10,
@@ -115,7 +115,7 @@ module.exports = function (_env, argv) {
               const packageName = module.context.match(
                 /[\\/]node_modules[\\/](.*?)([\\/]|$)/
               )[1];
-              return `${cacheGroupKey}.${packageName.replace("@", "")}`;
+              return `${cacheGroupKey}.${packageName.replace('@', '')}`;
             }
           },
           common: {
@@ -124,7 +124,7 @@ module.exports = function (_env, argv) {
           }
         }
       },
-      runtimeChunk: "single"
+      runtimeChunk: 'single'
     },
     devServer: {
       contentBase: path.join(__dirname, 'dist'),
