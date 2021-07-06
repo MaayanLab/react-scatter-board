@@ -9,19 +9,19 @@ function App() {
   const sources = {
     'React Scatter Board': {
       is3d: true,
-      source: require('./examples/react-scatter-board.json?url-loader').default,
+      source: 'https://s3.amazonaws.com/maayanlab-public/react_scatter_board/react-scatter-board.json',
     },
     'L1000FWD': {
       is3d: false,
-      source: require('./examples/l1000fwd.json?url-loader').default,
+      source: 'https://s3.amazonaws.com/maayanlab-public/react_scatter_board/l1000fwd.json',
     },
     'ARCHS4 Genes': {
       is3d: true,
-      source: require('./examples/archs4-genes.json?url-loader').default,
+      source: 'https://s3.amazonaws.com/maayanlab-public/react_scatter_board/archs4-genes.json',
     },
     'ARCHS4 Samples': {
       is3d: true,
-      source: require('./examples/archs4-samples.json?url-loader').default,
+      source: 'https://s3.amazonaws.com/maayanlab-public/react_scatter_board/archs4-samples.json',
     },
   }
   const [source, setSource] = React.useState()
