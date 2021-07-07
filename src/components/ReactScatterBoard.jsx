@@ -71,7 +71,7 @@ export default function ReactScatterBoard({
       .filter(labelKey =>
         _datum[labelKey] !== undefined
         && _datum[labelKey] !== null
-        && !isNaN(_datum[labelKey])
+        && (typeof _datum[labelKey] !== 'number' || !isNaN(_datum[labelKey]))
       )
       .map(labelKey => `${labelKey}: ${_datum[labelKey]}`).join('\n')
     if (shapeKey !== undefined && shapeKey in _datum && shapeKey in facets && 'shapeScale' in facets[shapeKey]) {
