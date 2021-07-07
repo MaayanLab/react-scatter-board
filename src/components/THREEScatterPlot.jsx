@@ -7,7 +7,6 @@ export default function THREEScatterPlot({ name, scale, is3d, data, meta }) {
   const shapeMaterials = useShapeMaterial()
   if (data.length === 0 || meta.length === 0) return null
   const { geometry, material } = React.useMemo(() => {
-    console.log(scale)
     const groups = {}
     const color = new THREE.Color()
     const pointScale = (
@@ -66,7 +65,7 @@ export default function THREEScatterPlot({ name, scale, is3d, data, meta }) {
     const mergedGeometries = BufferGeometryUtils.mergeBufferGeometries(geometries, true)
     mergedGeometries.userData.labels = labels
     return { geometry: mergedGeometries, material: materials }
-  }, [is3d, data, meta])
+  }, [is3d, scale, data, meta])
   return (
     <points
       name={name}
