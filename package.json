@@ -1,6 +1,6 @@
 {
   "name": "react-scatter-board",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "A React implementation of THREE.js 2d/3d scatter plot",
   "source": "src/react_scatter_board.js",
   "main": "react_scatter_board/react_scatter_board.js",
