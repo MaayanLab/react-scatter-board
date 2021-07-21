@@ -12,7 +12,9 @@ export default function THREEScatterPlotTooltip({ is3d, name, points }) {
     let groupNode = scene.getObjectByName(name)
     let pointsNode = scene.getObjectByName(points)
     if (pointsNode === undefined || groupNode === undefined) return
-    if (pointsNode.geometry === undefined || pointsNode.geometry.attributes === undefined) return
+    if (pointsNode.geometry === undefined
+        || pointsNode.geometry.attributes === undefined
+        || !('position' in pointsNode.geometry.attributes)) return
     // actually test points
     const pointPositions = pointsNode.geometry.attributes.position.array
     let closestPoint = undefined

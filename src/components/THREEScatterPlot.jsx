@@ -4,9 +4,14 @@ import { shapes, useShapeMaterial } from '../shapes'
 import { BufferGeometryUtils } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 
 export default function THREEScatterPlot({ name, scale, is3d, data, meta }) {
+  const pointsRef = React.useRef()
+  const [pointsProps, setPointsProps] = React.useState({})
   const shapeMaterials = useShapeMaterial()
-  if (data.length === 0 || meta.length === 0) return null
-  const { geometry, material } = React.useMemo(() => {
+  React.useEffect(() => {
+    if (data.length === 0 || meta.length === 0) {
+      setPointsProps({})
+      return
+    }
     const groups = {}
     const color = new THREE.Color()
     const pointScale = (
@@ -27,11 +32,13 @@ export default function THREEScatterPlot({ name, scale, is3d, data, meta }) {
       }
       if (!(shape in groups)) groups[shape] = {
         n: 0,
+        index: [],
         labels: [],
         positions: [],
         colors: [],
         sizes: [],
       }
+      groups[shape].index.push(i)
       groups[shape].labels.push(d.label)
       
       groups[shape].positions.push(d.x)
@@ -51,9 +58,11 @@ export default function THREEScatterPlot({ name, scale, is3d, data, meta }) {
 
     const geometries = []
     const materials = []
+    const index = []
     const labels = []
     for (const shape in groups) {
       const geometry = new THREE.BufferGeometry()
+      index.push(...groups[shape].index)
       labels.push(...groups[shape].labels)
       geometry.setAttribute('position', new THREE.Float32BufferAttribute(groups[shape].positions, 3))
       geometry.setAttribute('color', new THREE.Float32BufferAttribute(groups[shape].colors, 4))
@@ -63,14 +72,48 @@ export default function THREEScatterPlot({ name, scale, is3d, data, meta }) {
       materials.push(shapeMaterials[shape])
     }
     const mergedGeometries = BufferGeometryUtils.mergeBufferGeometries(geometries, true)
+    mergedGeometries.userData.index = index
     mergedGeometries.userData.labels = labels
-    return { geometry: mergedGeometries, material: materials }
-  }, [is3d, scale, data, meta])
+    mergedGeometries.dynamic = true
+    setPointsProps({ geometry: mergedGeometries, material: materials })
+  }, [is3d, data])
+  React.useEffect(() => {
+    if (
+      !pointsRef
+      || !pointsRef.current
+      || !meta
+      || meta.length === 0
+      || pointsRef.current.geometry === undefined
+      || pointsRef.current.geometry.attributes === undefined
+      || !('color' in pointsRef.current.geometry.attributes)
+    ) return
+    const geom = pointsRef.current.geometry
+    const pointScale = (
+      10 * scale
+      / Math.log10(scale)
+      / Math.log10(data.length)
+      / Math.log(8)
+      / (is3d ? 15 : 1)
+    )
+    const color = new THREE.Color()
+    for (let i = 0; i < geom.userData.index.length; i++) {
+      const j = geom.userData.index[i]
+      const d = {...data[j], ...meta[j]}
+      color.set(d.color || '#002288')
+      geom.attributes.color.array[(i*4) + 0] = color.r
+      geom.attributes.color.array[(i*4) + 1] = color.g
+      geom.attributes.color.array[(i*4) + 2] = color.b
+      geom.attributes.color.array[(i*4) + 3] = d.opacity
+      geom.attributes.size.array[i] = pointScale * (d.size || 1)
+    }
+    geom.attributes.color.needsUpdate = true
+    geom.attributes.size.needsUpdate = true
+  }, [pointsRef.current, scale, meta])
   return (
     <points
+      ref={pointsRef}
       name={name}
-      geometry={geometry}
-      material={material}
+      {...pointsProps}
     />
   )
 }
