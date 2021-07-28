@@ -14,8 +14,10 @@ const ReactGroupSelect = React.lazy(() => import('./ReactGroupSelect'))
 
 export default function ReactScatterBoard({
   data, is3d: init3d, toggle3d,
-  shapeKey: initShapeKey, colorKey: initColorKey,
-  labelKeys: initLabelKeys, searchKeys: initSearchKeys,
+  shapeKey: initShapeKey, shapeKeys,
+  colorKey: initColorKey, colorKeys,
+  labelKeys: initLabelKeys,
+  searchKeys: initSearchKeys,
   selectValue: initSelectValue, scale,
 }) {
   if (toggle3d === undefined) toggle3d = init3d
@@ -27,13 +29,13 @@ export default function ReactScatterBoard({
   }, [init3d])
   const [shapeKey, setShapeKey] = React.useState(initShapeKey)
   const shapeFacets = React.useMemo(() =>
-    objectFilter(facets, (facet, _k) => facet.shapeScale !== undefined),
-    [facets]
+    objectFilter(facets, (facet, _k) => facet.shapeScale !== undefined && (shapeKeys === undefined || shapeKeys.indexOf(k) !== -1)),
+    [facets, shapeKeys]
   )
   const [colorKey, setColorKey] = React.useState(initColorKey)
   const colorFacets = React.useMemo(() =>
-    objectFilter(facets, (facet, _k) => facet.colorScale !== undefined),
-    [facets]
+    objectFilter(facets, (facet, _k) => facet.colorScale !== undefined && (colorKeys === undefined || colorKeys.indexOf(k) !== -1)),
+    [facets, colorKeys]
   )
   const [labelKeys, setLabelKeys] = React.useState([])
   React.useEffect(() => {
