@@ -90,7 +90,7 @@ export default function useFacets(data) {
             facet.colorbar = domain
             const colorScale = d3Scale.scaleLinear()
               .domain(domain)
-              .range(['red', 'blue'])
+              .range(['grey', 'red'])
             facet.colorScale = v => isNaN(v*1.0) ? 'lightgrey' : colorScale(v*1.0)
           }
         }
