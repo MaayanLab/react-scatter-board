@@ -29,12 +29,12 @@ export default function ReactScatterBoard({
   }, [init3d])
   const [shapeKey, setShapeKey] = React.useState(initShapeKey)
   const shapeFacets = React.useMemo(() =>
-    objectFilter(facets, (facet, _k) => facet.shapeScale !== undefined && (shapeKeys === undefined || shapeKeys.indexOf(k) !== -1)),
+    objectFilter(facets, (facet, k) => facet.shapeScale !== undefined && (shapeKeys === undefined || shapeKeys.indexOf(k) !== -1)),
     [facets, shapeKeys]
   )
   const [colorKey, setColorKey] = React.useState(initColorKey)
   const colorFacets = React.useMemo(() =>
-    objectFilter(facets, (facet, _k) => facet.colorScale !== undefined && (colorKeys === undefined || colorKeys.indexOf(k) !== -1)),
+    objectFilter(facets, (facet, k) => facet.colorScale !== undefined && (colorKeys === undefined || colorKeys.indexOf(k) !== -1)),
     [facets, colorKeys]
   )
   const [labelKeys, setLabelKeys] = React.useState([])
