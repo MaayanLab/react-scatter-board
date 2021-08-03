@@ -2,7 +2,7 @@ import React from 'react'
 import Suspense from './Suspense'
 import { shapes } from '../shapes'
 
-import useFacets from '../hooks/useFacets'
+import computeFacets from '../utils/computeFacets'
 import objectFilter from '../utils/objectFilter'
 
 const ReactScatterPlot = React.lazy(() => import('./ReactScatterPlot'))
@@ -14,6 +14,7 @@ const ReactGroupSelect = React.lazy(() => import('./ReactGroupSelect'))
 
 export default function ReactScatterBoard({
   data, is3d: init3d, toggle3d,
+  facets: initFacets,
   shapeKey: initShapeKey, shapeKeys,
   colorKey: initColorKey, colorKeys,
   labelKeys: initLabelKeys,
@@ -21,7 +22,11 @@ export default function ReactScatterBoard({
   selectValue: initSelectValue, scale,
 }) {
   if (toggle3d === undefined) toggle3d = init3d
-  const facets = useFacets(data)
+  const [facets, setFacets] = React.useState(initFacets || {})
+  React.useEffect(() => {
+    if (initFacets === undefined) setFacets(computeFacets(data))
+    else setFacets(initFacets)
+  }, [data, initFacets])
   const [is3d, setIs3d] = React.useState(init3d === true)
   React.useEffect(() => {
     if (init3d === undefined) setIs3d(false)

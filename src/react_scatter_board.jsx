@@ -4,6 +4,8 @@ import Suspense from './components/Suspense'
 
 const ReactScatterBoardComponent = React.lazy(() => import('./components/ReactScatterBoard'))
 
+export { default as computeFacets } from './utils/computeFacets'
+
 export function ReactScatterBoard(container, { width, height, ...props }) {
   if (width === undefined) width = '100%'
   if (height === undefined) height = '500px'
