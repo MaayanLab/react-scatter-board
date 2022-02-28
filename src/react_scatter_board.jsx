@@ -1,10 +1,10 @@
 import ReactDOM from 'react-dom'
 import React from 'react'
-import Suspense from './components/Suspense'
+import Suspense from './lib/components/Suspense'
 
-const ReactScatterBoardComponent = React.lazy(() => import('./components/ReactScatterBoard'))
+const ReactScatterBoardComponent = React.lazy(() => import('./lib/components/ReactScatterBoard'))
 
-export { default as computeFacets } from './utils/computeFacets'
+export { default as computeFacets } from './lib/utils/computeFacets'
 
 export function ReactScatterBoard(container, { width, height, ...props }) {
   if (width === undefined) width = '100%'

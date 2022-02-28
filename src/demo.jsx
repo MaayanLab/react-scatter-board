@@ -1,9 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import Suspense from './components/Suspense'
+import Suspense from './lib/components/Suspense'
 
-const ReactScatterBoard = React.lazy(() => import('./components/ReactScatterBoard'))
-const ReactSelect = React.lazy(() => import('./components/ReactSelect'))
+const ReactScatterBoard = React.lazy(() => import('./lib/components/ReactScatterBoard'))
+const ReactSelect = React.lazy(() => import('./lib/components/ReactSelect'))
 
 function App() {
   const sources = {

@@ -10,6 +10,7 @@ module.exports = function (_env, argv) {
       library: 'react_scatter_board',
       libraryTarget: 'umd',
       umdNamedDefine: true,
+      globalObject: 'this',
     },
     module: {
       rules: [

@@ -2,12 +2,14 @@
   "name": "react-scatter-board",
   "version": "2.0.1",
   "description": "A React implementation of THREE.js 2d/3d scatter plot",
-  "source": "src/react_scatter_board.js",
-  "main": "react_scatter_board/react_scatter_board.js",
+  "main": "dist/lib/index.js",
+  "module": "dist/lib/index.js",
   "scripts": {
     "start": "webpack serve -c demo.webpack.config.js --mode development",
-    "build:lib": "webpack -c webpack.config.js --mode production",
-    "build:demo": "webpack -c demo.webpack.config.js --mode production"
+    "build:umd": "webpack -c webpack.config.js --mode production",
+    "build:esx": "NODE_ENV=production babel src/lib --out-dir dist/lib --copy-files",
+    "build:demo": "webpack -c demo.webpack.config.js --mode production",
+    "build": "npm run build:umd && npm run build:esx && npm run build:demo"
   },
   "repository": {
     "type": "git",
@@ -20,9 +22,10 @@
   },
   "homepage": "https://github.com/MaayanLab/react-scatter-board#readme",
   "devDependencies": {
-    "@babel/plugin-transform-runtime": "^7.14.5",
-    "@babel/preset-env": "^7.14.5",
-    "@babel/preset-react": "^7.14.5",
+    "@babel/cli": "^7.17.6",
+    "@babel/plugin-transform-runtime": "^7.17.0",
+    "@babel/preset-env": "^7.16.11",
+    "@babel/preset-react": "^7.16.7",
     "@svgr/webpack": "^5.5.0",
     "babel-loader": "^8.2.2",
     "babel-plugin-dynamic-import-webpack": "^1.1.0",
