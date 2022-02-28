@@ -8,14 +8,21 @@ function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (O
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 
 import React from 'react';
+import circle from './circle.png';
+import cross from './cross.png';
+import diamond from './diamond.png';
+import square from './square.png';
+import star from './star.png';
+import triangle from './triangle.png';
+import wye from './wye.png';
 var rcs = {
-  circle: require('./circle.png')["default"],
-  cross: require('./cross.png')["default"],
-  diamond: require('./diamond.png')["default"],
-  square: require('./square.png')["default"],
-  star: require('./star.png')["default"],
-  triangle: require('./triangle.png')["default"],
-  wye: require('./wye.png')["default"]
+  circle: circle,
+  cross: cross,
+  diamond: diamond,
+  square: square,
+  star: star,
+  triangle: triangle,
+  wye: wye
 };
 
 function ImageFactory(src) {

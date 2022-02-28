@@ -1,13 +1,19 @@
 import React from 'react'
-
+import circle from './circle.png'
+import cross from './cross.png'
+import diamond from './diamond.png'
+import square from './square.png'
+import star from './star.png'
+import triangle from './triangle.png'
+import wye from './wye.png'
 const rcs = {
-  circle: require('./circle.png').default,
-  cross: require('./cross.png').default,
-  diamond: require('./diamond.png').default,
-  square: require('./square.png').default,
-  star: require('./star.png').default,
-  triangle: require('./triangle.png').default,
-  wye: require('./wye.png').default,
+  circle,
+  cross,
+  diamond,
+  square,
+  star,
+  triangle,
+  wye,
 }
 
 function ImageFactory(src) {
