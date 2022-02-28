@@ -16,6 +16,16 @@ const rcs = {
   wye,
 }
 
+function extractSrc(mod) {
+  if (typeof mod === 'object' && 'src' in mod) {
+    return mod.src
+  } else if (typeof mod === 'string') {
+    return mod
+  } else {
+    throw new Error(`Unrecognized image type: ${JSON.stringify(mod)}`)
+  }
+}
+
 function ImageFactory(src) {
   function Image({ style, ...props }) {
     return (
@@ -31,7 +41,7 @@ function ImageFactory(src) {
 
 export const shapes = {}
 for (const shape in rcs) {
-  shapes[shape] = ImageFactory(rcs[shape])
+  shapes[shape] = ImageFactory(extractSrc(rcs[shape]))
 }
 
 import { useAsset } from 'use-asset'
@@ -40,7 +50,7 @@ import loadMaterial from '../loaders/loadMaterial'
 export function useShapeMaterial() {
   const materials = {}
   for (const shape in rcs) {
-    materials[shape] = useAsset(loadMaterial, rcs[shape])
+    materials[shape] = useAsset(loadMaterial, extractSrc(rcs[shape]))
   }
   return materials
 }

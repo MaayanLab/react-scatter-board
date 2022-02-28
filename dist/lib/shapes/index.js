@@ -1,6 +1,7 @@
 import _extends from "@babel/runtime/helpers/extends";
 import _defineProperty from "@babel/runtime/helpers/defineProperty";
 import _objectWithoutProperties from "@babel/runtime/helpers/objectWithoutProperties";
+import _typeof from "@babel/runtime/helpers/typeof";
 var _excluded = ["style"];
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
@@ -25,6 +26,16 @@ var rcs = {
   wye: wye
 };
 
+function extractSrc(mod) {
+  if (_typeof(mod) === 'object' && 'src' in mod) {
+    return mod.src;
+  } else if (typeof mod === 'string') {
+    return mod;
+  } else {
+    throw new Error("Unrecognized image type: ".concat(JSON.stringify(mod)));
+  }
+}
+
 function ImageFactory(src) {
   function Image(_ref) {
     var style = _ref.style,
@@ -44,7 +55,7 @@ function ImageFactory(src) {
 export var shapes = {};
 
 for (var shape in rcs) {
-  shapes[shape] = ImageFactory(rcs[shape]);
+  shapes[shape] = ImageFactory(extractSrc(rcs[shape]));
 }
 
 import { useAsset } from 'use-asset';
@@ -53,7 +64,7 @@ export function useShapeMaterial() {
   var materials = {};
 
   for (var _shape in rcs) {
-    materials[_shape] = useAsset(loadMaterial, rcs[_shape]);
+    materials[_shape] = useAsset(loadMaterial, extractSrc(rcs[_shape]));
   }
 
   return materials;
