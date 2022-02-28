@@ -55,12 +55,12 @@ import { useAsset } from 'use-asset';
 import loadMaterial from '../loaders/loadMaterial';
 export function useShapeMaterial() {
   return {
-    circle: useAsset(loadMaterial, require('./circle.png?url-loader')["default"]),
-    cross: useAsset(loadMaterial, require('./cross.png?url-loader')["default"]),
-    diamond: useAsset(loadMaterial, require('./diamond.png?url-loader')["default"]),
-    square: useAsset(loadMaterial, require('./square.png?url-loader')["default"]),
-    star: useAsset(loadMaterial, require('./star.png?url-loader')["default"]),
-    triangle: useAsset(loadMaterial, require('./triangle.png?url-loader')["default"]),
-    wye: useAsset(loadMaterial, require('./wye.png?url-loader')["default"])
+    circle: useAsset(loadMaterial, require('./circle.png')["default"]),
+    cross: useAsset(loadMaterial, require('./cross.png')["default"]),
+    diamond: useAsset(loadMaterial, require('./diamond.png')["default"]),
+    square: useAsset(loadMaterial, require('./square.png')["default"]),
+    star: useAsset(loadMaterial, require('./star.png')["default"]),
+    triangle: useAsset(loadMaterial, require('./triangle.png')["default"]),
+    wye: useAsset(loadMaterial, require('./wye.png')["default"])
   };
 }

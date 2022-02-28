@@ -52,7 +52,7 @@ module.exports = function (_env, argv) {
         },
         {
           test: /\.(png|jpg|gif|svg)$/i,
-          resourceQuery: /url-loader/,
+          // resourceQuery: /url-loader/,
           use: {
             loader: 'url-loader',
           }

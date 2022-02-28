@@ -57,7 +57,7 @@ module.exports = function (_env, argv) {
         {
           type: 'javascript/auto',
           test: /\.(png|jpg|gif|svg|json)$/,
-          resourceQuery: /url-loader/,
+          // resourceQuery: /url-loader/,
           loader: 'file-loader',
           options: {
             name: 'assets/media/[name].[hash:8].[ext]'
