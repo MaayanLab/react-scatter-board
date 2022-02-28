@@ -46,11 +46,6 @@ module.exports = function (_env, argv) {
           ]
         },
         {
-          test: /\.svg$/,
-          resourceQuery: /svgr/,
-          use: ['@svgr/webpack'],
-        },
-        {
           test: /\.(png|jpg|gif|svg)$/i,
           // resourceQuery: /url-loader/,
           use: {
