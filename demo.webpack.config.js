@@ -127,12 +127,14 @@ module.exports = function (_env, argv) {
       runtimeChunk: 'single'
     },
     devServer: {
-      contentBase: path.join(__dirname, 'dist'),
+      static: path.join(__dirname, 'dist'),
       port: 5000,
       compress: true,
       historyApiFallback: true,
       open: true,
-      overlay: true
+      client: {
+        overlay: true,
+      },
     }
   };
 };
