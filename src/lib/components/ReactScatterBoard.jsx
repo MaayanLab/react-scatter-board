@@ -94,10 +94,11 @@ export default function ReactScatterBoard({
     } else {
       datum.color = '#002288'
     }
+    if (datum.size === undefined) {
+      datum.size = 1.
+    }
     if (selectValue !== undefined && _datum[selectValue.key] == selectValue.value) {
-      datum.size = 2.5
-    } else {
-      datum.size = 1
+      datum.size = datum.size * 2.5
     }
     return datum
   }), [data, is3d, facets, shapeKey, colorKey, selectValue, labelKeys])

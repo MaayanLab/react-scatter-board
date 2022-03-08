@@ -16,7 +16,6 @@ export default function THREEScatterPlot({ name, scale, is3d, data, meta }) {
     const color = new THREE.Color()
     const pointScale = (
       10 * scale
-      / Math.log10(scale)
       / Math.log10(data.length)
       / Math.log(8)
       / (is3d ? 15 : 1)
@@ -51,7 +50,7 @@ export default function THREEScatterPlot({ name, scale, is3d, data, meta }) {
       groups[shape].colors.push(color.b)
       groups[shape].colors.push(d.opacity)
 
-      groups[shape].sizes.push(pointScale * (d.size || 1))
+      groups[shape].sizes.push(pointScale * (d.size || 1.))
 
       groups[shape].n++
     }
@@ -89,8 +88,7 @@ export default function THREEScatterPlot({ name, scale, is3d, data, meta }) {
     ) return
     const geom = pointsRef.current.geometry
     const pointScale = (
-      10 * scale
-      / Math.log10(scale)
+      10. * scale
       / Math.log10(data.length)
       / Math.log(8)
       / (is3d ? 15 : 1)
