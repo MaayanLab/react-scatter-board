@@ -100,6 +100,7 @@ export default function THREEScatterPlot({ name, scale, is3d, data, meta }) {
       const j = geom.userData.index[i]
       const d = {...data[j], ...meta[j]}
       color.set(d.color || '#002288')
+      color.convertSRGBToLinear();
       geom.attributes.color.array[(i*4) + 0] = color.r
       geom.attributes.color.array[(i*4) + 1] = color.g
       geom.attributes.color.array[(i*4) + 2] = color.b
