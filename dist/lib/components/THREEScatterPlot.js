@@ -33,7 +33,7 @@ export default function THREEScatterPlot(_ref) {
 
     var groups = {};
     var color = new THREE.Color();
-    var pointScale = 10 * scale / Math.log10(scale) / Math.log10(data.length) / Math.log(8) / (is3d ? 15 : 1);
+    var pointScale = 10 * scale / Math.log10(data.length) / Math.log(8) / (is3d ? 15 : 1);
 
     for (var i = 0; i < data.length; i++) {
       var d = _objectSpread(_objectSpread({}, data[i]), meta[i]);
@@ -65,7 +65,7 @@ export default function THREEScatterPlot(_ref) {
       groups[shape].colors.push(color.g);
       groups[shape].colors.push(color.b);
       groups[shape].colors.push(d.opacity);
-      groups[shape].sizes.push(pointScale * (d.size || 1));
+      groups[shape].sizes.push(pointScale * (d.size || 1.));
       groups[shape].n++;
     }
 
@@ -98,7 +98,7 @@ export default function THREEScatterPlot(_ref) {
   React.useEffect(function () {
     if (!pointsRef || !pointsRef.current || !meta || meta.length === 0 || pointsRef.current.geometry === undefined || pointsRef.current.geometry.attributes === undefined || !('color' in pointsRef.current.geometry.attributes)) return;
     var geom = pointsRef.current.geometry;
-    var pointScale = 10 * scale / Math.log10(scale) / Math.log10(data.length) / Math.log(8) / (is3d ? 15 : 1);
+    var pointScale = 10. * scale / Math.log10(data.length) / Math.log(8) / (is3d ? 15 : 1);
     var color = new THREE.Color();
 
     for (var i = 0; i < geom.userData.index.length; i++) {
