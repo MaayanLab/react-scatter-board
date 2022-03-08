@@ -46,6 +46,7 @@
     "@react-three/fiber": "^7.0.26",
     "d3-scale": "^4.0.2",
     "d3-scale-chromatic": "^3.0.0",
+    "html2canvas": "^1.4.1",
     "react": "^17.0.2",
     "react-select": "^5.2.2",
     "three": "^0.138.0",

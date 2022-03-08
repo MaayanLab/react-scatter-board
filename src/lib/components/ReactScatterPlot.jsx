@@ -1,5 +1,5 @@
 import React from 'react'
-import { Canvas } from '@react-three/fiber'
+import { Canvas, useThree } from '@react-three/fiber'
 import {
   GizmoHelper,
   GizmoViewport,
@@ -14,11 +14,17 @@ const THREEFog = React.lazy(() => import('./THREEFog'))
 const THREEScatterPlot = React.lazy(() => import('./THREEScatterPlot'))
 const THREEScatterPlotTooltip = React.lazy(() => import('./THREEScatterPlotTooltip'))
 
-export default function ReactScatterPlot({ is3d, scale, data, meta }) {
+const THREERef = React.forwardRef((_props, ref) => {
+  ref.current = useThree()
+  return null
+})
+
+const ReactScatterPlot = React.forwardRef(({ is3d, scale, data, meta }, ref) => {
   const { center, size } = useDataDimensions({ is3d, data })
   if (scale === undefined) scale = Math.max(size.x, size.y, size.z)
   return (
     <Canvas>
+      <THREERef ref={ref} />
       <THREEScatterPlot
         name="three-scatter-points"
         is3d={is3d}
@@ -89,4 +95,6 @@ export default function ReactScatterPlot({ is3d, scale, data, meta }) {
       )}
     </Canvas>
   )
-}
+})
+
+export default ReactScatterPlot

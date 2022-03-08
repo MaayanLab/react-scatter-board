@@ -4,6 +4,7 @@ import { shapes } from '../shapes'
 
 import computeFacets from '../utils/computeFacets'
 import objectFilter from '../utils/objectFilter'
+import html2canvas from 'html2canvas'
 
 const ReactScatterPlot = React.lazy(() => import('./ReactScatterPlot'))
 const ReactColorbar = React.lazy(() => import('./ReactColorbar'))
@@ -21,6 +22,8 @@ export default function ReactScatterBoard({
   searchKeys: initSearchKeys,
   selectValue: initSelectValue, scale,
 }) {
+  const threeRef = React.useRef()
+  const scatterboardRef = React.useRef()
   if (toggle3d === undefined) toggle3d = init3d
   const [facets, setFacets] = React.useState(initFacets || {})
   React.useEffect(() => {
@@ -100,13 +103,16 @@ export default function ReactScatterBoard({
   }), [data, is3d, facets, shapeKey, colorKey, selectValue, labelKeys])
 
   return (
-    <div style={{
-      flex: '1 1 auto',
-      position: 'relative',
-      overflow: 'hidden',
-    }}>
+    <div
+      ref={scatterboardRef}
+      style={{
+        flex: '1 1 auto',
+        position: 'relative',
+        overflow: 'hidden',
+      }}>
       <Suspense>
         <ReactScatterPlot
+          ref={threeRef}
           is3d={is3d}
           scale={scale}
           data={data}
@@ -214,6 +220,37 @@ export default function ReactScatterBoard({
                 current={is3d}
                 onChange={(value) => setIs3d(value)}
               />
+            ) : null}
+            {data && data.length > 0 ? (
+              <div style={{
+                margin: 10,
+                textAlign: 'center',
+              }}>
+                <button
+                  style={{
+                    border: 0,
+                    backgroundColor: 'inherit',
+                    pointerEvents: 'auto',
+                    cursor: 'pointer',
+                    color: '#0088aa',
+                  }}
+                  onClick={() => {
+                    threeRef.current.gl.domElement.getContext('webgl', { preserveDrawingBuffer: true })
+                    threeRef.current.gl.render(threeRef.current.scene, threeRef.current.camera)
+                    html2canvas(scatterboardRef.current)
+                      .then(canvas => {
+                        var a = document.createElement('a');
+                        a.href = canvas.toDataURL();
+                        a.download = 'canvas.png';
+                        a.click();
+                      }, 'image/png', 1.0
+                    )
+                    threeRef.current.gl.domElement.getContext('webgl', { preserveDrawingBuffer: false })
+                  }}
+                >
+                  Download as PNG
+                </button>
+              </div>
             ) : null}
           </Suspense>
         </div>
