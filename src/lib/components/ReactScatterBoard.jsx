@@ -21,6 +21,7 @@ export default function ReactScatterBoard({
   labelKeys: initLabelKeys,
   searchKeys: initSearchKeys,
   selectValue: initSelectValue, scale,
+  defaultColor = '#002288'
 }) {
   const threeRef = React.useRef()
   const scatterboardRef = React.useRef()
@@ -94,17 +95,20 @@ export default function ReactScatterBoard({
     if (colorKey !== undefined && colorKey in _datum && colorKey in facets && 'colorScale' in facets[colorKey]) {
       datum.color = facets[colorKey].colorScale(_datum[colorKey])
     } else {
-      datum.color = '#002288'
+      datum.color = defaultColor
     }
     if (datum.size === undefined) {
       datum.size = 1.
     }
     if (selectValue !== undefined && _datum[selectValue.key] == selectValue.value) {
-      datum.size = datum.size * 2.5
+      datum.size = 2.5
+    } else if (_datum[colorKey] !== undefined) {
+      datum.size = 2
+    }else {
+      datum.size = 0.5
     }
     return datum
   }), [data, is3d, facets, shapeKey, colorKey, selectValue, labelKeys])
-
   return (
     <div
       ref={scatterboardRef}

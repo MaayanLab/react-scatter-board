@@ -16,7 +16,7 @@ function cmpNaN(a, b) {
   else return (b * 1.0) - (a * 1.0)
 }
 
-export default function computeFacets(data) {
+export default function computeFacets(data, colormap={}) {
   // identify key/values in data
   const facets = {}
   for (const { x, y, z, ...d } of data) {
@@ -32,7 +32,9 @@ export default function computeFacets(data) {
     if (Object.keys(facet.values).length <= 1) continue
     if (facet.type === 'string') {
       facet.values = objectSort(facet.values, (a, b) => b - a)
-      if (Object.keys(facet.values).filter(v => !validColor(v)).length === 0) {
+      if (colormap[key] !== undefined && Object.keys(facet.values).filter(v => !validColor(colormap[key][v])).length === 0) {
+        facet.colorScale = v => colormap[key][v]
+      }else if (Object.keys(facet.values).filter(v => !validColor(v)).length === 0) {
         // if colors are all interpretable as valid colors, passthrough
         facet.colorScale = color => color
       } else if (Object.keys(facet.values).length <= d3ScaleChromatic.schemeCategory10.length) {
