@@ -101,11 +101,11 @@ export default function ReactScatterBoard({
       datum.size = 1.
     }
     if (selectValue !== undefined && _datum[selectValue.key] == selectValue.value) {
-      datum.size = 2.5
+      datum.size = datum.size * 2.5
     } else if (_datum[colorKey] !== undefined) {
-      datum.size = 2
+      datum.size = datum.size * 2
     }else {
-      datum.size = 0.5
+      datum.size = datum.size * 0.5
     }
     return datum
   }), [data, is3d, facets, shapeKey, colorKey, selectValue, labelKeys])
