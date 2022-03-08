@@ -10,6 +10,7 @@ import Suspense from './Suspense';
 import { shapes } from '../shapes';
 import computeFacets from '../utils/computeFacets';
 import objectFilter from '../utils/objectFilter';
+import html2canvas from 'html2canvas';
 var ReactScatterPlot = /*#__PURE__*/React.lazy(function () {
   return new Promise(function (resolve) {
     (function () {
@@ -65,6 +66,8 @@ export default function ReactScatterBoard(_ref) {
       initSearchKeys = _ref.searchKeys,
       initSelectValue = _ref.selectValue,
       scale = _ref.scale;
+  var threeRef = React.useRef();
+  var scatterboardRef = React.useRef();
   if (toggle3d === undefined) toggle3d = init3d;
 
   var _React$useState = React.useState(initFacets || {}),
@@ -174,12 +177,14 @@ export default function ReactScatterBoard(_ref) {
     });
   }, [data, is3d, facets, shapeKey, colorKey, selectValue, labelKeys]);
   return /*#__PURE__*/React.createElement("div", {
+    ref: scatterboardRef,
     style: {
       flex: '1 1 auto',
       position: 'relative',
       overflow: 'hidden'
     }
   }, /*#__PURE__*/React.createElement(Suspense, null, /*#__PURE__*/React.createElement(ReactScatterPlot, {
+    ref: threeRef,
     is3d: is3d,
     scale: scale,
     data: data,
@@ -279,5 +284,33 @@ export default function ReactScatterBoard(_ref) {
     onChange: function onChange(value) {
       return setIs3d(value);
     }
-  }) : null))));
+  }) : null, data && data.length > 0 ? /*#__PURE__*/React.createElement("div", {
+    style: {
+      margin: 10,
+      textAlign: 'center'
+    }
+  }, /*#__PURE__*/React.createElement("button", {
+    style: {
+      border: 0,
+      backgroundColor: 'inherit',
+      pointerEvents: 'auto',
+      cursor: 'pointer',
+      color: '#0088aa'
+    },
+    onClick: function onClick() {
+      threeRef.current.gl.domElement.getContext('webgl', {
+        preserveDrawingBuffer: true
+      });
+      threeRef.current.gl.render(threeRef.current.scene, threeRef.current.camera);
+      html2canvas(scatterboardRef.current).then(function (canvas) {
+        var a = document.createElement('a');
+        a.href = canvas.toDataURL();
+        a.download = 'canvas.png';
+        a.click();
+      }, 'image/png', 1.0);
+      threeRef.current.gl.domElement.getContext('webgl', {
+        preserveDrawingBuffer: false
+      });
+    }
+  }, "Download as PNG")) : null))));
 }

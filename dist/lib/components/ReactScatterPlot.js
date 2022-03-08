@@ -1,5 +1,5 @@
 import React from 'react';
-import { Canvas } from '@react-three/fiber';
+import { Canvas, useThree } from '@react-three/fiber';
 import { GizmoHelper, GizmoViewport, MapControls, OrbitControls, OrthographicCamera, PerspectiveCamera } from '@react-three/drei';
 import useDataDimensions from '../hooks/useDataDimensions';
 var THREEFog = /*#__PURE__*/React.lazy(function () {
@@ -23,7 +23,11 @@ var THREEScatterPlotTooltip = /*#__PURE__*/React.lazy(function () {
     })();
   });
 });
-export default function ReactScatterPlot(_ref) {
+var THREERef = /*#__PURE__*/React.forwardRef(function (_props, ref) {
+  ref.current = useThree();
+  return null;
+});
+var ReactScatterPlot = /*#__PURE__*/React.forwardRef(function (_ref, ref) {
   var is3d = _ref.is3d,
       scale = _ref.scale,
       data = _ref.data,
@@ -37,7 +41,9 @@ export default function ReactScatterPlot(_ref) {
       size = _useDataDimensions.size;
 
   if (scale === undefined) scale = Math.max(size.x, size.y, size.z);
-  return /*#__PURE__*/React.createElement(Canvas, null, /*#__PURE__*/React.createElement(THREEScatterPlot, {
+  return /*#__PURE__*/React.createElement(Canvas, null, /*#__PURE__*/React.createElement(THREERef, {
+    ref: ref
+  }), /*#__PURE__*/React.createElement(THREEScatterPlot, {
     name: "three-scatter-points",
     is3d: is3d,
     scale: scale,
@@ -89,4 +95,5 @@ export default function ReactScatterPlot(_ref) {
     maxPolarAngle: 0,
     minPolarAngle: 0
   })));
-}
+});
+export default ReactScatterPlot;

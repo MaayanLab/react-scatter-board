@@ -107,6 +107,7 @@ export default function THREEScatterPlot(_ref) {
       var d = _objectSpread(_objectSpread({}, data[j]), meta[j]);
 
       color.set(d.color || '#002288');
+      color.convertSRGBToLinear();
       geom.attributes.color.array[i * 4 + 0] = color.r;
       geom.attributes.color.array[i * 4 + 1] = color.g;
       geom.attributes.color.array[i * 4 + 2] = color.b;
