@@ -16,7 +16,7 @@ function cmpNaN(a, b) {
   else return (b * 1.0) - (a * 1.0)
 }
 
-export default function computeFacets(data, colormap={}) {
+export default function computeFacets(data) {
   // identify key/values in data
   const facets = {}
   for (const { x, y, z, ...d } of data) {
@@ -30,71 +30,74 @@ export default function computeFacets(data, colormap={}) {
   for (const key in facets) {
     const facet = facets[key]
     if (Object.keys(facet.values).length <= 1) continue
-    if (facet.type === 'string') {
-      facet.values = objectSort(facet.values, (a, b) => b - a)
-      if (colormap[key] !== undefined && Object.keys(facet.values).filter(v => !validColor(colormap[key][v])).length === 0) {
-        facet.colorScale = v => colormap[key][v]
-      }else if (Object.keys(facet.values).filter(v => !validColor(v)).length === 0) {
-        // if colors are all interpretable as valid colors, passthrough
-        facet.colorScale = color => color
-      } else if (Object.keys(facet.values).length <= d3ScaleChromatic.schemeCategory10.length) {
-        // if there are enough colors for all the catagories, map them to the chromatic scale
-        const colorScale = d3Scale.scaleOrdinal()
-          .domain(Object.keys(facet.values))
-          .range(d3ScaleChromatic.schemeCategory10)
-        facet.colorScale = v => colorScale(v+'')
-      } else if (Object.keys(facet.values).length <= data.length*0.1) {
-        const N = Object.keys(facet.values).length
-        const colorScale = d3Scale.scaleOrdinal()
-          .domain(Object.keys(facet.values))
-          .range(
-            Object.keys(facet.values)
-              .map((_, ind) => d3ScaleChromatic.interpolateSinebow(ind/(N-1)))
-          )
-        facet.colorScale = v => colorScale(v+'')
-      }
-      if (Object.keys(facet.values).filter(k => shapes[k] === undefined).length === 0) {
-        // if the shapes are interpretable as valid shapes, passthrough
-        facet.shapeScale = shape => shape
-      } else if (Object.keys(facet.values).length <= Object.keys(shapes).length) {
-        // if there are enough shapes for the categories, map them to the shapes
-        const shapeScale = d3Scale.scaleOrdinal()
-          .domain(Object.keys(facet.values))
-          .range(Object.keys(shapes))
-        facet.shapeScale = v => shapeScale(v+'')
-      }
+    facets[key] = computeScale(facet, data)
+  }
+  return facets
+}
+
+export function computeScale(facet, data) {
+  if (facet.type === 'string') {
+    facet.values = objectSort(facet.values, (a, b) => b - a)
+    if (Object.keys(facet.values).filter(v => !validColor(v)).length === 0) {
+      // if colors are all interpretable as valid colors, passthrough
+      facet.colorScale = color => color
+    } else if (Object.keys(facet.values).length <= d3ScaleChromatic.schemeCategory10.length) {
+      // if there are enough colors for all the catagories, map them to the chromatic scale
+      const colorScale = d3Scale.scaleOrdinal()
+        .domain(Object.keys(facet.values))
+        .range(d3ScaleChromatic.schemeCategory10)
+      facet.colorScale = v => colorScale(v+'')
+    } else if (Object.keys(facet.values).length <= data.length*0.1) {
+      const N = Object.keys(facet.values).length
+      const colorScale = d3Scale.scaleOrdinal()
+        .domain(Object.keys(facet.values))
+        .range(
+          Object.keys(facet.values)
+            .map((_, ind) => d3ScaleChromatic.interpolateSinebow(ind/(N-1)))
+        )
+      facet.colorScale = v => colorScale(v+'')
     }
-    if (facet.type === 'bigint' || facet.type === 'number') {
-      if (facet.type === 'bigint' && Object.keys(facet.values).length <= d3ScaleChromatic.schemeCategory10.length) {
-        facet.values = objectSort(facet.values, (_a, _b, a, b) => cmpNaN(a, b))
-        // if there are enough colors for the categories, map them to the chromatic scale
-        const colorScale = d3Scale.scaleOrdinal()
-          .domain(Object.keys(facet.values))
-          .range(d3ScaleChromatic.schemeCategory10)
-        facet.colorScale = v => colorScale(v+'')
-      }
-      if (Object.keys(facet.values).length <= Object.keys(shapes).length) {
-        facet.values = objectSort(facet.values, (_a, _b, a, b) => cmpNaN(a, b))
-        // if there are enough shapes for the categories, map them to the shapes
-        const shapeScale = d3Scale.scaleOrdinal()
-          .domain(Object.keys(facet.values))
-          .range(Object.keys(shapes))
-        facet.shapeScale = v => shapeScale(v + '')
-      } else {
-        // not enough categorical colors -- treat number as linearly interpolated
-        const domain = [
-          Object.keys(facet.values).map(v => v*1.0).reduce((m, v) => isNaN(v) ? m : Math.min(m, v)),
-          Object.keys(facet.values).map(v => v*1.0).reduce((m, v) => isNaN(v) ? m : Math.max(m, v)),
-        ]
-        if (!isNaN(domain[0]) && !isNaN(domain[1])) {
-          facet.colorbar = domain
-          const colorScale = d3Scale.scaleLinear()
-            .domain(domain)
-            .range(['grey', 'red'])
-          facet.colorScale = v => isNaN(v*1.0) ? 'lightgrey' : colorScale(v*1.0)
-        }
+    if (Object.keys(facet.values).filter(k => shapes[k] === undefined).length === 0) {
+      // if the shapes are interpretable as valid shapes, passthrough
+      facet.shapeScale = shape => shape
+    } else if (Object.keys(facet.values).length <= Object.keys(shapes).length) {
+      // if there are enough shapes for the categories, map them to the shapes
+      const shapeScale = d3Scale.scaleOrdinal()
+        .domain(Object.keys(facet.values))
+        .range(Object.keys(shapes))
+      facet.shapeScale = v => shapeScale(v+'')
+    }
+  }
+  if (facet.type === 'bigint' || facet.type === 'number') {
+    if (facet.type === 'bigint' && Object.keys(facet.values).length <= d3ScaleChromatic.schemeCategory10.length) {
+      facet.values = objectSort(facet.values, (_a, _b, a, b) => cmpNaN(a, b))
+      // if there are enough colors for the categories, map them to the chromatic scale
+      const colorScale = d3Scale.scaleOrdinal()
+        .domain(Object.keys(facet.values))
+        .range(d3ScaleChromatic.schemeCategory10)
+      facet.colorScale = v => colorScale(v+'')
+    }
+    if (Object.keys(facet.values).length <= Object.keys(shapes).length) {
+      facet.values = objectSort(facet.values, (_a, _b, a, b) => cmpNaN(a, b))
+      // if there are enough shapes for the categories, map them to the shapes
+      const shapeScale = d3Scale.scaleOrdinal()
+        .domain(Object.keys(facet.values))
+        .range(Object.keys(shapes))
+      facet.shapeScale = v => shapeScale(v + '')
+    } else {
+      // not enough categorical colors -- treat number as linearly interpolated
+      const domain = [
+        Object.keys(facet.values).map(v => v*1.0).reduce((m, v) => isNaN(v) ? m : Math.min(m, v)),
+        Object.keys(facet.values).map(v => v*1.0).reduce((m, v) => isNaN(v) ? m : Math.max(m, v)),
+      ]
+      if (!isNaN(domain[0]) && !isNaN(domain[1])) {
+        facet.colorbar = domain
+        const colorScale = d3Scale.scaleLinear()
+          .domain(domain)
+          .range(['grey', 'red'])
+        facet.colorScale = v => isNaN(v*1.0) ? 'lightgrey' : colorScale(v*1.0)
       }
     }
   }
-  return facets
+  return facet
 }
