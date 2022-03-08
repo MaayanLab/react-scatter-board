@@ -61,6 +61,7 @@ export default function THREEScatterPlot(_ref) {
       groups[shape].positions.push(d.y);
       groups[shape].positions.push(is3d ? d.z : 0);
       color.set(d.color || '#002288');
+      color.convertSRGBToLinear();
       groups[shape].colors.push(color.r);
       groups[shape].colors.push(color.g);
       groups[shape].colors.push(color.b);
