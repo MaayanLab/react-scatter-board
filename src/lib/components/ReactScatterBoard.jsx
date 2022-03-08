@@ -72,7 +72,9 @@ export default function ReactScatterBoard({
   )
   const meta = React.useMemo(() => data.map(_datum => {
     const datum = {}
-    if (is3d === false) {
+    if (_datum.opacity !== undefined) {
+      datum.opacity = _datum.opacity
+    } else if (is3d === false) {
       datum.opacity = 1.0
     } else {
       datum.opacity = 0.8
