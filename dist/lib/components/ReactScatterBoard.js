@@ -1,9 +1,9 @@
 import _defineProperty from "@babel/runtime/helpers/defineProperty";
 import _slicedToArray from "@babel/runtime/helpers/slicedToArray";
 
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 import React from 'react';
 import Suspense from './Suspense';
@@ -65,7 +65,9 @@ export default function ReactScatterBoard(_ref) {
       initLabelKeys = _ref.labelKeys,
       initSearchKeys = _ref.searchKeys,
       initSelectValue = _ref.selectValue,
-      scale = _ref.scale;
+      scale = _ref.scale,
+      _ref$defaultColor = _ref.defaultColor,
+      defaultColor = _ref$defaultColor === void 0 ? '#002288' : _ref$defaultColor;
   var threeRef = React.useRef();
   var scatterboardRef = React.useRef();
   if (toggle3d === undefined) toggle3d = init3d;
@@ -166,7 +168,7 @@ export default function ReactScatterBoard(_ref) {
       if (colorKey !== undefined && colorKey in _datum && colorKey in facets && 'colorScale' in facets[colorKey]) {
         datum.color = facets[colorKey].colorScale(_datum[colorKey]);
       } else {
-        datum.color = '#002288';
+        datum.color = defaultColor;
       }
 
       if (datum.size === undefined) {
@@ -175,6 +177,10 @@ export default function ReactScatterBoard(_ref) {
 
       if (selectValue !== undefined && _datum[selectValue.key] == selectValue.value) {
         datum.size = datum.size * 2.5;
+      } else if (_datum[colorKey] !== undefined) {
+        datum.size = datum.size * 2;
+      } else {
+        datum.size = datum.size * 0.5;
       }
 
       return datum;

@@ -58,112 +58,106 @@ export default function computeFacets(data) {
   for (var key in facets) {
     var facet = facets[key];
     if (Object.keys(facet.values).length <= 1) continue;
+    facets[key] = computeScale(facet, data);
+  }
 
-    if (facet.type === 'string') {
-      facet.values = objectSort(facet.values, function (a, b) {
-        return b - a;
-      });
+  return facets;
+}
+export function computeScale(facet, data) {
+  if (facet.type === 'string') {
+    facet.values = objectSort(facet.values, function (a, b) {
+      return b - a;
+    });
 
-      if (Object.keys(facet.values).filter(function (v) {
-        return !validColor(v);
-      }).length === 0) {
-        // if colors are all interpretable as valid colors, passthrough
-        facet.colorScale = function (color) {
-          return color;
-        };
-      } else if (Object.keys(facet.values).length <= d3ScaleChromatic.schemeCategory10.length) {
-        (function () {
-          // if there are enough colors for all the catagories, map them to the chromatic scale
-          var colorScale = d3Scale.scaleOrdinal().domain(Object.keys(facet.values)).range(d3ScaleChromatic.schemeCategory10);
+    if (Object.keys(facet.values).filter(function (v) {
+      return !validColor(v);
+    }).length === 0) {
+      // if colors are all interpretable as valid colors, passthrough
+      facet.colorScale = function (color) {
+        return color;
+      };
+    } else if (Object.keys(facet.values).length <= d3ScaleChromatic.schemeCategory10.length) {
+      // if there are enough colors for all the catagories, map them to the chromatic scale
+      var colorScale = d3Scale.scaleOrdinal().domain(Object.keys(facet.values)).range(d3ScaleChromatic.schemeCategory10);
 
-          facet.colorScale = function (v) {
-            return colorScale(v + '');
-          };
-        })();
-      } else if (Object.keys(facet.values).length <= data.length * 0.1) {
-        (function () {
-          var N = Object.keys(facet.values).length;
-          var colorScale = d3Scale.scaleOrdinal().domain(Object.keys(facet.values)).range(Object.keys(facet.values).map(function (_, ind) {
-            return d3ScaleChromatic.interpolateSinebow(ind / (N - 1));
-          }));
+      facet.colorScale = function (v) {
+        return colorScale(v + '');
+      };
+    } else if (Object.keys(facet.values).length <= data.length * 0.1) {
+      var N = Object.keys(facet.values).length;
 
-          facet.colorScale = function (v) {
-            return colorScale(v + '');
-          };
-        })();
-      }
+      var _colorScale = d3Scale.scaleOrdinal().domain(Object.keys(facet.values)).range(Object.keys(facet.values).map(function (_, ind) {
+        return d3ScaleChromatic.interpolateSinebow(ind / (N - 1));
+      }));
 
-      if (Object.keys(facet.values).filter(function (k) {
-        return shapes[k] === undefined;
-      }).length === 0) {
-        // if the shapes are interpretable as valid shapes, passthrough
-        facet.shapeScale = function (shape) {
-          return shape;
-        };
-      } else if (Object.keys(facet.values).length <= Object.keys(shapes).length) {
-        (function () {
-          // if there are enough shapes for the categories, map them to the shapes
-          var shapeScale = d3Scale.scaleOrdinal().domain(Object.keys(facet.values)).range(Object.keys(shapes));
-
-          facet.shapeScale = function (v) {
-            return shapeScale(v + '');
-          };
-        })();
-      }
+      facet.colorScale = function (v) {
+        return _colorScale(v + '');
+      };
     }
 
-    if (facet.type === 'bigint' || facet.type === 'number') {
-      if (facet.type === 'bigint' && Object.keys(facet.values).length <= d3ScaleChromatic.schemeCategory10.length) {
-        (function () {
-          facet.values = objectSort(facet.values, function (_a, _b, a, b) {
-            return cmpNaN(a, b);
-          }); // if there are enough colors for the categories, map them to the chromatic scale
+    if (Object.keys(facet.values).filter(function (k) {
+      return shapes[k] === undefined;
+    }).length === 0) {
+      // if the shapes are interpretable as valid shapes, passthrough
+      facet.shapeScale = function (shape) {
+        return shape;
+      };
+    } else if (Object.keys(facet.values).length <= Object.keys(shapes).length) {
+      // if there are enough shapes for the categories, map them to the shapes
+      var shapeScale = d3Scale.scaleOrdinal().domain(Object.keys(facet.values)).range(Object.keys(shapes));
 
-          var colorScale = d3Scale.scaleOrdinal().domain(Object.keys(facet.values)).range(d3ScaleChromatic.schemeCategory10);
+      facet.shapeScale = function (v) {
+        return shapeScale(v + '');
+      };
+    }
+  }
 
-          facet.colorScale = function (v) {
-            return colorScale(v + '');
-          };
-        })();
-      }
+  if (facet.type === 'bigint' || facet.type === 'number') {
+    if (facet.type === 'bigint' && Object.keys(facet.values).length <= d3ScaleChromatic.schemeCategory10.length) {
+      facet.values = objectSort(facet.values, function (_a, _b, a, b) {
+        return cmpNaN(a, b);
+      }); // if there are enough colors for the categories, map them to the chromatic scale
 
-      if (Object.keys(facet.values).length <= Object.keys(shapes).length) {
-        (function () {
-          facet.values = objectSort(facet.values, function (_a, _b, a, b) {
-            return cmpNaN(a, b);
-          }); // if there are enough shapes for the categories, map them to the shapes
+      var _colorScale2 = d3Scale.scaleOrdinal().domain(Object.keys(facet.values)).range(d3ScaleChromatic.schemeCategory10);
 
-          var shapeScale = d3Scale.scaleOrdinal().domain(Object.keys(facet.values)).range(Object.keys(shapes));
+      facet.colorScale = function (v) {
+        return _colorScale2(v + '');
+      };
+    }
 
-          facet.shapeScale = function (v) {
-            return shapeScale(v + '');
-          };
-        })();
-      } else {
-        // not enough categorical colors -- treat number as linearly interpolated
-        var domain = [Object.keys(facet.values).map(function (v) {
-          return v * 1.0;
-        }).reduce(function (m, v) {
-          return isNaN(v) ? m : Math.min(m, v);
-        }), Object.keys(facet.values).map(function (v) {
-          return v * 1.0;
-        }).reduce(function (m, v) {
-          return isNaN(v) ? m : Math.max(m, v);
-        })];
+    if (Object.keys(facet.values).length <= Object.keys(shapes).length) {
+      facet.values = objectSort(facet.values, function (_a, _b, a, b) {
+        return cmpNaN(a, b);
+      }); // if there are enough shapes for the categories, map them to the shapes
 
-        if (!isNaN(domain[0]) && !isNaN(domain[1])) {
-          (function () {
-            facet.colorbar = domain;
-            var colorScale = d3Scale.scaleLinear().domain(domain).range(['grey', 'red']);
+      var _shapeScale = d3Scale.scaleOrdinal().domain(Object.keys(facet.values)).range(Object.keys(shapes));
 
-            facet.colorScale = function (v) {
-              return isNaN(v * 1.0) ? 'lightgrey' : colorScale(v * 1.0);
-            };
-          })();
-        }
+      facet.shapeScale = function (v) {
+        return _shapeScale(v + '');
+      };
+    } else {
+      // not enough categorical colors -- treat number as linearly interpolated
+      var domain = [Object.keys(facet.values).map(function (v) {
+        return v * 1.0;
+      }).reduce(function (m, v) {
+        return isNaN(v) ? m : Math.min(m, v);
+      }), Object.keys(facet.values).map(function (v) {
+        return v * 1.0;
+      }).reduce(function (m, v) {
+        return isNaN(v) ? m : Math.max(m, v);
+      })];
+
+      if (!isNaN(domain[0]) && !isNaN(domain[1])) {
+        facet.colorbar = domain;
+
+        var _colorScale3 = d3Scale.scaleLinear().domain(domain).range(['grey', 'red']);
+
+        facet.colorScale = function (v) {
+          return isNaN(v * 1.0) ? 'lightgrey' : _colorScale3(v * 1.0);
+        };
       }
     }
   }
 
-  return facets;
+  return facet;
 }
