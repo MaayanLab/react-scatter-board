@@ -3,7 +3,7 @@ import * as THREE from 'three'
 import { shapes, useShapeMaterial } from '../shapes'
 import * as BufferGeometryUtils from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 
-export default function THREEScatterPlot({ name, scale, is3d, data, meta }) {
+export default function THREEScatterPlot({ name, scale, is3d, data, meta, onClick }) {
   const pointsRef = React.useRef()
   const [pointsProps, setPointsProps] = React.useState({})
   const shapeMaterials = useShapeMaterial()
@@ -113,6 +113,7 @@ export default function THREEScatterPlot({ name, scale, is3d, data, meta }) {
     <points
       ref={pointsRef}
       name={name}
+      onClick={onClick}
       {...pointsProps}
     />
   )

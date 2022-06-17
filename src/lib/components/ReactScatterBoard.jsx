@@ -21,6 +21,7 @@ export default function ReactScatterBoard({
   labelKeys: initLabelKeys,
   searchKeys: initSearchKeys,
   selectValue: initSelectValue, scale,
+  onHover, onClick,
 }) {
   const threeRef = React.useRef()
   const scatterboardRef = React.useRef()
@@ -120,6 +121,8 @@ export default function ReactScatterBoard({
           scale={scale}
           data={data}
           meta={meta}
+          onHover={onHover}
+          onClick={onClick}
         />
       </Suspense>
       <div style={{
@@ -238,8 +241,8 @@ export default function ReactScatterBoard({
                     color: '#0088aa',
                   }}
                   onClick={() => {
-                    threeRef.current.gl.domElement.getContext('webgl', { preserveDrawingBuffer: true })
-                    threeRef.current.gl.render(threeRef.current.scene, threeRef.current.camera)
+                    threeRef.current.three.gl.domElement.getContext('webgl', { preserveDrawingBuffer: true })
+                    threeRef.current.three.gl.render(threeRef.current.three.scene, threeRef.current.three.camera)
                     html2canvas(scatterboardRef.current)
                       .then(canvas => {
                         var a = document.createElement('a');
@@ -248,7 +251,7 @@ export default function ReactScatterBoard({
                         a.click();
                       }, 'image/png', 1.0
                     )
-                    threeRef.current.gl.domElement.getContext('webgl', { preserveDrawingBuffer: false })
+                    threeRef.current.three.gl.domElement.getContext('webgl', { preserveDrawingBuffer: false })
                   }}
                 >
                   Download as PNG
