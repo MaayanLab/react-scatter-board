@@ -109,11 +109,40 @@ export default function THREEScatterPlot({ name, scale, is3d, data, meta, onClic
     geom.attributes.color.needsUpdate = true
     geom.attributes.size.needsUpdate = true
   }, [pointsRef.current, scale, meta])
+  // onPointerDown/onPointerUp are hacks just to emulate standard onClick
   return (
     <points
       ref={pointsRef}
       name={name}
-      onClick={onClick}
+      onPointerDown={evt => {
+        const _pointerEvent = {
+          state: 'down',
+          timeStamp: evt.nativeEvent.timeStamp,
+          clientX: evt.nativeEvent.clientX,
+          clientY: evt.nativeEvent.clientY,
+        }
+        Object.assign(pointsRef.current, { _pointerEvent })
+      }}
+      onPointerUp={evt => {
+        const _pointerEvent = {
+          state: 'up',
+          timeStamp: evt.nativeEvent.timeStamp,
+          clientX: evt.nativeEvent.clientX,
+          clientY: evt.nativeEvent.clientY,
+        }
+        if ('_pointerEvent' in pointsRef.current) {
+          const _prevPointerEvent = pointsRef.current._pointerEvent
+          if (
+            _prevPointerEvent.state === 'down'
+            && (_pointerEvent.timeStamp - _prevPointerEvent.timeStamp) < 500
+            && Math.abs(_pointerEvent.clientX - _prevPointerEvent.clientX) < 5
+            && Math.abs(_pointerEvent.clientY - _prevPointerEvent.clientY) < 5
+          ) {
+            onClick(evt)
+          }
+          delete pointsRef.current._pointerEvent
+        }
+      }}
       {...pointsProps}
     />
   )
