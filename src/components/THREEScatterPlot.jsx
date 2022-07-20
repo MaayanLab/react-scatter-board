@@ -3,19 +3,14 @@ import * as THREE from 'three'
 import { shapes, useShapeMaterial } from '../shapes'
 import { BufferGeometryUtils } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 
-export default function THREEScatterPlot({ name, scale, is3d, data, meta }) {
+export default function THREEScatterPlot({ name, scale, mu, std, is3d, data, meta }) {
   const shapeMaterials = useShapeMaterial()
   if (data.length === 0 || meta.length === 0) return null
   const { geometry, material } = React.useMemo(() => {
     const groups = {}
     const color = new THREE.Color()
-    const pointScale = (
-      10 * scale
-      / Math.log10(scale)
-      / Math.log10(data.length)
-      / Math.log(8)
-      / (is3d ? 15 : 1)
-    )
+    const pointScale = scale
+    const max_std = Math.max(std.x, std.y, std.z)
     for (let i = 0; i < data.length; i++) {
       const d = { ...data[i], ...meta[i] }
       let shape
@@ -34,9 +29,9 @@ export default function THREEScatterPlot({ name, scale, is3d, data, meta }) {
       }
       groups[shape].labels.push(d.label)
       
-      groups[shape].positions.push(d.x)
-      groups[shape].positions.push(d.y)
-      groups[shape].positions.push(is3d ? d.z : 0)
+      groups[shape].positions.push((d.x - mu.x)/max_std)
+      groups[shape].positions.push((d.y - mu.y)/max_std)
+      groups[shape].positions.push(is3d ? ((d.z - mu.z)/max_std) : 0)
 
       color.set(d.color || '#002288')
       groups[shape].colors.push(color.r)

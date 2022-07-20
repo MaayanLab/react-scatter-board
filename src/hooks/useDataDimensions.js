@@ -3,31 +3,27 @@ import * as THREE from 'three'
 
 export default function useDataDimensions({ is3d, data }) {
   return React.useMemo(() => {
-    let minX, minY, minZ,
-      maxX, maxY, maxZ
-    for (const { x, y, z } of data) {
-      minX = minX === undefined ? x : Math.min(minX, x)
-      maxX = maxX === undefined ? x : Math.max(maxX, x)
-      minY = minY === undefined ? y : Math.min(minY, y)
-      maxY = maxY === undefined ? y : Math.max(maxY, y)
-      if (is3d === true) {
-        minZ = minZ === undefined ? z : Math.min(minZ, z)
-        maxZ = maxZ === undefined ? z : Math.max(maxZ, z)
+    let m = { min: {}, max: {}, mu: {}, std: {}, span: {}, center: {} }
+    const dims = ['x', 'y']
+    if (is3d) dims.push('z')
+    for (const datum of data) {
+      for (const dim of dims) {
+        m.min[dim] = m.min[dim] === undefined ? datum[dim] : Math.min(m.min[dim], datum[dim])
+        m.max[dim] = m.max[dim] === undefined ? datum[dim] : Math.max(m.max[dim], datum[dim])
+        m.mu[dim] = m.mu[dim] === undefined ? datum[dim] : m.mu[dim] + datum[dim]
+        m.std[dim] = m.std[dim] === undefined ? datum[dim] : m.std[dim] + datum[dim]*datum[dim]
       }
     }
-    let spanX, spanY, spanZ
-    spanX = maxX - minX
-    spanY = maxY - minY
-    if (is3d) spanZ = maxZ - minZ
-    let centerX, centerY, centerZ
-    centerX = ((maxX - minX) / 2) | 0
-    centerY = ((maxY - minY) / 2) | 0
-    if (is3d === true) {
-      centerZ = ((maxZ - minZ) / 2) | 0
+    for (const dim of dims) {
+      m.span[dim] = m.max[dim] - m.min[dim]
+      m.center[dim] = ((m.max[dim] - m.min[dim]) / 2) | 0
+      m.mu[dim] = m.mu[dim] / data.length
+      m.std[dim] = Math.sqrt(m.std[dim])
     }
     return {
-      center: new THREE.Vector3(centerX, centerY, is3d ? centerZ : 1),
-      size: new THREE.Vector3(spanX, spanY, is3d ? spanZ : 1),
+      center: new THREE.Vector3(m.center.x, m.center.y, is3d ? m.center.z : 1),
+      size: new THREE.Vector3(m.span.x, m.span.y, is3d ? m.span.z : 1),
+      mu: m.mu, std: m.std,
     }
   }, [is3d, data])
 }

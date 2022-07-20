@@ -15,14 +15,15 @@ const THREEScatterPlot = React.lazy(() => import('./THREEScatterPlot'))
 const THREEScatterPlotTooltip = React.lazy(() => import('./THREEScatterPlotTooltip'))
 
 export default function ReactScatterPlot({ is3d, scale, data, meta }) {
-  const { center, size } = useDataDimensions({ is3d, data })
-  if (scale === undefined) scale = Math.max(size.x, size.y, size.z)
+  const { center, size, mu, std } = useDataDimensions({ is3d, data })
+  if (scale === undefined) scale = Math.min(size.x, size.y, size.z) / 4.0 * data.length
   return (
     <Canvas>
       <THREEScatterPlot
         name="three-scatter-points"
         is3d={is3d}
         scale={scale}
+        mu={mu} std={std}
         data={data}
         meta={meta}
       />
@@ -36,14 +37,14 @@ export default function ReactScatterPlot({ is3d, scale, data, meta }) {
           <THREEFog
             color="#ffffff"
             near={0}
-            far={2 * Math.max(size.x, size.y, size.z)}
+            far={2 * 3}
           />
           <PerspectiveCamera
             makeDefault
             fov={90}
-            position={center}
+            position={[0, 0, 0]}
             near={0.01}
-            far={10 * Math.max(size.x, size.y, size.z)}
+            far={10 * 3}
             zoom={1}
           />
           <OrbitControls
@@ -71,7 +72,7 @@ export default function ReactScatterPlot({ is3d, scale, data, meta }) {
         <>
           <OrthographicCamera
             makeDefault
-            position={center}
+            position={[0, 0, 0]}
             up={[0, 0, 1]}
             near={0.01}
             far={100}
