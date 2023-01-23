@@ -125,6 +125,6 @@ npm run deploy
 
 This creates a production build of the example `create-react-app` that showcases your library and then runs `gh-pages` to deploy the resulting bundle.
 
-## License
+## Copyright
 
-MIT © [MaayanLab](https://github.com/MaayanLab)
+[MaayanLab](https://github.com/MaayanLab)
