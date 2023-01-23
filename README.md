@@ -95,7 +95,7 @@ export default class App extends Component {
 
 ## Examples
 
-A demo website with examples: [documention](https://maayanlab.github.io/react-scatter-board/).
+A demo website with examples: [React Scatter Board](https://maayanlab.github.io/react-scatter-board/).
 
 ## Development
 
