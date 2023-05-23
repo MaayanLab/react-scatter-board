@@ -1,10 +1,10 @@
-const path = require('path');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const webpack = require('webpack');
-const TerserWebpackPlugin = require('terser-webpack-plugin');
+import path from 'path';
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import webpack from 'webpack';
+import TerserWebpackPlugin from 'terser-webpack-plugin';
 
-module.exports = function (_env, argv) {
+export default function (_env, argv) {
   const isProduction = argv.mode === 'production';
   const isDevelopment = !isProduction;
 
@@ -12,7 +12,7 @@ module.exports = function (_env, argv) {
     devtool: isDevelopment && 'cheap-module-source-map',
     entry: './src/demo.jsx',
     output: {
-      path: path.resolve(__dirname, 'dist', 'demo'),
+      path: path.resolve('dist', 'demo'),
       filename: 'assets/js/[name].[contenthash:8].js',
       publicPath: '/'
     },
@@ -21,6 +21,9 @@ module.exports = function (_env, argv) {
         {
           test: /\.jsx?$/,
           exclude: /node_modules/,
+          resolve: {
+            fullySpecified: false,
+          },
           use: {
             loader: 'babel-loader',
             options: {
@@ -70,7 +73,7 @@ module.exports = function (_env, argv) {
         chunkFilename: 'assets/css/[name].[contenthash:8].chunk.css'
       }),
       new HtmlWebpackPlugin({
-        template: path.resolve(__dirname, 'src/demo.html'),
+        template: path.resolve('src', 'demo.html'),
         inject: true
       }),
       new webpack.DefinePlugin({
@@ -122,7 +125,7 @@ module.exports = function (_env, argv) {
       runtimeChunk: 'single'
     },
     devServer: {
-      static: path.join(__dirname, 'dist'),
+      static: path.join('dist'),
       port: 5000,
       compress: true,
       historyApiFallback: true,

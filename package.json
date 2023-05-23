@@ -2,6 +2,7 @@
   "name": "react-scatter-board",
   "version": "2.0.1",
   "description": "A React implementation of THREE.js 2d/3d scatter plot",
+  "type": "module",
   "main": "dist/lib/index.js",
   "module": "dist/lib/index.js",
   "scripts": {
@@ -47,7 +48,7 @@
     "d3-scale": "^4.0.2",
     "d3-scale-chromatic": "^3.0.0",
     "html2canvas": "^1.4.1",
-    "react": "^17.0.2",
+    "react": "^18.2.0",
     "react-select": "^5.2.2",
     "three": "^0.138.0",
     "use-asset": "^1.0.4"

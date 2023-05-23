@@ -16,7 +16,8 @@ export default function THREEScatterPlot(_ref) {
       scale = _ref.scale,
       is3d = _ref.is3d,
       data = _ref.data,
-      meta = _ref.meta;
+      meta = _ref.meta,
+      onClick = _ref.onClick;
   var pointsRef = React.useRef();
 
   var _React$useState = React.useState({}),
@@ -118,9 +119,39 @@ export default function THREEScatterPlot(_ref) {
 
     geom.attributes.color.needsUpdate = true;
     geom.attributes.size.needsUpdate = true;
-  }, [pointsRef.current, scale, meta]);
+  }, [pointsRef.current, scale, meta]); // onPointerDown/onPointerUp are hacks just to emulate standard onClick
+
   return /*#__PURE__*/React.createElement("points", _extends({
     ref: pointsRef,
-    name: name
+    name: name,
+    onPointerDown: function onPointerDown(evt) {
+      var _pointerEvent = {
+        state: 'down',
+        timeStamp: evt.nativeEvent.timeStamp,
+        clientX: evt.nativeEvent.clientX,
+        clientY: evt.nativeEvent.clientY
+      };
+      Object.assign(pointsRef.current, {
+        _pointerEvent: _pointerEvent
+      });
+    },
+    onPointerUp: function onPointerUp(evt) {
+      var _pointerEvent = {
+        state: 'up',
+        timeStamp: evt.nativeEvent.timeStamp,
+        clientX: evt.nativeEvent.clientX,
+        clientY: evt.nativeEvent.clientY
+      };
+
+      if ('_pointerEvent' in pointsRef.current) {
+        var _prevPointerEvent = pointsRef.current._pointerEvent;
+
+        if (_prevPointerEvent.state === 'down' && _pointerEvent.timeStamp - _prevPointerEvent.timeStamp < 500 && Math.abs(_pointerEvent.clientX - _prevPointerEvent.clientX) < 5 && Math.abs(_pointerEvent.clientY - _prevPointerEvent.clientY) < 5) {
+          onClick(evt);
+        }
+
+        delete pointsRef.current._pointerEvent;
+      }
+    }
   }, pointsProps));
 }

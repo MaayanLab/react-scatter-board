@@ -1,11 +1,11 @@
-const path = require('path');
+import path from 'path';
 
-module.exports = function (_env, argv) {
+export default function (_env, argv) {
   return {
     mode: 'production',
     entry: './src/react_scatter_board.jsx',
     output: {
-      path: path.resolve(__dirname, 'react_scatter_board'),
+      path: path.resolve('react_scatter_board'),
       filename: 'react_scatter_board.js',
       library: 'react_scatter_board',
       libraryTarget: 'umd',
@@ -17,6 +17,9 @@ module.exports = function (_env, argv) {
         {
           test: /\.jsx?$/,
           exclude: /node_modules/,
+          resolve: {
+            fullySpecified: false,
+          },
           use: {
             loader: 'babel-loader',
             options: {

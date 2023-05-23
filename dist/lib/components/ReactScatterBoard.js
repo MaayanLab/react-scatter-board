@@ -65,7 +65,9 @@ export default function ReactScatterBoard(_ref) {
       initLabelKeys = _ref.labelKeys,
       initSearchKeys = _ref.searchKeys,
       initSelectValue = _ref.selectValue,
-      scale = _ref.scale;
+      scale = _ref.scale,
+      onHover = _ref.onHover,
+      onClick = _ref.onClick;
   var threeRef = React.useRef();
   var scatterboardRef = React.useRef();
   if (toggle3d === undefined) toggle3d = init3d;
@@ -192,7 +194,9 @@ export default function ReactScatterBoard(_ref) {
     is3d: is3d,
     scale: scale,
     data: data,
-    meta: meta
+    meta: meta,
+    onHover: onHover,
+    onClick: onClick
   })), /*#__PURE__*/React.createElement("div", {
     style: {
       position: 'absolute',
@@ -302,17 +306,17 @@ export default function ReactScatterBoard(_ref) {
       color: '#0088aa'
     },
     onClick: function onClick() {
-      threeRef.current.gl.domElement.getContext('webgl', {
+      threeRef.current.three.gl.domElement.getContext('webgl', {
         preserveDrawingBuffer: true
       });
-      threeRef.current.gl.render(threeRef.current.scene, threeRef.current.camera);
+      threeRef.current.three.gl.render(threeRef.current.three.scene, threeRef.current.three.camera);
       html2canvas(scatterboardRef.current).then(function (canvas) {
         var a = document.createElement('a');
         a.href = canvas.toDataURL();
         a.download = 'canvas.png';
         a.click();
       }, 'image/png', 1.0);
-      threeRef.current.gl.domElement.getContext('webgl', {
+      threeRef.current.three.gl.domElement.getContext('webgl', {
         preserveDrawingBuffer: false
       });
     }
